@@ -1,0 +1,2064 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>浅草めぐり · 妈妈的日语散步</title>
+<style>
+:root{
+  --paper:#FBF3E2;
+  --paper-deep:#F3E7CC;
+  --ink:#33302B;
+  --shu:#C73E3A;
+  --shu-deep:#A32E2C;
+  --kon:#26466D;
+  --gold:#D9A441;
+  --moss:#7A8450;
+  --white:#FFFDF7;
+  --grey:#B9B0A0;
+  --ok:#5E7F4E;
+  --ng:#B23A3A;
+  --serif:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Noto Serif SC","Songti SC",serif;
+  --sans:"Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP","Noto Sans SC","PingFang SC",sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  font-family:var(--sans);color:var(--ink);background:var(--paper);
+  max-width:480px;margin:0 auto;overflow-x:hidden;
+  background-image:radial-gradient(circle at 20% 10%, rgba(217,164,65,.06), transparent 40%),
+                   radial-gradient(circle at 80% 90%, rgba(199,62,58,.05), transparent 40%);
+}
+button{font-family:inherit;border:none;background:none;cursor:pointer;color:inherit}
+
+/* ---------- top bar ---------- */
+#topbar{
+  position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;background:var(--shu);color:var(--white);
+  box-shadow:0 2px 0 var(--shu-deep);
+}
+#topbar .title{font-family:var(--serif);font-size:18px;letter-spacing:2px;font-weight:600}
+#topbar .sub{font-size:10px;opacity:.85;letter-spacing:1px;margin-top:1px}
+#btn-stamps{
+  display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.14);
+  border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:5px 11px;
+  color:var(--white);font-size:12px;
+}
+#btn-stamps .seal-mini{width:14px;height:14px;border-radius:50%;background:var(--white);color:var(--shu);
+  font-size:9px;display:flex;align-items:center;justify-content:center;font-family:var(--serif)}
+#btn-back{display:none;align-items:center;gap:4px;color:var(--white);font-size:13px;padding:4px 8px 4px 0}
+#btn-back .arr{font-size:16px}
+
+/* ---------- views ---------- */
+.view{display:none;animation:fadein .25s ease}
+.view.active{display:block}
+@keyframes fadein{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* ---------- map ---------- */
+#view-map{padding:18px 14px 30px}
+.map-frame{
+  position:relative;background:var(--paper-deep);border:2px solid var(--ink);border-radius:8px;
+  padding:14px 10px 22px;box-shadow:4px 4px 0 rgba(51,48,43,.15);
+}
+.map-head{text-align:center;margin-bottom:6px}
+.map-head h1{font-family:var(--serif);font-size:20px;letter-spacing:6px}
+.map-head p{font-size:11px;color:#6d675c;letter-spacing:2px;margin-top:3px}
+#map-canvas{position:relative;height:560px}
+#map-canvas svg.path-bg{position:absolute;inset:0;width:100%;height:100%}
+.lantern-node{
+  position:absolute;transform:translate(-50%,-50%);text-align:center;width:108px;
+}
+.lantern-node .lamp{
+  width:74px;height:88px;margin:0 auto;border-radius:42% 42% 46% 46%/38% 38% 52% 52%;
+  background:radial-gradient(circle at 50% 30%, #E2554F, var(--shu) 55%, var(--shu-deep));
+  border:2px solid var(--ink);position:relative;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 10px rgba(163,46,44,.35);
+}
+.lantern-node .lamp::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);
+  width:34px;height:8px;background:var(--ink);border-radius:3px}
+.lantern-node .lamp::after{content:"";position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+  width:30px;height:7px;background:var(--ink);border-radius:3px}
+.lantern-node .lamp .nm{
+  writing-mode:vertical-rl;font-family:var(--serif);color:var(--white);
+  font-size:15px;letter-spacing:3px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.3);
+}
+.lantern-node .cnt{margin-top:9px;font-size:11px;color:#6d675c;background:var(--white);
+  display:inline-block;padding:2px 9px;border-radius:999px;border:1px solid #d8cdb6}
+.lantern-node.done .cnt{background:var(--gold);color:var(--white);border-color:var(--gold)}
+.lantern-node:not(.locked) .lamp{animation:glow 2.6s ease-in-out infinite}
+@keyframes glow{0%,100%{box-shadow:0 4px 10px rgba(163,46,44,.35)}50%{box-shadow:0 4px 20px rgba(226,120,80,.6)}}
+.lantern-node.locked .lamp{
+  background:radial-gradient(circle at 50% 30%, #cfc8ba, var(--grey) 60%, #948c7c);
+  box-shadow:none;animation:none;
+}
+.lantern-node.locked .lamp .nm{color:#f2eee4;text-shadow:none}
+.lantern-node.locked .ribbon{
+  position:absolute;top:34px;left:50%;transform:translate(-50%,0) rotate(-8deg);
+  background:var(--ink);color:var(--paper);font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:2px;
+}
+.lantern-node.small{width:88px}
+.lantern-node.small .lamp{width:56px;height:66px}
+.lantern-node.small .lamp .nm{font-size:11px;letter-spacing:2px}
+.map-foot{margin-top:10px;text-align:center;font-size:11px;color:#8a8272;letter-spacing:1px}
+
+/* ---------- scene ---------- */
+#view-scene{padding:0 0 26px}
+.scene-head{padding:14px 16px 8px;display:flex;align-items:baseline;justify-content:space-between}
+.scene-head h2{font-family:var(--serif);font-size:20px;letter-spacing:4px}
+.scene-head .prog{font-size:12px;color:#6d675c}
+.scene-stage{position:relative;margin:4px 12px 0;border:2px solid var(--ink);border-radius:8px;overflow:hidden;
+  box-shadow:4px 4px 0 rgba(51,48,43,.15);background:#EAF2F4}
+.scene-stage svg{display:block;width:100%;height:auto}
+.spot{
+  position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:3px;z-index:5;
+  padding:6px;
+}
+.spot .dot{width:17px;height:17px;border-radius:50%;background:var(--shu);border:2px solid var(--white);
+  box-shadow:0 0 0 3px rgba(199,62,58,.35);animation:pulse 1.8s ease-out infinite;position:relative}
+.spot.learned .dot{background:var(--kon);box-shadow:0 0 0 3px rgba(38,70,109,.3)}
+.spot.cleared .dot{background:var(--shu-deep);box-shadow:0 0 0 3px rgba(163,46,44,.35);animation:none}
+.spot.gold .dot{background:var(--gold);box-shadow:0 0 0 3px rgba(217,164,65,.45);animation:none}
+.spot.cleared .dot::after,.spot.gold .dot::after{content:"印";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--white);font-size:9px;font-family:var(--serif)}
+@keyframes pulse{0%{box-shadow:0 0 0 3px rgba(199,62,58,.4)}70%{box-shadow:0 0 0 11px rgba(199,62,58,0)}100%{box-shadow:0 0 0 3px rgba(199,62,58,0)}}
+.spot .tag{font-size:10px;background:rgba(255,253,247,.92);border:1px solid #cfc4ab;border-radius:999px;
+  padding:2px 8px;letter-spacing:1px;white-space:nowrap}
+.spot.egg .dot{background:var(--moss);box-shadow:0 0 0 3px rgba(122,132,80,.3);animation:none;opacity:.85}
+.scene-tip{margin:12px 18px 0;font-size:12px;color:#8a8272;text-align:center;letter-spacing:1px}
+
+/* egg speech bubble */
+#egg-bubble{
+  position:absolute;z-index:8;transform:translate(-50%,-115%);background:var(--white);border:1.5px solid var(--ink);
+  border-radius:10px;padding:6px 11px;font-size:12px;white-space:nowrap;display:none;
+  box-shadow:2px 2px 0 rgba(51,48,43,.2);
+}
+#egg-bubble::after{content:"";position:absolute;bottom:-7px;left:50%;transform:translateX(-50%);
+  border:7px solid transparent;border-top-color:var(--ink);border-bottom:none}
+
+/* ---------- bottom sheet ---------- */
+#sheet-mask{position:fixed;inset:0;background:rgba(40,35,28,.45);z-index:60;display:none}
+#sheet{
+  position:fixed;left:50%;transform:translate(-50%,105%);bottom:0;width:100%;max-width:480px;z-index:70;
+  background:var(--white);border-radius:20px 20px 0 0;border:2px solid var(--ink);border-bottom:none;
+  max-height:86vh;overflow-y:auto;transition:transform .28s cubic-bezier(.2,.8,.25,1);
+  padding:10px 20px calc(20px + env(safe-area-inset-bottom));
+}
+#sheet.open{transform:translate(-50%,0)}
+.sheet-grip{width:44px;height:4px;border-radius:2px;background:#d8cdb6;margin:2px auto 12px}
+.sheet-eyebrow{font-size:11px;letter-spacing:3px;color:var(--shu);font-weight:600;margin-bottom:2px}
+.sheet-title{font-family:var(--serif);font-size:21px;letter-spacing:2px;margin-bottom:12px}
+
+/* learn card */
+.word-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px dashed #ddd2ba}
+.word-row .w-main{flex:1}
+.word-row .w-kanji{font-family:var(--serif);font-size:26px;letter-spacing:2px}
+.word-row .w-kana{font-size:13px;color:var(--kon);margin-top:2px;letter-spacing:1px}
+.word-row .w-zh{font-size:12px;color:#7c7566;margin-top:2px}
+.btn-tts{
+  width:42px;height:42px;border-radius:50%;background:var(--kon);color:#fff;font-size:17px;flex:none;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 0 #16304f;
+}
+.btn-tts:active{transform:translateY(1px);box-shadow:0 1px 0 #16304f}
+.learn-note{margin:14px 0 4px;padding:12px 14px;background:var(--paper);border-radius:10px;border:1px solid #e4d9c0}
+.learn-note .n-ja{font-size:15px;line-height:1.7}
+.learn-note .n-zh{font-size:12px;color:#7c7566;margin-top:6px;line-height:1.6}
+.learn-note .n-play{margin-top:8px}
+.link-plain{font-size:12px;color:var(--kon);text-decoration:underline;padding:6px 0}
+
+/* buttons */
+.btn-main{
+  display:block;width:100%;margin-top:18px;padding:14px;border-radius:12px;background:var(--shu);color:#fff;
+  font-size:16px;letter-spacing:3px;box-shadow:0 3px 0 var(--shu-deep);font-weight:600;
+}
+.btn-main:active{transform:translateY(2px);box-shadow:0 1px 0 var(--shu-deep)}
+.btn-ghost{
+  display:block;width:100%;margin-top:10px;padding:12px;border-radius:12px;background:none;color:#8a8272;
+  font-size:13px;letter-spacing:2px;border:1.5px dashed #cfc4ab;
+}
+
+/* quiz */
+.quiz-prog{display:flex;gap:6px;margin-bottom:14px}
+.quiz-prog i{width:8px;height:8px;border-radius:50%;background:#e0d6bd}
+.quiz-prog i.on{background:var(--shu)}
+.quiz-prog i.done{background:var(--gold)}
+.q-text{font-size:16px;line-height:1.7;margin-bottom:6px}
+.q-text .jp{font-family:var(--serif);font-size:18px}
+.q-listen{
+  display:flex;align-items:center;gap:10px;margin:10px 0 4px;padding:12px;background:var(--paper);
+  border-radius:10px;border:1px solid #e4d9c0;
+}
+.q-listen .hint{font-size:12px;color:#7c7566}
+.opts{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.opt{
+  text-align:left;padding:13px 15px;border-radius:12px;border:1.5px solid #d8cdb6;background:var(--white);
+  font-size:15px;line-height:1.5;transition:border-color .15s;
+}
+.opt .jp{font-family:var(--serif)}
+.opt.correct{border-color:var(--ok);background:#F0F5EA;color:var(--ok);font-weight:600}
+.opt.wrong{border-color:var(--ng);background:#FAEDEA;color:var(--ng)}
+.opt:disabled{opacity:.92}
+.q-explain{
+  margin-top:14px;padding:12px 14px;border-radius:10px;background:var(--paper);border-left:4px solid var(--gold);
+  font-size:13px;line-height:1.7;display:none;
+}
+.q-explain .tr{color:var(--kon);font-family:var(--serif);display:block;margin-bottom:4px;font-size:14px}
+
+/* result & stamp */
+.result-wrap{text-align:center;padding:8px 0 4px}
+.result-wrap .r-title{font-family:var(--serif);font-size:20px;letter-spacing:3px;margin-bottom:4px}
+.result-wrap .r-sub{font-size:13px;color:#7c7566}
+.seal{
+  width:110px;height:110px;margin:18px auto 6px;border-radius:50%;background:var(--shu);
+  display:flex;align-items:center;justify-content:center;position:relative;
+  animation:stampin .45s cubic-bezier(.2,1.6,.4,1);box-shadow:0 4px 14px rgba(163,46,44,.4);
+}
+.seal .s-inner{
+  width:92px;height:92px;border:2px solid rgba(255,255,255,.85);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.seal .s-name{writing-mode:vertical-rl;font-family:var(--serif);color:#fff;font-size:17px;letter-spacing:3px;font-weight:600}
+.seal.gold{background:var(--gold);box-shadow:0 4px 14px rgba(217,164,65,.5)}
+@keyframes stampin{0%{transform:scale(2.1);opacity:0}60%{transform:scale(.94);opacity:1}100%{transform:scale(1)}}
+.perfect-tag{display:inline-block;margin-top:6px;font-size:11px;color:var(--gold);letter-spacing:2px;font-weight:600}
+
+/* ---------- omikuji ---------- */
+.mikuji-box{
+  margin:6px auto 0;width:120px;height:150px;border-radius:10px;border:2px solid var(--ink);
+  background:repeating-linear-gradient(90deg,#8B5A2B 0 14px,#7A4E24 14px 28px);position:relative;
+  display:flex;align-items:center;justify-content:center;box-shadow:4px 4px 0 rgba(51,48,43,.15);
+}
+.mikuji-box .hole{position:absolute;top:12px;width:26px;height:26px;border-radius:50%;background:#2e2013;border:2px solid var(--ink)}
+.mikuji-box .label{writing-mode:vertical-rl;font-family:var(--serif);color:#fff;font-size:19px;letter-spacing:6px;text-shadow:0 1px 2px rgba(0,0,0,.5)}
+.mikuji-box.shaking{animation:shake .5s ease-in-out 2}
+@keyframes shake{0%,100%{transform:rotate(0)}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.mikuji-slip{
+  margin:16px auto 0;max-width:270px;background:var(--white);border:1.5px solid var(--ink);padding:18px 16px;
+  box-shadow:3px 3px 0 rgba(51,48,43,.15);display:none;animation:slipin .4s ease;
+}
+@keyframes slipin{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.mikuji-slip .m-rank{font-family:var(--serif);font-size:30px;text-align:center;letter-spacing:8px;margin-bottom:10px}
+.mikuji-slip .m-rank.daikichi{color:var(--shu)}
+.mikuji-slip .m-rank.kichi{color:var(--moss)}
+.mikuji-slip .m-rank.kyo{color:var(--kon)}
+.mikuji-slip .m-body{font-family:var(--serif);font-size:14px;line-height:2;letter-spacing:1px;white-space:pre-line}
+.mikuji-slip .m-zh{display:none;margin-top:10px;padding-top:10px;border-top:1px dashed #d8cdb6;font-size:12px;color:#7c7566;line-height:1.7}
+.mikuji-note{text-align:center;font-size:12px;color:#8a8272;margin-top:12px;letter-spacing:1px}
+
+/* ---------- stamp book ---------- */
+#view-stamps{padding:18px 16px 30px}
+.book-frame{background:var(--white);border:2px solid var(--ink);border-radius:8px;padding:18px 14px;
+  box-shadow:4px 4px 0 rgba(51,48,43,.15)}
+.book-frame h2{font-family:var(--serif);text-align:center;font-size:19px;letter-spacing:6px}
+.book-frame .b-sub{text-align:center;font-size:11px;color:#8a8272;margin:4px 0 16px;letter-spacing:2px}
+.stamp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.stamp-cell{display:flex;flex-direction:column;align-items:center;gap:6px}
+.stamp-cell .c-seal{
+  width:76px;height:76px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+}
+.stamp-cell.got .c-seal{background:var(--shu);box-shadow:0 2px 8px rgba(163,46,44,.35)}
+.stamp-cell.got.gold .c-seal{background:var(--gold);box-shadow:0 2px 8px rgba(217,164,65,.45)}
+.stamp-cell.empty .c-seal{border:2px dashed #cfc4ab}
+.stamp-cell .c-inner{width:62px;height:62px;border:1.5px solid rgba(255,255,255,.85);border-radius:50%;
+  display:flex;align-items:center;justify-content:center}
+.stamp-cell .c-name{writing-mode:vertical-rl;font-family:var(--serif);color:#fff;font-size:12px;letter-spacing:2px}
+.stamp-cell.empty .c-name{color:#cfc4ab}
+.stamp-cell.empty .c-inner{border-color:transparent}
+.stamp-cell .c-label{font-size:10px;color:#8a8272;text-align:center;letter-spacing:1px}
+
+/* help + guide */
+#btn-help{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,.4);
+  background:rgba(255,255,255,.14);color:#fff;font-size:14px;margin-left:auto;margin-right:8px}
+#topbar{gap:8px}
+#topbar-title{margin-right:auto}
+.map-head .chap{font-size:10px;letter-spacing:8px;color:var(--shu);font-weight:700;margin-bottom:2px}
+#guide,#ovl{position:fixed;inset:0;background:rgba(40,35,28,.55);z-index:120;display:none;
+  align-items:center;justify-content:center;padding:24px}
+.g-card{background:var(--white);border:2px solid var(--ink);border-radius:16px;max-width:340px;
+  padding:22px 20px 18px;box-shadow:6px 6px 0 rgba(51,48,43,.25)}
+.g-card h3{font-family:var(--serif);font-size:19px;letter-spacing:4px;text-align:center;margin-bottom:14px}
+.g-card .g-step{display:flex;gap:10px;font-size:13.5px;line-height:1.65;margin-bottom:10px}
+.g-card .g-ico{flex:none;font-size:17px}
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <button id="btn-back"><span class="arr">‹</span> 地图</button>
+  <div id="topbar-title">
+    <div class="title">浅草めぐり</div>
+    <div class="sub">ことばで巡る浅草一丁目</div>
+  </div>
+  <button id="btn-help" aria-label="怎么玩">？</button>
+  <button id="btn-stamps"><span class="seal-mini">印</span><span id="stamp-count">0</span></button>
+</header>
+
+<!-- ============ MAP ============ -->
+<main id="view-map" class="view active">
+  <div class="map-frame">
+    <div class="map-head">
+      <p class="chap">第 一 章</p>
+      <h1>浅草寺絵図</h1>
+      <p>点亮灯笼，走进去看看 · 每处都藏着题</p>
+    </div>
+    <div id="map-canvas">
+      <svg class="path-bg" viewBox="0 0 390 560" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M195 500 C 195 440, 195 400, 195 340 C 195 280, 195 250, 195 185"
+              fill="none" stroke="#C73E3A" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round" opacity=".55"/>
+        <path d="M195 340 C 150 330, 120 315, 92 268" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
+        <path d="M195 360 C 250 355, 290 335, 316 300" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
+        <path d="M195 210 C 150 200, 110 185, 82 150" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
+        <path d="M195 480 C 250 478, 285 490, 308 500" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
+      </svg>
+      <!-- nodes injected by JS -->
+    </div>
+    <div class="map-foot">灰灯笼＝集齐上一章全部金印后点亮</div>
+  </div>
+</main>
+
+<!-- ============ SCENE ============ -->
+<main id="view-scene" class="view">
+  <div class="scene-head">
+    <h2 id="scene-title"></h2>
+    <span class="prog" id="scene-prog"></span>
+  </div>
+  <div class="scene-stage" id="scene-stage">
+    <!-- svg + spots injected -->
+    <div id="egg-bubble"></div>
+  </div>
+  <p class="scene-tip">红点＝新内容 · 蓝点＝点它做题（每次3题都不同）· 金印＝题库全部答完</p>
+</main>
+
+<!-- ============ STAMP BOOK ============ -->
+<main id="view-stamps" class="view">
+  <div class="book-frame">
+    <h2>御朱印帳</h2>
+    <p class="b-sub" id="book-sub"></p>
+    <div class="stamp-grid" id="stamp-grid"></div>
+  </div>
+</main>
+
+<!-- ============ BOTTOM SHEET ============ -->
+<div id="sheet-mask"></div>
+<div id="sheet" role="dialog" aria-modal="true">
+  <div class="sheet-grip"></div>
+  <div id="sheet-content"></div>
+</div>
+
+<script>
+/* =====================================================
+   DATA
+===================================================== */
+const SCENES = [
+  {
+    id:"kaminarimon", name:"雷門前広場", short:"雷門", chapter:1,
+    svg:"s1",
+    hotspots:[
+      {
+        id:"lantern", name:"雷門大提灯", x:50, y:46,
+        learn:{
+          words:[
+            {jp:"雷門", kana:"かみなりもん", romaji:"kaminarimon", zh:"雷门（浅草寺的正门）"},
+            {jp:"提灯", kana:"ちょうちん", romaji:"chōchin", zh:"灯笼"},
+            {jp:"入口", kana:"いりぐち", romaji:"iriguchi", zh:"入口"},
+            {jp:"観光客", kana:"かんこうきゃく", romaji:"kankōkyaku", zh:"游客"}
+          ],
+          noteJa:"雷門の提灯は高さ3.9メートル。浅草寺の入口で、観光客の待ち合わせ場所です。",
+          noteKana:"かみなりもんの ちょうちんは たかさ さんてんきゅうメートル。せんそうじの いりぐちで、かんこうきゃくの まちあわせばしょです。",
+          noteRomaji:"Kaminarimon no chōchin wa takasa 3.9 mētoru. Sensōji no iriguchi de, kankōkyaku no machiawase-basho desu.",
+          noteZh:"雷门的大灯笼高3.9米。这里是浅草寺的入口，也是游客约见碰头的地标。"
+        },
+        questions:[
+          {type:"read", prompt:"「雷門」の読み方は？", options:["かみなりもん","らいもん","いかづちもん"], answer:0,
+           explain:"「雷」在这里用训读かみなり。中国学习者九成会先想到音读らいもん——这个坑就是给你准备的。"},
+          {type:"read", prompt:"「提灯」の読み方は？", options:["ちょうちん","ていとう","さげび"], answer:0,
+           explain:"「提灯」是惯用读法ちょうちん，日常里只用这个读音。"},
+          {type:"listen", tts:"雷門の前で待ち合わせしませんか。",
+           ttsKana:"かみなりもんの まえで まちあわせ しませんか。",
+           options:["约在雷门前碰头吧","雷门前禁止等人","雷门快关门了"], answer:0,
+           explain:"待ち合わせ（まちあわせ）＝约好碰头。「〜しませんか」是邀请句式。"},
+          {type:"read", prompt:"「入口」の読み方は？", options:["いりぐち","にゅうこう","はいりくち"], answer:0,
+           explain:"训读组合いり＋ぐち。反义词出口＝でぐち。"},
+          {type:"listen", tts:"写真を撮るなら、朝早くがおすすめですよ。",
+           ttsKana:"しゃしんを とるなら、あさはやくが おすすめですよ。",
+           options:["拍照的话推荐一大早来","这里禁止拍照","晚上拍照更好看"], answer:0,
+           explain:"「〜なら」＝如果要…的话。おすすめ＝推荐，菜单上也天天见。"}
+        ]
+      },
+      {
+        id:"rickshaw", name:"人力車", x:18, y:66,
+        learn:{
+          words:[
+            {jp:"人力車", kana:"じんりきしゃ", romaji:"jinrikisha", zh:"人力车"},
+            {jp:"案内", kana:"あんない", romaji:"annai", zh:"向导/带路"},
+            {jp:"観光", kana:"かんこう", romaji:"kankō", zh:"观光"}
+          ],
+          noteJa:"「お姉さん、一周どうですか？浅草を案内しますよ。」——観光名物、30分のコースが人気です。",
+          noteKana:"おねえさん、いっしゅう どうですか？ あさくさを あんない しますよ。かんこうめいぶつ、さんじゅっぷんの コースが にんきです。",
+          noteRomaji:"Onēsan, isshū dō desu ka? Asakusa o annai shimasu yo. Kankō meibutsu, 30-pun no kōsu ga ninki desu.",
+          noteZh:"车夫的招牌揽客语：「小姐姐，坐一圈怎么样？我带你逛浅草哦。」30分钟路线最受欢迎。"
+        },
+        questions:[
+          {type:"read", prompt:"「人力車」の読み方は？", options:["じんりきしゃ","にんりょくしゃ","ひとちからぐるま"], answer:0,
+           explain:"じんりきしゃ——三个字全用音读，りき是「力」的吴音。"},
+          {type:"listen", tts:"30分で雷門とスカイツリーが見えるスポットを回ります。",
+           ttsKana:"さんじゅっぷんで かみなりもんと スカイツリーが みえる スポットを まわります。",
+           options:["30分钟绕一圈，能看到雷门和晴空塔","晴空塔离这里30分钟","雷门30分钟后关闭"], answer:0,
+           explain:"「〜が見えるスポットを回ります」＝绕着能看到…的地点转。车夫的真实语速，听不清多放几遍。"},
+          {type:"scene", prompt:"想婉拒车夫，说哪句最自然？", jpOptions:true,
+           options:["また今度お願いします","いらないです","だめです"], answer:0,
+           phraseKana:"またこんど おねがいします",
+           explain:"「また今度」（下次吧）是日语里最标准的软拒绝。后两句语法没错，但听起来生硬得像吵架。"},
+          {type:"vocab", prompt:"「案内します」是什么意思？",
+           options:["带您逛、给您引路","给您拍照","请您上车"], answer:0,
+           explain:"案内＝引导、带路。道案内（指路）、案内所（问询处）都是一家人。"},
+          {type:"listen", tts:"お代は最後で大丈夫ですよ。",
+           ttsKana:"おだいは さいごで だいじょうぶですよ。",
+           options:["费用最后付就行","必须先付钱","今天免费"], answer:0,
+           explain:"お代（おだい）＝费用（口语）。最後で＝最后（付）。"}
+        ]
+      },
+      {
+        id:"pigeons", name:"鳩", x:72, y:83, egg:true,
+        eggLines:["ぽっぽー","ばさばさっ","ぽっぽっぽー"],
+        eggFinal:"鳩（はと）も浅草の住人です", eggFinalAt:10
+      }
+    ]
+  },
+  {
+    id:"nakamise", name:"仲見世通り", short:"仲見世", chapter:1,
+    svg:"s2",
+    hotspots:[
+      {
+        id:"ningyoyaki", name:"人形焼の店", x:20, y:36,
+        learn:{
+          words:[
+            {jp:"人形焼", kana:"にんぎょうやき", romaji:"ningyōyaki", zh:"人形烧（小蛋糕点心）"},
+            {jp:"雷おこし", kana:"かみなりおこし", romaji:"kaminari-okoshi", zh:"雷米花糖"},
+            {jp:"お土産", kana:"おみやげ", romaji:"omiyage", zh:"伴手礼"},
+            {jp:"試食", kana:"ししょく", romaji:"shishoku", zh:"试吃"}
+          ],
+          noteJa:"仲見世は雷門から本堂まで続く商店街です。お土産の試食ができる店もあります。",
+          noteKana:"なかみせは かみなりもんから ほんどうまで つづく しょうてんがいです。おみやげの ししょくが できる みせも あります。",
+          noteRomaji:"Nakamise wa Kaminarimon kara hondō made tsuzuku shōtengai desu. Omiyage no shishoku ga dekiru mise mo arimasu.",
+          noteZh:"仲见世是从雷门延伸到本堂的商店街，有的店可以试吃伴手礼。"
+        },
+        questions:[
+          {type:"read", prompt:"「人形焼」の読み方は？", options:["にんぎょうやき","じんけいしょう","ひとがたやき"], answer:0,
+           explain:"人形（にんぎょう）＋焼き（やき）。"},
+          {type:"listen", tts:"温かいのと冷たいの、どちらにしますか。",
+           ttsKana:"あたたかいのと つめたいの、どちらに しますか。",
+           options:["问你要热的还是凉的","问你要几个","问你堂食还是带走"], answer:0,
+           explain:"温かいの／冷たいの——「の」代替名词，「どちらにしますか」＝您选哪个。"},
+          {type:"scene", prompt:"想问能不能试吃，说哪句最自然？", jpOptions:true,
+           options:["味見してもいいですか","食べたいです","これは何ですか"], answer:0,
+           phraseKana:"あじみしても いいですか",
+           explain:"味見（あじみ）＝尝味道。「〜てもいいですか」是请求许可的标准句式。"},
+          {type:"read", prompt:"「お土産」の読み方は？", options:["おみやげ","おどさん","おつちさん"], answer:0,
+           explain:"熟字训——「土産」两个字整体读みやげ，拆开读必错。"},
+          {type:"scene", prompt:"想问一盒里装几个，说哪句？", jpOptions:true,
+           options:["一箱に何個入っていますか","これ、いくら？","たくさんください"], answer:0,
+           phraseKana:"ひとはこに なんこ はいって いますか",
+           explain:"何個（なんこ）＝几个。买点心装盒送人前必问的一句。"}
+        ]
+      },
+      {
+        id:"manekineko", name:"招き猫の店", x:80, y:34,
+        learn:{
+          words:[
+            {jp:"招き猫", kana:"まねきねこ", romaji:"manekineko", zh:"招财猫"},
+            {jp:"縁起物", kana:"えんぎもの", romaji:"engimono", zh:"吉祥物"},
+            {jp:"手作り", kana:"てづくり", romaji:"tezukuri", zh:"手工制作"}
+          ],
+          noteJa:"招き猫は縁起物です。右手はお金を招き、左手はお客さんを招きます。",
+          noteKana:"まねきねこは えんぎものです。みぎては おかねを まねき、ひだりては おきゃくさんを まねきます。",
+          noteRomaji:"Manekineko wa engimono desu. Migite wa okane o maneki, hidarite wa okyakusan o manekimasu.",
+          noteZh:"招财猫是吉祥物。举右手招财，举左手招客。"
+        },
+        questions:[
+          {type:"read", prompt:"「招き猫」の読み方は？", options:["まねきねこ","しょうざいねこ","よびねこ"], answer:0,
+           explain:"招く（まねく）＝招揽。全训读。"},
+          {type:"culture", prompt:"举右手的招财猫，招的是什么？",
+           options:["招财","招客","招福"], answer:0,
+           explain:"右手招钱，左手招客。开店的一般摆左手猫，家里摆右手猫。"},
+          {type:"scene", prompt:"想问店员有没有小一点的尺寸，说哪句最自然？", jpOptions:true,
+           options:["もう少し小さいサイズはありますか","小さいのがほしい","これ、大きすぎます"], answer:0,
+           phraseKana:"もうすこし ちいさい サイズは ありますか",
+           explain:"「もう少し＋形容词＋はありますか」是购物万能句式，换成安い、軽い都能用。"},
+          {type:"vocab", prompt:"「縁起物」是什么意思？",
+           options:["讨彩头的吉祥物","古董","纪念邮票"], answer:0,
+           explain:"縁起（えんぎ）＝彩头、吉兆。縁起がいい＝吉利，縁起でもない＝不吉利。"},
+          {type:"listen", tts:"これは手作りなので、一つ一つ顔が違うんですよ。",
+           ttsKana:"これは てづくりなので、ひとつひとつ かおが ちがうんですよ。",
+           options:["这是手工做的，每只脸都不一样","这个不能摸","这些是机器做的"], answer:0,
+           explain:"手作り（てづくり）＝手工。一つ一つ＝一个一个。"}
+        ]
+      },
+      {
+        id:"kimono", name:"着物レンタル", x:20, y:62,
+        learn:{
+          words:[
+            {jp:"着物", kana:"きもの", romaji:"kimono", zh:"和服"},
+            {jp:"レンタル", kana:"レンタル", romaji:"rentaru", zh:"租赁"},
+            {jp:"帯", kana:"おび", romaji:"obi", zh:"腰带"},
+            {jp:"草履", kana:"ぞうり", romaji:"zōri", zh:"草履（和服鞋）"}
+          ],
+          noteJa:"浅草では着物を着て歩く観光客が多いです。帯と草履もセットで借りられます。",
+          noteKana:"あさくさでは きものを きて あるく かんこうきゃくが おおいです。おびと ぞうりも セットで かりられます。",
+          noteRomaji:"Asakusa de wa kimono o kite aruku kankōkyaku ga ōi desu. Obi to zōri mo setto de kariraremasu.",
+          noteZh:"在浅草，穿和服逛街的游客很多。腰带和草履可以成套租。"
+        },
+        questions:[
+          {type:"read", prompt:"「着物」の読み方は？", options:["きもの","ちゃくぶつ","きぶつ"], answer:0,
+           explain:"着る（きる）＋物（もの）。想成「穿的东西」就不会错。"},
+          {type:"listen", tts:"ご返却は夕方5時までにお願いします。",
+           ttsKana:"ごへんきゃくは ゆうがた ごじまでに おねがいします。",
+           options:["请在下午5点前归还","5点以后打折","今天5点关门"], answer:0,
+           explain:"返却（へんきゃく）＝归还。「〜までに」＝在…之前（截止）。"},
+          {type:"scene", prompt:"想请店员帮忙穿上和服，说哪句最自然？", jpOptions:true,
+           options:["着付けもお願いできますか","着るのを手伝って","一人でできません"], answer:0,
+           phraseKana:"きつけも おねがい できますか",
+           explain:"着付け（きつけ）是「帮人穿和服」的专门说法，租和服时一定用得上。"},
+          {type:"read", prompt:"「帯」の読み方は？", options:["おび","たい","おびる"], answer:0,
+           explain:"单字训读おび。包装上的「帯」（书腰）也是它。"},
+          {type:"listen", tts:"雨の日は料金が半額になります。",
+           ttsKana:"あめのひは りょうきんが はんがくに なります。",
+           options:["下雨天费用半价","下雨天不营业","雨天要加钱"], answer:0,
+           explain:"半額（はんがく）＝半价。超市晚上的半額シール是打工人的快乐。"}
+        ]
+      },
+      {
+        id:"tempura", name:"天ぷら屋", x:80, y:62,
+        learn:{
+          words:[
+            {jp:"天丼", kana:"てんどん", romaji:"tendon", zh:"天妇罗盖饭"},
+            {jp:"海老", kana:"えび", romaji:"ebi", zh:"虾"},
+            {jp:"老舗", kana:"しにせ", romaji:"shinise", zh:"老字号"},
+            {jp:"揚げたて", kana:"あげたて", romaji:"agetate", zh:"刚炸好的"}
+          ],
+          noteJa:"浅草は天丼の老舗が多いことで有名です。揚げたてが一番おいしいです。",
+          noteKana:"あさくさは てんどんの しにせが おおい ことで ゆうめいです。あげたてが いちばん おいしいです。",
+          noteRomaji:"Asakusa wa tendon no shinise ga ōi koto de yūmei desu. Agetate ga ichiban oishii desu.",
+          noteZh:"浅草以天妇罗盖饭老字号多而闻名。刚炸好的最好吃。"
+        },
+        questions:[
+          {type:"read", prompt:"「海老」の読み方は？", options:["えび","かいろう","うみおい"], answer:0,
+           explain:"えび是熟字训——两个汉字合起来对应一个固有词，拆开读必错，只能整个记。"},
+          {type:"listen", tts:"海老天丼お待たせしました。熱いのでお気をつけください。",
+           ttsKana:"えびてんどん おまたせしました。あついので おきを つけください。",
+           options:["天丼来了，小心烫","天丼要等很久","虾卖完了"], answer:0,
+           explain:"お待たせしました＝让您久等了（上菜固定语）。熱いので＝因为烫。"},
+          {type:"scene", prompt:"想加一份味噌汤，说哪句最自然？", jpOptions:true,
+           options:["お味噌汁もつけてもらえますか","スープをください","味噌汁、ある？"], answer:0,
+           phraseKana:"おみそしるも つけて もらえますか",
+           explain:"「〜をつける」＝配上/附上。第三句语法没错，但对店员说太随便了。"},
+          {type:"read", prompt:"「老舗」の読み方は？", options:["しにせ","ろうほ","おいみせ"], answer:0,
+           explain:"又一个整体记的熟字训，能力考的常客。老舗＝传了几代的老字号。"},
+          {type:"vocab", prompt:"「揚げたて」是什么意思？",
+           options:["刚炸好","凉掉了","免油炸"], answer:0,
+           explain:"揚げる＝油炸；「〜たて」又来了——焼きたて（刚烤好）的兄弟，见一次认一次。"}
+        ]
+      },
+      {
+        id:"sensu", name:"扇子店", x:20, y:87,
+        learn:{
+          words:[
+            {jp:"扇子", kana:"せんす", romaji:"sensu", zh:"折扇"},
+            {jp:"団扇", kana:"うちわ", romaji:"uchiwa", zh:"团扇"},
+            {jp:"柄", kana:"がら", romaji:"gara", zh:"花纹图案"},
+            {jp:"贈り物", kana:"おくりもの", romaji:"okurimono", zh:"礼物"}
+          ],
+          noteJa:"折りたためるのが扇子、折りたためないのが団扇です。柄の種類も豊富で、贈り物に人気です。",
+          noteKana:"おりたためるのが せんす、おりたためないのが うちわです。がらの しゅるいも ほうふで、おくりものに にんきです。",
+          noteRomaji:"Oritatameru no ga sensu, oritatamenai no ga uchiwa desu. Gara no shurui mo hōfu de, okurimono ni ninki desu.",
+          noteZh:"能折叠的是扇子，不能折的是团扇。花纹种类丰富，很适合送礼。"
+        },
+        questions:[
+          {type:"read", prompt:"「団扇」の読み方は？", options:["うちわ","だんせん","まるおうぎ"], answer:0,
+           explain:"又一个熟字训。学了二十年也会在这儿栽——栽过一次就永远记住了。"},
+          {type:"culture", prompt:"能折叠的是哪个？",
+           options:["扇子","団扇","都能折"], answer:0,
+           explain:"扇子（せんす）能折，団扇（うちわ）是一整片。夏日祭上人手一把的是団扇。"},
+          {type:"listen", tts:"贈り物用に包んでもらえますか。",
+           ttsKana:"おくりものように つつんで もらえますか。",
+           options:["能按送礼包装吗","这是赠品","能便宜点吗"], answer:0,
+           explain:"贈り物（おくりもの）＝礼物。「〜用に包む」＝按…用途包装。买伴手礼必备句。"},
+          {type:"read", prompt:"「贈り物」の読み方は？", options:["おくりもの","ぞうもつ","そうぶつ"], answer:0,
+           explain:"贈る（おくる）＝赠送。注意和送る（おくる·寄送）同音不同字。"},
+          {type:"vocab", prompt:"在店里问「どんな柄がありますか」，「柄」指的是？",
+           options:["花纹图案","手柄","价格"], answer:0,
+           explain:"柄（がら）＝花纹。花柄＝碎花纹。买布、买伞、买扇子都用它。"}
+        ]
+      },
+      {
+        id:"dango", name:"団子屋", x:80, y:87,
+        learn:{
+          words:[
+            {jp:"団子", kana:"だんご", romaji:"dango", zh:"团子"},
+            {jp:"焼きたて", kana:"やきたて", romaji:"yakitate", zh:"刚烤好的"},
+            {jp:"一本", kana:"いっぽん", romaji:"ippon", zh:"一串"},
+            {jp:"甘い", kana:"あまい", romaji:"amai", zh:"甜的"}
+          ],
+          noteJa:"みたらし団子は甘辛いタレが特徴です。一本から買えます。",
+          noteKana:"みたらしだんごは あまからい タレが とくちょうです。いっぽんから かえます。",
+          noteRomaji:"Mitarashi-dango wa amakarai tare ga tokuchō desu. Ippon kara kaemasu.",
+          noteZh:"御手洗团子的特点是甜咸口的酱汁。一串起卖。"
+        },
+        questions:[
+          {type:"read", prompt:"「団子」の読み方は？", options:["だんご","だんし","まるこ"], answer:0,
+           explain:"だんご。花より団子（不解风情、实惠优先）这个谚语里就是它。"},
+          {type:"vocab", prompt:"「焼きたて」是什么意思？",
+           options:["刚烤好","烤焦了","需要预烤"], answer:0,
+           explain:"「动词ます形去ます＋たて」＝刚…好。炊きたて（刚煮好的饭）、淹れたて（刚泡好的茶）同理。"},
+          {type:"listen", tts:"焼きたてですよ、一本どうぞ。",
+           ttsKana:"やきたてですよ、いっぽん どうぞ。",
+           options:["刚烤好的，来一串吧","一人限一串","烤好还要等一会"], answer:0,
+           explain:"「どうぞ」在这里是招呼你买/尝。团子的量词是本（ほん）——因为是串。"},
+          {type:"read", prompt:"「一本」の読み方は？", options:["いっぽん","いちほん","ひともと"], answer:0,
+           explain:"促音变：いち＋ほん→いっぽん。一本、二本（にほん）、三本（さんぼん），读音一直在变，日语学习者的老朋友。"},
+          {type:"listen", tts:"タレは甘いのと、しょっぱいのがあります。",
+           ttsKana:"タレは あまいのと、しょっぱいのが あります。",
+           options:["酱汁有甜的和咸的","酱汁卖完了","酱汁另外收费"], answer:0,
+           explain:"しょっぱい＝咸（口语，比塩辛い常用）。"}
+        ]
+      },
+      {
+        id:"cat", name:"眠り猫", x:52, y:94, egg:true,
+        eggLines:["にゃあ…","……（翻了个身）","にゃ？","……zzz"],
+        eggFinal:"猫は仲見世の看板娘です", eggFinalAt:10
+      }
+    ]
+  },
+  {
+    id:"hondo", name:"本堂エリア", short:"本堂", chapter:1,
+    svg:"s3",
+    hotspots:[
+      {
+        id:"hozomon", name:"宝蔵門", x:50, y:78,
+        learn:{
+          words:[
+            {jp:"宝蔵門", kana:"ほうぞうもん", romaji:"hōzōmon", zh:"宝藏门"},
+            {jp:"魔除け", kana:"まよけ", romaji:"mayoke", zh:"辟邪"},
+            {jp:"わらじ", kana:"わらじ", romaji:"waraji", zh:"草鞋"},
+            {jp:"仁王像", kana:"におうぞう", romaji:"niōzō", zh:"仁王像（守门金刚）"}
+          ],
+          noteJa:"門の両側には仁王像が立ち、裏には大きなわらじが掛かっています。魔除けだそうです。",
+          noteKana:"もんの りょうがわには におうぞうが たち、うらには おおきな わらじが かかっています。まよけだ そうです。",
+          noteRomaji:"Mon no ryōgawa ni wa niōzō ga tachi, ura ni wa ōkina waraji ga kakatte imasu. Mayoke da sō desu.",
+          noteZh:"门两侧立着仁王像，背面挂着巨大的草鞋，据说是用来辟邪的。"
+        },
+        questions:[
+          {type:"read", prompt:"「宝蔵門」の読み方は？", options:["ほうぞうもん","たからくらもん","ほうくらもん"], answer:0,
+           explain:"三字全音读：ほう＋ぞう＋もん。"},
+          {type:"vocab", prompt:"「魔除け」是什么意思？",
+           options:["辟邪","大扫除","禁止入内"], answer:0,
+           explain:"魔（ま）＝邪祟，除け（よけ）＝避开。同构词还有日除け（遮阳）、虫除け（防虫）。"},
+          {type:"listen", tts:"あのわらじ、写真撮ってもらえますか。",
+           ttsKana:"あのわらじ、しゃしん とって もらえますか。",
+           options:["能帮我和那个草鞋拍张照吗","那个草鞋不能拍照","我给你拍草鞋吧"], answer:0,
+           explain:"「撮ってもらえますか」＝能帮我拍吗。请路人帮忙拍照就用这句。"},
+          {type:"culture", prompt:"宝蔵門左右两侧站着的是？",
+           options:["仁王像","狛犬","七福神"], answer:0,
+           explain:"仁王（におう）是守寺门的金刚力士；狛犬（こまいぬ）守的是神社——又一个寺和神社的区别。"},
+          {type:"read", prompt:"门背面挂着的大草鞋重达500公斤。「草鞋」の読み方は？",
+           options:["わらじ","くさぐつ","そうあい"], answer:0,
+           explain:"熟字训。据说妖怪看到这么大的草鞋会以为「这里住着巨人」，吓得不敢进门。"}
+        ]
+      },
+      {
+        id:"kouro", name:"常香炉", x:26, y:55,
+        learn:{
+          words:[
+            {jp:"常香炉", kana:"じょうこうろ", romaji:"jōkōro", zh:"常香炉"},
+            {jp:"煙", kana:"けむり", romaji:"kemuri", zh:"烟"},
+            {jp:"お線香", kana:"おせんこう", romaji:"osenkō", zh:"线香"}
+          ],
+          noteJa:"お線香の煙を体の悪いところにあてると、良くなると言われています。",
+          noteKana:"おせんこうの けむりを からだの わるい ところに あてると、よく なると いわれています。",
+          noteRomaji:"Osenkō no kemuri o karada no warui tokoro ni ateru to, yoku naru to iwarete imasu.",
+          noteZh:"据说把线香的烟扇到身体不舒服的地方，那里就会变好。"
+        },
+        questions:[
+          {type:"read", prompt:"「煙」の読み方は？", options:["けむり","えん","かすみ"], answer:0,
+           explain:"单独出现读训读けむり；组词时才用音读えん（禁煙・喫煙）。"},
+          {type:"culture", prompt:"大家把香炉的烟往身上扇，是为了什么？",
+           options:["治愈身体不好的地方","驱赶蚊虫","净化随身物品"], answer:0,
+           explain:"哪里不舒服扇哪里。下次去可以留意：扇头的人最多。"},
+          {type:"listen", tts:"頭にあてると、頭が良くなるそうですよ。",
+           ttsKana:"あたまに あてると、あたまが よく なる そうですよ。",
+           options:["听说扇到头上会变聪明","烟对头不好","请不要靠近头部"], answer:0,
+           explain:"「〜そうですよ」＝听说…哦（传闻）。頭が良い＝聪明。"},
+          {type:"read", prompt:"「お線香」の読み方は？", options:["おせんこう","おせんか","おいとこう"], answer:0,
+           explain:"線香＝线香。参拜、扫墓都用，也是「香火」的具体形态。"},
+          {type:"listen", tts:"お線香は一束100円です。",
+           ttsKana:"おせんこうは ひとたば ひゃくえんです。",
+           options:["线香一束100日元","线香免费","一人限一根"], answer:0,
+           explain:"一束（ひとたば）＝一捆。数钱的百＝ひゃく，配円直接读ひゃくえん。"}
+        ]
+      },
+      {
+        id:"saisen", name:"本堂参拝", x:50, y:32,
+        learn:{
+          words:[
+            {jp:"お賽銭", kana:"おさいせん", romaji:"osaisen", zh:"香资/香火钱"},
+            {jp:"お参り", kana:"おまいり", romaji:"omairi", zh:"参拜"},
+            {jp:"願い事", kana:"ねがいごと", romaji:"negaigoto", zh:"心愿"},
+            {jp:"手を合わせる", kana:"てをあわせる", romaji:"te o awaseru", zh:"合掌"}
+          ],
+          noteJa:"浅草寺はお寺なので、神社と違って拍手はしません。静かに手を合わせて、願い事をします。",
+          noteKana:"せんそうじは おてらなので、じんじゃと ちがって かしわでは しません。しずかに てを あわせて、ねがいごとを します。",
+          noteRomaji:"Sensōji wa otera na node, jinja to chigatte kashiwade wa shimasen. Shizuka ni te o awasete, negaigoto o shimasu.",
+          noteZh:"浅草寺是寺庙，和神社不同，参拜时不拍手。静静合掌，许下心愿。"
+        },
+        questions:[
+          {type:"culture", prompt:"在浅草寺本堂参拜，正确的做法是？",
+           options:["静静合掌，不拍手","二礼二拍手一礼","拍三次手"], answer:0,
+           explain:"「二礼二拍手一礼」是神社的规矩。寺庙不拍手——这一题错了的人非常多，错了才记得牢。"},
+          {type:"read", prompt:"「お賽銭」の読み方は？", options:["おさいせん","おしんせん","おざいぜに"], answer:0,
+           explain:"賽銭（さいせん），加お表示郑重。投币的箱子叫賽銭箱（さいせんばこ）。"},
+          {type:"listen", tts:"お賽銭は五円玉がいいって言いますね。ご縁がありますように。",
+           ttsKana:"おさいせんは ごえんだまが いいって いいますね。ごえんが ありますように。",
+           options:["投五円是取「ご縁」的谐音","至少要投五百円","投五円以下失礼"], answer:0,
+           explain:"五円（ごえん）＝ご縁（缘分）谐音，所以大家爱投五円硬币。金额本身没有规定。"},
+          {type:"read", prompt:"「願い事」の読み方は？", options:["ねがいごと","がんじ","きぼうごと"], answer:0,
+           explain:"願う（ねがう）＝祈愿。抽签签文的第一行就是它——现在你能读懂了。"},
+          {type:"listen", tts:"お参りの前に、手を清めましょう。",
+           ttsKana:"おまいりの まえに、てを きよめましょう。",
+           options:["参拜前先净手","参拜前要脱鞋","参拜前请排队"], answer:0,
+           explain:"清める（きよめる）＝洗净。入口洗手的水池叫手水舎（ちょうずや）。"}
+        ]
+      },
+      {
+        id:"pagoda", name:"五重塔", x:15, y:26,
+        learn:{
+          words:[
+            {jp:"五重塔", kana:"ごじゅうのとう", romaji:"gojūnotō", zh:"五重塔"},
+            {jp:"ライトアップ", kana:"ライトアップ", romaji:"raito appu", zh:"夜间灯光照明"},
+            {jp:"夜景", kana:"やけい", romaji:"yakei", zh:"夜景"},
+            {jp:"建物", kana:"たてもの", romaji:"tatemono", zh:"建筑物"}
+          ],
+          noteJa:"夜はライトアップされて、とてもきれいです。夜景の写真スポットとして人気の建物です。",
+          noteKana:"よるは ライトアップ されて、とても きれいです。やけいの しゃしんスポットとして にんきの たてものです。",
+          noteRomaji:"Yoru wa raito appu sarete, totemo kirei desu. Yakei no shashin supotto to shite ninki no tatemono desu.",
+          noteZh:"晚上有灯光照明，非常漂亮，是拍夜景的人气建筑。"
+        },
+        questions:[
+          {type:"read", prompt:"「五重塔」の読み方は？", options:["ごじゅうのとう","ごちょうとう","いつえのとう"], answer:0,
+           explain:"注意中间藏了个「の」：ごじゅう・の・とう。很多学习者会漏掉。"},
+          {type:"listen", tts:"夜のライトアップは何時までですか。",
+           ttsKana:"よるの ライトアップは なんじまでですか。",
+           options:["问夜间点灯到几点","说晚上很亮","问几点开门"], answer:0,
+           explain:"「何時まで」＝到几点。问营业时间的孪生句是「何時から」。"},
+          {type:"vocab", prompt:"「ライトアップ」是什么意思？",
+           options:["夜间灯光照明","打折促销","排队入场"], answer:0,
+           explain:"和制英语light up。红叶季、樱花季的「夜間ライトアップ」新闻里天天见。"},
+          {type:"read", prompt:"「建物」の読み方は？", options:["たてもの","けんぶつ","たちもの"], answer:0,
+           explain:"训读组合たてもの。长得像的「見物（けんぶつ）」是参观——两个词经常被认混。"},
+          {type:"listen", tts:"五重塔の中には入れません。外から見るだけです。",
+           ttsKana:"ごじゅうのとうの なかには はいれません。そとから みるだけです。",
+           options:["塔内不能进，只能在外面看","塔里可以参观","塔今天关闭"], answer:0,
+           explain:"入れません＝进不去（可能形否定）。「〜だけ」＝只、仅仅。"}
+        ]
+      },
+      {
+        id:"omikuji", name:"おみくじ", x:84, y:44, mikuji:true
+      }
+    ]
+  },
+  {
+    id:"denboin", name:"伝法院通り", short:"伝法院", chapter:2,
+    svg:"s4",
+    hotspots:[
+      {
+        id:"soba", name:"蕎麦屋", x:20, y:42,
+        learn:{
+          words:[
+            {jp:"蕎麦", kana:"そば", romaji:"soba", zh:"荞麦面"},
+            {jp:"出汁", kana:"だし", romaji:"dashi", zh:"高汤"},
+            {jp:"お会計", kana:"おかいけい", romaji:"okaikei", zh:"结账"},
+            {jp:"天ざる", kana:"てんざる", romaji:"tenzaru", zh:"天妇罗笸箩面"}
+          ],
+          noteJa:"伝法院通りには江戸の雰囲気の店が並んでいます。蕎麦は音を立てて食べても大丈夫です。",
+          noteKana:"でんぼういんどおりには えどの ふんいきの みせが ならんでいます。そばは おとを たてて たべても だいじょうぶです。",
+          noteRomaji:"Denbōin-dōri ni wa Edo no fun'iki no mise ga narande imasu. Soba wa oto o tatete tabete mo daijōbu desu.",
+          noteZh:"传法院通排列着江户风情的店铺。吃荞麦面出声也没关系。"
+        },
+        questions:[
+          {type:"read", prompt:"「蕎麦」の読み方は？", options:["そば","きょうばく","そばく"], answer:0,
+           explain:"熟字训そば。车站的「駅そば」是日本人的快餐。"},
+          {type:"read", prompt:"「出汁」の読み方は？", options:["だし","でじる","しゅつじゅう"], answer:0,
+           explain:"だし＝高汤，日料的灵魂词。昆布出汁、かつお出汁。"},
+          {type:"listen", tts:"お蕎麦、伸びないうちにどうぞ。",
+           ttsKana:"おそば、のびない うちに どうぞ。",
+           options:["面会坨，请趁早吃","面还要再等等","面可以免费续"], answer:0,
+           explain:"伸びる＝面泡软坨掉。「〜ないうちに」＝趁还没…。"},
+          {type:"scene", prompt:"吃完想结账，说哪句最自然？", jpOptions:true,
+           options:["お会計お願いします","お金です","終わりました"], answer:0,
+           phraseKana:"おかいけい おねがいします",
+           explain:"万能结账句，所有餐厅通用。也可以说「お勘定お願いします」。"},
+          {type:"culture", prompt:"在日本吃荞麦面发出「吸溜」声是？",
+           options:["可以的，甚至算吃法地道","非常失礼","只有小孩可以"], answer:0,
+           explain:"吸面出声OK，据说更能带出香气。但喝汤把碗敲得响就不行了。"}
+        ]
+      },
+      {
+        id:"yokan", name:"芋ようかん屋", x:80, y:42,
+        learn:{
+          words:[
+            {jp:"芋", kana:"いも", romaji:"imo", zh:"薯类/红薯"},
+            {jp:"ようかん", kana:"ようかん", romaji:"yōkan", zh:"羊羹"},
+            {jp:"賞味期限", kana:"しょうみきげん", romaji:"shōmi-kigen", zh:"保质期"},
+            {jp:"日持ち", kana:"ひもち", romaji:"himochi", zh:"耐放程度"}
+          ],
+          noteJa:"浅草名物の芋ようかんは、さつまいもと砂糖だけで作られています。",
+          noteKana:"あさくさめいぶつの いもようかんは、さつまいもと さとうだけで つくられています。",
+          noteRomaji:"Asakusa meibutsu no imo-yōkan wa, satsumaimo to satō dake de tsukurarete imasu.",
+          noteZh:"浅草名产芋羊羹，只用红薯和砂糖制成。"
+        },
+        questions:[
+          {type:"read", prompt:"「芋」の読み方は？", options:["いも","う","たろ"], answer:0,
+           explain:"いも。さつまいも（红薯）、じゃがいも（土豆）、さといも（芋头）全家桶。"},
+          {type:"read", prompt:"「賞味期限」の読み方は？", options:["しょうみきげん","しょうあじきげん","そうみきげん"], answer:0,
+           explain:"买吃的必看的四个字。和消費期限不同：賞味期限过了只是不够好吃，不是不能吃。"},
+          {type:"listen", tts:"賞味期限は明日までなので、お早めにどうぞ。",
+           ttsKana:"しょうみきげんは あしたまでなので、おはやめに どうぞ。",
+           options:["保质期到明天，请尽早吃","明天才能吃","可以放一个月"], answer:0,
+           explain:"お早めに＝请尽早。包装上的「お早めにお召し上がりください」就是它的完整版。"},
+          {type:"vocab", prompt:"店头写着「ご試食どうぞ」，意思是？",
+           options:["请随意试吃","禁止饮食","仅限外带"], answer:0,
+           explain:"試食（ししょく）＝试吃。看到这五个字就放心大胆地尝。"},
+          {type:"scene", prompt:"买伴手礼想问能放几天，说哪句？", jpOptions:true,
+           options:["日持ちはどのくらいですか","何日ですか","古いですか"], answer:0,
+           phraseKana:"ひもちは どのくらいですか",
+           explain:"日持ち（ひもち）＝耐放程度。买点心带回国前的专用提问。"}
+        ]
+      },
+      {
+        id:"tenugui", name:"手ぬぐい店", x:50, y:70,
+        learn:{
+          words:[
+            {jp:"手ぬぐい", kana:"てぬぐい", romaji:"tenugui", zh:"日式手巾"},
+            {jp:"綿", kana:"めん", romaji:"men", zh:"棉"},
+            {jp:"藍色", kana:"あいいろ", romaji:"aiiro", zh:"藏蓝色"}
+          ],
+          noteJa:"手ぬぐいは江戸時代から使われている万能の布です。綿100%で、乾きが早いです。",
+          noteKana:"てぬぐいは えどじだいから つかわれている ばんのうの ぬのです。めん ひゃくパーセントで、かわきが はやいです。",
+          noteRomaji:"Tenugui wa Edo-jidai kara tsukawarete iru bannō no nuno desu. Men 100% de, kawaki ga hayai desu.",
+          noteZh:"手巾是江户时代沿用至今的万能布。纯棉材质，干得很快。"
+        },
+        questions:[
+          {type:"read", prompt:"「手ぬぐい」の読み方は？", options:["てぬぐい","しゅきん","てふき"], answer:0,
+           explain:"拭う（ぬぐう）＝擦拭。手ぬぐい＝擦手布，但实际是万能布。"},
+          {type:"read", prompt:"材质标签「綿100%」的「綿」读作？", options:["めん","わた","こめん"], answer:0,
+           explain:"标材质时读めん；单说「棉花」这种东西才读わた。一个字两副面孔。"},
+          {type:"listen", tts:"洗うと少し縮みますので、ご注意ください。",
+           ttsKana:"あらうと すこし ちぢみますので、ごちゅういください。",
+           options:["洗后会稍微缩水，请注意","不能水洗","越洗越大"], answer:0,
+           explain:"縮む（ちぢむ）＝缩。买棉麻制品常听到的提醒。"},
+          {type:"scene", prompt:"不知道这东西怎么用，想问店员，说哪句？", jpOptions:true,
+           options:["これはどうやって使うんですか","何ですかこれ","使い方！"], answer:0,
+           phraseKana:"これは どうやって つかうんですか",
+           explain:"どうやって＝怎么（用什么方法）。万能提问句，接任何动词都行。"},
+          {type:"culture", prompt:"手ぬぐい和普通毛巾最大的不同是？",
+           options:["边缘不锁边、干得特别快","更厚实","只能当装饰"], answer:0,
+           explain:"布边是剪裁不缝的，越用越软、越洗越贴手，一两个小时就晾干。"}
+        ]
+      },
+      {
+        id:"tanuki", name:"屋根のたぬき", x:82, y:16, egg:true,
+        eggLines:["……","（屋根の上からこっちを見ている）","（しっぽが揺れた）"],
+        eggFinal:"伝法院通りの屋根には、たぬきが隠れています", eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"sumida", name:"吾妻橋・隅田川", short:"隅田川", chapter:2,
+    svg:"s5",
+    hotspots:[
+      {
+        id:"bridge", name:"吾妻橋", x:30, y:62,
+        learn:{
+          words:[
+            {jp:"橋", kana:"はし", romaji:"hashi", zh:"桥"},
+            {jp:"渡る", kana:"わたる", romaji:"wataru", zh:"过（桥/马路）"},
+            {jp:"眺め", kana:"ながめ", romaji:"nagame", zh:"景色/视野"}
+          ],
+          noteJa:"吾妻橋からは、スカイツリーと金色のオブジェがよく見えます。眺めが最高です。",
+          noteKana:"あづまばしからは、スカイツリーと きんいろの オブジェが よく みえます。ながめが さいこうです。",
+          noteRomaji:"Azumabashi kara wa, Sukaitsurī to kin'iro no obuje ga yoku miemasu. Nagame ga saikō desu.",
+          noteZh:"从吾妻桥能清楚看到晴空塔和那个金色雕塑，视野绝佳。"
+        },
+        questions:[
+          {type:"read", prompt:"「橋」单独出现时的読み方は？", options:["はし","きょう","ばし"], answer:0,
+           explain:"单独读はし；组成桥名时浊化成ばし（吾妻橋＝あづまばし）——这个现象叫连浊。"},
+          {type:"vocab", prompt:"「眺めがいい」是什么意思？",
+           options:["视野好、景色好","散步舒服","桥很结实"], answer:0,
+           explain:"眺め（ながめ）＝景色视野。订酒店选房也用：眺めのいい部屋。"},
+          {type:"listen", tts:"ここから見るスカイツリーが一番きれいですよ。",
+           ttsKana:"ここから みる スカイツリーが いちばん きれいですよ。",
+           options:["从这里看晴空塔最美","晴空塔今天关门","晴空塔在维修"], answer:0,
+           explain:"一番（いちばん）＋形容词＝最…。"},
+          {type:"read", prompt:"「渡る」の読み方は？", options:["わたる","とる","めぐる"], answer:0,
+           explain:"过桥、过马路都用渡る。橋を渡る、道を渡る。"},
+          {type:"scene", prompt:"桥上人多想借过，说哪句最自然？", jpOptions:true,
+           options:["すみません、通ります","どいて","行きます"], answer:0,
+           phraseKana:"すみません、とおります",
+           explain:"轻声说这句人群自然让开。どいて（让开）很粗鲁，吵架才用。"}
+        ]
+      },
+      {
+        id:"suijobus", name:"水上バス乗り場", x:70, y:78,
+        learn:{
+          words:[
+            {jp:"水上バス", kana:"すいじょうバス", romaji:"suijō-basu", zh:"水上巴士"},
+            {jp:"乗り場", kana:"のりば", romaji:"noriba", zh:"乘船/乘车处"},
+            {jp:"片道", kana:"かたみち", romaji:"katamichi", zh:"单程"},
+            {jp:"往復", kana:"おうふく", romaji:"ōfuku", zh:"往返"}
+          ],
+          noteJa:"水上バスで隅田川を下って、お台場まで行けます。",
+          noteKana:"すいじょうバスで すみだがわを くだって、おだいばまで いけます。",
+          noteRomaji:"Suijō-basu de Sumidagawa o kudatte, Odaiba made ikemasu.",
+          noteZh:"坐水上巴士顺隅田川而下，可以一直到台场。"
+        },
+        questions:[
+          {type:"read", prompt:"「乗り場」の読み方は？", options:["のりば","じょうじょう","のりじょう"], answer:0,
+           explain:"タクシー乗り場、バス乗り場——到处都是这三个字。"},
+          {type:"vocab", prompt:"「往返票」应该买哪种？",
+           options:["往復","片道","自由席"], answer:0,
+           explain:"片道（かたみち）单程，往復（おうふく）往返。买票必用的一对词。"},
+          {type:"listen", tts:"次の便は30分後に出発します。",
+           ttsKana:"つぎの びんは さんじゅっぷんごに しゅっぱつします。",
+           options:["下一班30分钟后出发","末班船已经开走","每30分钟一班"], answer:0,
+           explain:"便（びん）＝班次。次の便＝下一班。"},
+          {type:"scene", prompt:"想买两张往返票，说哪句？", jpOptions:true,
+           options:["往復を二枚お願いします","チケット二つ","二人です"], answer:0,
+           phraseKana:"おうふくを にまい おねがいします",
+           explain:"票的量词是枚（まい）。二枚＝两张。"},
+          {type:"read", prompt:"「出発」の読み方は？", options:["しゅっぱつ","しゅつはつ","でたつ"], answer:0,
+           explain:"促音变しゅっぱつ。机场、车站的电子屏天天见。"}
+        ]
+      },
+      {
+        id:"riverside", name:"隅田川の遊歩道", x:24, y:88,
+        learn:{
+          words:[
+            {jp:"桜", kana:"さくら", romaji:"sakura", zh:"樱花"},
+            {jp:"花見", kana:"はなみ", romaji:"hanami", zh:"赏花"},
+            {jp:"満開", kana:"まんかい", romaji:"mankai", zh:"盛开"},
+            {jp:"散歩", kana:"さんぽ", romaji:"sanpo", zh:"散步"}
+          ],
+          noteJa:"春には隅田川の両岸に桜が咲いて、花見の名所になります。",
+          noteKana:"はるには すみだがわの りょうがんに さくらが さいて、はなみの めいしょに なります。",
+          noteRomaji:"Haru ni wa Sumidagawa no ryōgan ni sakura ga saite, hanami no meisho ni narimasu.",
+          noteZh:"春天隅田川两岸樱花盛开，是赏花名胜。"
+        },
+        questions:[
+          {type:"read", prompt:"「花見」の読み方は？", options:["はなみ","かけん","はなけん"], answer:0,
+           explain:"「見」训读み。月見（赏月）、雪見（赏雪）同款构词。"},
+          {type:"listen", tts:"桜は今週末が見頃だそうですよ。",
+           ttsKana:"さくらは こんしゅうまつが みごろだそうですよ。",
+           options:["樱花这周末是最佳观赏期","樱花已经谢了","樱花下个月才开"], answer:0,
+           explain:"見頃（みごろ）＝正当观赏时。食べ頃（正好吃的时候）同理。"},
+          {type:"vocab", prompt:"「満開」是什么意思？",
+           options:["盛开","花苞","凋谢"], answer:0,
+           explain:"満開（まんかい）。春天新闻里的高频词：桜前線、三分咲き、満開。"},
+          {type:"read", prompt:"「散歩」の読み方は？", options:["さんぽ","さんほ","ちるほ"], answer:0,
+           explain:"注意是半浊音ぽ。犬の散歩＝遛狗。"},
+          {type:"scene", prompt:"想请路人帮忙拍照，最客气的说法是？", jpOptions:true,
+           options:["写真を撮っていただけますか","カメラお願い","撮って！"], answer:0,
+           phraseKana:"しゃしんを とって いただけますか",
+           explain:"いただけますか比もらえますか又客气一档，对陌生人正合适。"}
+        ]
+      },
+      {
+        id:"kamome", name:"ユリカモメ", x:76, y:30, egg:true,
+        eggLines:["ミャー","（叫声像猫！）","（贴着水面飞过去了）"],
+        eggFinal:"ユリカモメは東京都の鳥です", eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"hoppy", name:"ホッピー通り", short:"ホッピー", chapter:3,
+    svg:"s6",
+    hotspots:[
+      {
+        id:"izakaya", name:"居酒屋の暖簾", x:22, y:44,
+        learn:{
+          words:[
+            {jp:"居酒屋", kana:"いざかや", romaji:"izakaya", zh:"居酒屋"},
+            {jp:"暖簾", kana:"のれん", romaji:"noren", zh:"门帘"},
+            {jp:"乾杯", kana:"かんぱい", romaji:"kanpai", zh:"干杯"},
+            {jp:"とりあえず", kana:"とりあえず", romaji:"toriaezu", zh:"先来…（姑且）"}
+          ],
+          noteJa:"ホッピー通りは昼から飲める居酒屋が並ぶ通りです。「とりあえずビール」は魔法の言葉です。",
+          noteKana:"ホッピーどおりは ひるから のめる いざかやが ならぶ とおりです。とりあえず ビールは まほうの ことばです。",
+          noteRomaji:"Hoppī-dōri wa hiru kara nomeru izakaya ga narabu tōri desu. 'Toriaezu bīru' wa mahō no kotoba desu.",
+          noteZh:"ホッピー通り是从中午就开喝的居酒屋一条街。「先来杯啤酒」是打开一切的魔法咒语。"
+        },
+        questions:[
+          {type:"read", prompt:"「居酒屋」の読み方は？", options:["いざかや","きょしゅや","いさかや"], answer:0,
+           explain:"い＋ざかや，中间浊化。居（い）＝待着——「能待着喝酒的店」。"},
+          {type:"read", prompt:"「乾杯」の読み方は？", options:["かんぱい","かんはい","けんぱい"], answer:0,
+           explain:"半浊音ぱい。中文干杯要喝干，日语乾杯只是碰个杯，别硬灌。"},
+          {type:"vocab", prompt:"「とりあえずビール」是什么意思？",
+           options:["先来杯啤酒（再慢慢点别的）","只要啤酒","啤酒免费"], answer:0,
+           explain:"とりあえず＝姑且、先。居酒屋落座第一句，说完店员和同伴都安心了。"},
+          {type:"listen", tts:"お通しです。こちらはサービスではありません。",
+           ttsKana:"おとおしです。こちらは サービスでは ありません。",
+           options:["这是开胃小菜，不是免费赠送的","这是本店赠品","这是今日菜单"], answer:0,
+           explain:"お通し＝落座自动上的小菜，要收钱（一般300-500円）。无数游客的第一课，现在你妈免疫了。"},
+          {type:"scene", prompt:"看到邻桌的菜很馋，想点一样的，说哪句？", jpOptions:true,
+           options:["あれと同じものをください","あれ！あれ！","隣のです"], answer:0,
+           phraseKana:"あれと おなじものを ください",
+           explain:"指着别桌点菜的标准句。同じもの＝一样的东西。"}
+        ]
+      },
+      {
+        id:"yakitori", name:"焼き鳥の屋台", x:78, y:44,
+        learn:{
+          words:[
+            {jp:"焼き鳥", kana:"やきとり", romaji:"yakitori", zh:"烤鸡串"},
+            {jp:"塩", kana:"しお", romaji:"shio", zh:"盐"},
+            {jp:"タレ", kana:"タレ", romaji:"tare", zh:"酱汁"},
+            {jp:"おかわり", kana:"おかわり", romaji:"okawari", zh:"续杯/再来一份"}
+          ],
+          noteJa:"焼き鳥は塩かタレか選べます。通は塩から始めるそうです。",
+          noteKana:"やきとりは しおか タレか えらべます。つうは しおから はじめる そうです。",
+          noteRomaji:"Yakitori wa shio ka tare ka erabemasu. Tsū wa shio kara hajimeru sō desu.",
+          noteZh:"烤鸡串可以选盐味或酱汁味。据说行家都从盐味吃起。"
+        },
+        questions:[
+          {type:"read", prompt:"「塩」の読み方は？", options:["しお","えん","しほ"], answer:0,
+           explain:"单字训读しお；组词才用音读えん（塩分、減塩）。"},
+          {type:"vocab", prompt:"「おかわり」是什么意思？",
+           options:["再来一份、续杯","打包带走","请结账"], answer:0,
+           explain:"ご飯おかわり自由＝米饭随便续。这个词能让旅行幸福度上升30%。"},
+          {type:"listen", tts:"塩とタレ、どちらになさいますか。",
+           ttsKana:"しおと タレ、どちらに なさいますか。",
+           options:["问要盐味还是酱汁味","问要几串","问辣不辣"], answer:0,
+           explain:"なさいます是します的尊敬语——店员对客人专用，听懂了但自己不用说。"},
+          {type:"read", prompt:"「焼き鳥」の読み方は？", options:["やきとり","しょうちょう","やきどり"], answer:0,
+           explain:"这里的とり不浊化。但烤串店menu上的ねぎま、つくね又是另一批生词了。"},
+          {type:"scene", prompt:"杯子空了，想再来一杯一样的，说哪句？", jpOptions:true,
+           options:["同じものをもう一杯お願いします","もっと！","ビール"], answer:0,
+           phraseKana:"おなじものを もういっぱい おねがいします",
+           explain:"もう一杯＝再来一杯。配上空杯子一举，全世界都懂了。"}
+        ]
+      },
+      {
+        id:"hoppysign", name:"ホッピーの看板", x:50, y:20,
+        learn:{
+          words:[
+            {jp:"ホッピー", kana:"ホッピー", romaji:"hoppī", zh:"Hoppy（啤酒风味饮料）"},
+            {jp:"下町", kana:"したまち", romaji:"shitamachi", zh:"老城区/平民街区"},
+            {jp:"名物", kana:"めいぶつ", romaji:"meibutsu", zh:"名产"},
+            {jp:"割る", kana:"わる", romaji:"waru", zh:"兑着喝"}
+          ],
+          noteJa:"ホッピーはビール風の飲み物で、焼酎と割って飲む下町の名物です。",
+          noteKana:"ホッピーは ビールふうの のみもので、しょうちゅうと わって のむ したまちの めいぶつです。",
+          noteRomaji:"Hoppī wa bīru-fū no nomimono de, shōchū to watte nomu shitamachi no meibutsu desu.",
+          noteZh:"Hoppy是啤酒风味的饮料，兑烧酒一起喝，是老城区的名物——这条街就以它命名。"
+        },
+        questions:[
+          {type:"read", prompt:"「下町」の読み方は？", options:["したまち","しもまち","げちょう"], answer:0,
+           explain:"下町＝庶民老街区，浅草就是代表。反义词是山の手（やまのて）。"},
+          {type:"read", prompt:"「名物」の読み方は？", options:["めいぶつ","なもの","めいもの"], answer:0,
+           explain:"名物＝当地名产。名物に旨いものなし（名产没好吃的）是句毒舌谚语——浅草是例外。"},
+          {type:"listen", tts:"初めてですか？じゃあ、飲み方を説明しますね。",
+           ttsKana:"はじめてですか？ じゃあ、のみかたを せつめいしますね。",
+           options:["第一次喝吗？那我给你讲讲喝法","这个卖完了","你喝得太多了"], answer:0,
+           explain:"飲み方（のみかた）＝喝法。「动词ます形去ます＋方」＝…的方法：食べ方、使い方、読み方。"},
+          {type:"vocab", prompt:"喝酒场景里的「割る」是什么意思？",
+           options:["兑着喝","打碎杯子","AA制平摊"], answer:0,
+           explain:"水割り（兑水）、お湯割り（兑热水）、ソーダ割り（兑苏打）都是这个割る。"},
+          {type:"culture", prompt:"在居酒屋，大家举杯时说的是？",
+           options:["乾杯！","いただきます","ごちそうさま"], answer:0,
+           explain:"吃饭开动说いただきます，喝酒碰杯说乾杯，吃完说ごちそうさま——三件套别混。"}
+        ]
+      },
+      {
+        id:"akachochin", name:"赤提灯", x:80, y:76, egg:true,
+        eggLines:["ゆらゆら","（風で揺れている）","（灯りがついた）"],
+        eggFinal:"赤提灯は「ここで飲めます」の合図です", eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"station", name:"浅草駅", short:"浅草駅", chapter:3,
+    svg:"s7",
+    hotspots:[
+      {
+        id:"kenbaiki", name:"券売機", x:20, y:60,
+        learn:{
+          words:[
+            {jp:"切符", kana:"きっぷ", romaji:"kippu", zh:"车票"},
+            {jp:"券売機", kana:"けんばいき", romaji:"kenbaiki", zh:"售票机"},
+            {jp:"運賃", kana:"うんちん", romaji:"unchin", zh:"车费"},
+            {jp:"チャージ", kana:"チャージ", romaji:"chāji", zh:"充值"}
+          ],
+          noteJa:"切符を買うより、ICカードにチャージする方が便利です。",
+          noteKana:"きっぷを かうより、アイシーカードに チャージする ほうが べんりです。",
+          noteRomaji:"Kippu o kau yori, IC kādo ni chāji suru hō ga benri desu.",
+          noteZh:"比起每次买票，给IC交通卡充值更方便。"
+        },
+        questions:[
+          {type:"read", prompt:"「切符」の読み方は？", options:["きっぷ","せっぷ","きりふ"], answer:0,
+           explain:"促音＋半浊音双重变化：きっぷ。"},
+          {type:"vocab", prompt:"「チャージ」是什么意思？",
+           options:["给交通卡充值","退款","换乘"], answer:0,
+           explain:"Suica、PASMO都说チャージ。便利店收银台也能：チャージお願いします。"},
+          {type:"listen", tts:"このカードにいくらチャージしますか。",
+           ttsKana:"この カードに いくら チャージしますか。",
+           options:["问给卡充多少钱","问卡里还剩多少","问卡是不是丢了"], answer:0,
+           explain:"いくら＝多少钱。机器和店员都会这么问。"},
+          {type:"read", prompt:"「運賃」の読み方は？", options:["うんちん","うんじん","はこびちん"], answer:0,
+           explain:"運賃表就挂在售票机上方——抬头看一眼，去哪儿多少钱全写着。"},
+          {type:"scene", prompt:"机器吞了钱没出票，找工作人员说哪句？", jpOptions:true,
+           options:["すみません、お金が出てきません","機械が壊れた！","お金！"], answer:0,
+           phraseKana:"すみません、おかねが でてきません",
+           explain:"出てくる＝（东西）出来。冷静描述现象，比指责机器坏了更快解决问题。"}
+        ]
+      },
+      {
+        id:"kaisatsu", name:"改札口", x:60, y:56,
+        learn:{
+          words:[
+            {jp:"改札", kana:"かいさつ", romaji:"kaisatsu", zh:"检票口"},
+            {jp:"乗り換え", kana:"のりかえ", romaji:"norikae", zh:"换乘"},
+            {jp:"出口", kana:"でぐち", romaji:"deguchi", zh:"出口"},
+            {jp:"終電", kana:"しゅうでん", romaji:"shūden", zh:"末班车"}
+          ],
+          noteJa:"浅草駅では銀座線、都営浅草線、東武線が乗り換えできます。",
+          noteKana:"あさくさえきでは ぎんざせん、とえいあさくさせん、とうぶせんが のりかえ できます。",
+          noteRomaji:"Asakusa-eki de wa Ginza-sen, Toei Asakusa-sen, Tōbu-sen ga norikae dekimasu.",
+          noteZh:"浅草站可以换乘银座线、都营浅草线和东武线。"
+        },
+        questions:[
+          {type:"read", prompt:"「改札」の読み方は？", options:["かいさつ","かいふだ","がいさつ"], answer:0,
+           explain:"改札口（かいさつぐち）＝检票口。约人碰头常说：改札で待ってるね。"},
+          {type:"read", prompt:"「乗り換え」の読み方は？", options:["のりかえ","じょうかん","のりがえ"], answer:0,
+           explain:"车内广播高频句：お乗り換えのご案内です。"},
+          {type:"listen", tts:"雷門へは、1番出口が便利です。",
+           ttsKana:"かみなりもんへは、いちばんでぐちが べんりです。",
+           options:["去雷门走1号出口方便","雷门站已经过了","1号出口封闭中"], answer:0,
+           explain:"日本地铁站出口都有编号，认「〇番出口」比认方向靠谱。"},
+          {type:"vocab", prompt:"「終電」是什么意思？",
+           options:["末班车","首班车","特快车"], answer:0,
+           explain:"終電（しゅうでん）。东京末班车一般在0点前后——「終電逃した」（没赶上末班车）是打工人的噩梦词。"},
+          {type:"scene", prompt:"想问怎么去晴空塔，说哪句？", jpOptions:true,
+           options:["スカイツリーへは、どう行けばいいですか","スカイツリー、どこ","行きたいです"], answer:0,
+           phraseKana:"スカイツリーへは、どう いけば いいですか",
+           explain:"「どう行けばいいですか」＝该怎么走。问路万能句，把地名换掉就能走遍日本。"}
+        ]
+      },
+      {
+        id:"home", name:"駅のホーム", x:50, y:86,
+        learn:{
+          words:[
+            {jp:"ホーム", kana:"ホーム", romaji:"hōmu", zh:"站台"},
+            {jp:"各駅停車", kana:"かくえきていしゃ", romaji:"kakueki-teisha", zh:"慢车（每站停）"},
+            {jp:"急行", kana:"きゅうこう", romaji:"kyūkō", zh:"快车"},
+            {jp:"行き先", kana:"いきさき", romaji:"ikisaki", zh:"目的地"}
+          ],
+          noteJa:"急行は小さい駅には止まりません。乗る前に行き先をよく確認しましょう。",
+          noteKana:"きゅうこうは ちいさい えきには とまりません。のる まえに いきさきを よく かくにん しましょう。",
+          noteRomaji:"Kyūkō wa chiisai eki ni wa tomarimasen. Noru mae ni ikisaki o yoku kakunin shimashō.",
+          noteZh:"快车不停小站。上车前要看清列车的目的地。"
+        },
+        questions:[
+          {type:"read", prompt:"「急行」の読み方は？", options:["きゅうこう","きゅうぎょう","いそぎゆき"], answer:0,
+           explain:"电车种类从慢到快：各停→急行→特急。坐错一档，下车就是陌生的街道。"},
+          {type:"vocab", prompt:"「各駅停車」是哪种车？",
+           options:["每站都停的慢车","跳站的特快","末班车"], answer:0,
+           explain:"简称各停（かくてい）。不认识站名的时候，坐它最安全。"},
+          {type:"listen", tts:"まもなく電車がまいります。黄色い線までお下がりください。",
+           ttsKana:"まもなく でんしゃが まいります。きいろい せんまで おさがりください。",
+           options:["电车即将进站，请退到黄线以内","电车晚点了","请赶快上车"], answer:0,
+           explain:"车站广播原句。まいります是来ます的自谦语。听懂这句，你就是站台上最从容的人。"},
+          {type:"read", prompt:"「行き先」の読み方は？", options:["いきさき","こうせん","ゆきどころ"], answer:0,
+           explain:"电车头上写的「○○行き」读いき/ゆき都行。行き先＝目的地。"},
+          {type:"culture", prompt:"在日本站台等车的规矩是？",
+           options:["站在地上画的排队线内","挤在车门正前方","随便站哪都行"], answer:0,
+           explain:"地上画着乘车位置线，按线排队，先下后上。"}
+        ]
+      },
+      {
+        id:"melody", name:"発車ベル", x:84, y:80, egg:true,
+        eggLines:["♪ピンポーン","♪（発車メロディが流れた）","♪♪"],
+        eggFinal:"日本の駅は、それぞれ発車メロディを持っています", eggFinalAt:8
+      }
+    ]
+  }
+];
+
+
+const OMIKUJI = [
+  {rank:"大吉", cls:"daikichi", body:"願い事：思うままなり\n旅立ち：よし\n待ち人：来たる",
+   zh:"愿望：如你所愿。出行：吉。等的人：会来。"},
+  {rank:"大吉", cls:"daikichi", body:"学問：励めば大いに実る\n商い：利あり\n縁談：整う",
+   zh:"学业：努力必有大成。生意：有利。姻缘：可成。"},
+  {rank:"大吉", cls:"daikichi", body:"願い事：早く叶う\n失せ物：近くにあり\n健康：すこぶる良し",
+   zh:"愿望：很快实现。失物：就在近处。健康：极佳。"},
+  {rank:"吉", cls:"kichi", body:"願い事：叶うが急ぐべからず\n失せ物：出づる\n商い：焦らねば利あり",
+   zh:"愿望：能实现，但不可心急。失物：会找到。生意：不急躁则有利。"},
+  {rank:"吉", cls:"kichi", body:"旅立ち：さわりなし\n待ち人：遅れて来たる\n学問：こつこつと励むべし",
+   zh:"出行：无碍。等的人：会来，但要迟一些。学业：应踏实努力。"},
+  {rank:"吉", cls:"kichi", body:"願い事：人の助けにて叶う\n健康：養生すれば良し\n争い事：避けるが吉",
+   zh:"愿望：借他人之力可成。健康：注意保养则安。争执：避开为吉。"},
+  {rank:"吉", cls:"kichi", body:"縁談：良し。ただし高望みは禁物\n商い：ほどほどに利あり\n失せ物：西の方にあり",
+   zh:"姻缘：好。但不可要求过高。生意：适度经营有利。失物：在西边。"},
+  {rank:"凶", cls:"kyo", body:"願い事：叶いがたし。時を待て\n病：長引く恐れあり\n慎め",
+   zh:"愿望：难以实现，等待时机。疾病：恐会拖延。凡事谨慎。"},
+  {rank:"凶", cls:"kyo", body:"旅立ち：見合わせるべし\n失せ物：出でがたし\n心静かに過ごせ",
+   zh:"出行：应暂缓。失物：难寻。静心度日。"},
+  {rank:"凶", cls:"kyo", body:"待ち人：来たらず\n争い事：負けなり\n耐えて春を待て",
+   zh:"等的人：不会来。争执：会输。忍耐，等待春天。"}
+];
+// 大吉20% / 吉50% / 凶30%（浅草寺传统：凶签就是多）
+const OMIKUJI_WEIGHTS = [
+  {idx:[0,1,2], w:20},
+  {idx:[3,4,5,6], w:50},
+  {idx:[7,8,9], w:30}
+];
+
+/* =====================================================
+   STORAGE  (window.storage -> localStorage -> memory)
+===================================================== */
+const SAVE_KEY = "asakusa-meguri-save";
+let state = { learned:{}, cleared:{}, gold:{}, qdone:{}, omikuji:null, eggTaps:{}, seenGuide:false };
+
+async function loadState(){
+  if (window.storage) {
+    try {
+      const r = await window.storage.get(SAVE_KEY);
+      if (r && r.value) { state = Object.assign(state, JSON.parse(r.value)); return; }
+    } catch(e){ /* key missing or unavailable */ }
+  }
+  try {
+    const v = localStorage.getItem(SAVE_KEY);
+    if (v) state = Object.assign(state, JSON.parse(v));
+  } catch(e){}
+}
+async function saveState(){
+  const v = JSON.stringify(state);
+  if (window.storage) {
+    try { await window.storage.set(SAVE_KEY, v); return; } catch(e){}
+  }
+  try { localStorage.setItem(SAVE_KEY, v); } catch(e){}
+}
+
+/* =====================================================
+   TTS
+===================================================== */
+let jaVoice = null;
+function findJaVoice(){
+  if (!("speechSynthesis" in window)) return null;
+  const vs = speechSynthesis.getVoices();
+  if (!vs || !vs.length) return null;
+  const ja = vs.filter(v=>v.lang && v.lang.replace("_","-").toLowerCase().indexOf("ja")===0);
+  if (!ja.length) return null;
+  const pref = ja.find(v=>/Kyoko|Otoya|Google\s*日本語|Google Japanese|Sayaka|Haruka/i.test(v.name));
+  return pref || ja[0];
+}
+function ensureVoice(){ if(!jaVoice) jaVoice = findJaVoice(); return jaVoice; }
+if ("speechSynthesis" in window){
+  speechSynthesis.onvoiceschanged = ()=>{ jaVoice = findJaVoice(); };
+  let _vtries = 0;
+  const _vt = setInterval(()=>{ if (ensureVoice() || ++_vtries>12) clearInterval(_vt); }, 300);
+}
+function speak(text, rate){
+  if (!("speechSynthesis" in window)){ toast("这个浏览器不支持语音朗读"); return; }
+  const v = ensureVoice();
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "ja-JP";
+  if (v){ u.voice = v; }
+  else { toast("没找到日语语音包：请在手机系统设置里添加日语语音，否则可能用中文声音朗读"); }
+  u.rate = rate || 0.85;
+  speechSynthesis.speak(u);
+}
+let _toastT = null;
+function toast(msg){
+  let t = document.getElementById("toast");
+  if (!t){
+    t = document.createElement("div");
+    t.id = "toast";
+    t.style.cssText = "position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#33302B;color:#FBF3E2;padding:10px 16px;border-radius:10px;font-size:12px;z-index:99;max-width:80%;text-align:center;line-height:1.5;box-shadow:0 4px 12px rgba(0,0,0,.3);display:none";
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.display = "block";
+  clearTimeout(_toastT);
+  _toastT = setTimeout(()=>{ t.style.display = "none"; }, 3400);
+}
+
+/* =====================================================
+   HELPERS
+===================================================== */
+const $ = s => document.querySelector(s);
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (html !== undefined) e.innerHTML = html;
+  return e;
+}
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function shuffledOptions(q){
+  const idx = q.options.map((_,i)=>i);
+  for (let i=idx.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [idx[i],idx[j]] = [idx[j],idx[i]];
+  }
+  return idx;
+}
+function quizHotspots(scene){ return scene.hotspots.filter(h=>h.learn); }
+function totalStamps(){ return SCENES.reduce((n,s)=>n+quizHotspots(s).length,0); }
+function stampCount(){ return Object.keys(state.cleared).length; }
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+let currentScene = null;
+function show(viewId){
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  $("#"+viewId).classList.add("active");
+  $("#btn-back").style.display = (viewId==="view-map") ? "none" : "flex";
+  window.scrollTo(0,0);
+}
+$("#btn-back").addEventListener("click", ()=>{ renderMap(); show("view-map"); });
+$("#btn-stamps").addEventListener("click", ()=>{ renderStamps(); show("view-stamps"); });
+
+/* =====================================================
+   MAP
+===================================================== */
+const NODE_POS = {
+  kaminarimon:{x:50,y:88}, nakamise:{x:50,y:60}, hondo:{x:50,y:30},
+  denboin:{x:20,y:45}, sumida:{x:81,y:52},
+  hoppy:{x:20,y:17}, station:{x:80,y:88}
+};
+function chapterAllGold(ch){
+  return SCENES.filter(s=>s.chapter===ch)
+    .every(s=>quizHotspots(s).every(h=>state.gold[h.id]));
+}
+function chapterUnlocked(ch){
+  if (ch===1) return true;
+  return chapterAllGold(ch-1);
+}
+function renderMap(){
+  const canvas = $("#map-canvas");
+  canvas.querySelectorAll(".lantern-node").forEach(n=>n.remove());
+  SCENES.forEach(sc=>{
+    const hs = quizHotspots(sc);
+    const goldN = hs.filter(h=>state.gold[h.id]).length;
+    const unlocked = chapterUnlocked(sc.chapter);
+    const small = sc.chapter!==1;
+    const node = el("div","lantern-node"+(small?" small":"")+(unlocked?"":" locked")+(goldN===hs.length&&unlocked?" done":""));
+    node.style.left = NODE_POS[sc.id].x+"%";
+    node.style.top = NODE_POS[sc.id].y+"%";
+    node.innerHTML = '<div class="lamp"><span class="nm">'+sc.short+'</span>'+
+      (unlocked?'':'<span class="ribbon">'+sc.chapter+'章</span>')+'</div>'+
+      (unlocked?('<div class="cnt">金 '+goldN+' / '+hs.length+'</div>'):'<div class="cnt">🔒</div>');
+    node.addEventListener("click", ()=>{
+      if (!unlocked){ toast("第"+(sc.chapter-1)+"章の全部の地点で金印を集めると、ここが点亮されます"); return; }
+      openScene(sc);
+    });
+    canvas.appendChild(node);
+  });
+  $("#stamp-count").textContent = stampCount()+"/"+totalStamps();
+}
+
+/* =====================================================
+   SCENES (SVG art)
+===================================================== */
+const SVG_ART = {
+s1: `
+<svg viewBox="0 0 390 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="300" fill="#DCEBEF"/>
+  <circle cx="330" cy="46" r="24" fill="#F3D9A6" opacity=".9"/>
+  <ellipse cx="70" cy="52" rx="44" ry="13" fill="#fff" opacity=".8"/>
+  <ellipse cx="250" cy="34" rx="36" ry="10" fill="#fff" opacity=".7"/>
+  <rect y="230" width="390" height="70" fill="#CFC3A6"/>
+  <rect y="228" width="390" height="4" fill="#B4A98D"/>
+  <!-- gate -->
+  <rect x="70" y="70" width="26" height="160" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <rect x="294" y="70" width="26" height="160" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <rect x="52" y="52" width="286" height="24" rx="4" fill="#A32E2C" stroke="#33302B" stroke-width="3"/>
+  <path d="M40 54 L195 22 L350 54 Z" fill="#3B4A45" stroke="#33302B" stroke-width="3"/>
+  <rect x="120" y="80" width="150" height="12" fill="#A32E2C" stroke="#33302B" stroke-width="2.5"/>
+  <!-- big lantern -->
+  <path d="M150 96 C 138 120, 138 176, 152 198 C 178 210, 212 210, 238 198 C 252 176, 252 120, 240 96 C 212 86, 178 86, 150 96 Z"
+        fill="#C73E3A" stroke="#33302B" stroke-width="3.5"/>
+  <path d="M150 108 C 240 100, 240 100, 240 108 M146 128 H244 M144 150 H246 M146 172 H244 M152 190 H238"
+        stroke="#8E2624" stroke-width="2" fill="none" opacity=".7"/>
+  <rect x="172" y="86" width="46" height="10" rx="3" fill="#33302B"/>
+  <rect x="172" y="200" width="46" height="10" rx="3" fill="#33302B"/>
+  <text x="195" y="138" text-anchor="middle" font-size="34" fill="#FFFDF7" font-family="serif" font-weight="700">雷</text>
+  <text x="195" y="180" text-anchor="middle" font-size="34" fill="#FFFDF7" font-family="serif" font-weight="700">門</text>
+  <!-- rickshaw -->
+  <g stroke="#33302B" stroke-width="3" fill="none">
+    <circle cx="66" cy="248" r="24" fill="#FFFDF7"/>
+    <circle cx="66" cy="248" r="4" fill="#33302B"/>
+    <path d="M66 224 L66 272 M46 262 L86 234 M46 234 L86 262 M90 248 H42"/>
+  </g>
+  <path d="M44 210 C 42 232, 58 240, 82 238 L96 238 C 104 224, 100 204, 84 198 C 64 192, 48 198, 44 210 Z"
+        fill="#26466D" stroke="#33302B" stroke-width="3"/>
+  <path d="M92 240 L128 252" stroke="#33302B" stroke-width="3.5"/>
+  <!-- pigeons -->
+  <g id="pigeon-group">
+    <g class="bird"><ellipse cx="268" cy="252" rx="13" ry="9" fill="#9FA8B5" stroke="#33302B" stroke-width="2"/><circle cx="280" cy="246" r="6" fill="#9FA8B5" stroke="#33302B" stroke-width="2"/><circle cx="282" cy="245" r="1.3" fill="#33302B"/></g>
+    <g class="bird"><ellipse cx="304" cy="262" rx="12" ry="8" fill="#B7BEC9" stroke="#33302B" stroke-width="2"/><circle cx="315" cy="256" r="5.5" fill="#B7BEC9" stroke="#33302B" stroke-width="2"/><circle cx="317" cy="255" r="1.2" fill="#33302B"/></g>
+    <g class="bird"><ellipse cx="248" cy="270" rx="11" ry="7.5" fill="#8C96A6" stroke="#33302B" stroke-width="2"/><circle cx="258" cy="265" r="5" fill="#8C96A6" stroke="#33302B" stroke-width="2"/><circle cx="260" cy="264" r="1.1" fill="#33302B"/></g>
+  </g>
+</svg>`,
+s2: `
+<svg viewBox="0 0 390 330" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="330" fill="#F3E2C2"/>
+  <path d="M120 330 L165 60 L225 60 L270 330 Z" fill="#CFC3A6" stroke="#B4A98D" stroke-width="2"/>
+  <!-- left shops -->
+  <path d="M0 60 L120 330 L0 330 Z" fill="#E8D5AE"/>
+  <path d="M390 60 L270 330 L390 330 Z" fill="#E8D5AE"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="8" y="70" width="104" height="70" fill="#FFFDF7"/>
+    <rect x="8" y="60" width="104" height="18" fill="#C73E3A"/>
+    <rect x="8" y="150" width="120" height="72" fill="#FFFDF7"/>
+    <rect x="8" y="140" width="120" height="18" fill="#26466D"/>
+    <rect x="8" y="234" width="136" height="76" fill="#FFFDF7"/>
+    <rect x="8" y="224" width="136" height="18" fill="#7A8450"/>
+    <rect x="278" y="70" width="104" height="70" fill="#FFFDF7"/>
+    <rect x="278" y="60" width="104" height="18" fill="#26466D"/>
+    <rect x="262" y="150" width="120" height="72" fill="#FFFDF7"/>
+    <rect x="262" y="140" width="120" height="18" fill="#C73E3A"/>
+    <rect x="246" y="234" width="136" height="76" fill="#FFFDF7"/>
+    <rect x="246" y="224" width="136" height="18" fill="#D9A441"/>
+  </g>
+  <g font-family="serif" font-size="13" fill="#33302B">
+    <text x="60" y="112" text-anchor="middle">人形焼</text>
+    <text x="68" y="192" text-anchor="middle">着物</text>
+    <text x="76" y="278" text-anchor="middle">扇子</text>
+    <text x="330" y="112" text-anchor="middle">招き猫</text>
+    <text x="322" y="192" text-anchor="middle">天ぷら</text>
+    <text x="314" y="278" text-anchor="middle">団子</text>
+  </g>
+  <!-- lantern string -->
+  <path d="M0 40 C 130 66, 260 66, 390 40" stroke="#33302B" stroke-width="2" fill="none"/>
+  <g stroke="#33302B" stroke-width="2">
+    <ellipse cx="70" cy="58" rx="11" ry="14" fill="#C73E3A"/>
+    <ellipse cx="150" cy="66" rx="11" ry="14" fill="#FFFDF7"/>
+    <ellipse cx="240" cy="66" rx="11" ry="14" fill="#C73E3A"/>
+    <ellipse cx="320" cy="58" rx="11" ry="14" fill="#FFFDF7"/>
+  </g>
+  <!-- distant gate -->
+  <rect x="165" y="76" width="60" height="8" fill="#A32E2C" stroke="#33302B" stroke-width="2"/>
+  <rect x="170" y="84" width="7" height="40" fill="#C73E3A" stroke="#33302B" stroke-width="2"/>
+  <rect x="213" y="84" width="7" height="40" fill="#C73E3A" stroke="#33302B" stroke-width="2"/>
+  <!-- sleeping cat -->
+  <g id="cat-group">
+    <ellipse cx="195" cy="306" rx="26" ry="14" fill="#E8A93C" stroke="#33302B" stroke-width="2.5"/>
+    <circle cx="216" cy="298" r="9" fill="#E8A93C" stroke="#33302B" stroke-width="2.5"/>
+    <path d="M210 291 L208 284 L214 288 Z M221 290 L224 283 L226 290 Z" fill="#E8A93C" stroke="#33302B" stroke-width="2"/>
+    <path d="M214 299 Q216 301 218 299" stroke="#33302B" stroke-width="1.5" fill="none"/>
+    <path d="M172 310 Q160 316 168 300" stroke="#33302B" stroke-width="2.5" fill="none" id="cat-tail"/>
+  </g>
+</svg>`,
+s3: `
+<svg viewBox="0 0 390 330" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="330" fill="#DCEBEF"/>
+  <circle cx="60" cy="44" r="20" fill="#F3D9A6" opacity=".9"/>
+  <rect y="270" width="390" height="60" fill="#CFC3A6"/>
+  <!-- pagoda -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="38" y="180" width="44" height="90" fill="#C73E3A"/>
+    <path d="M22 184 L60 160 L98 184 Z" fill="#3B4A45"/>
+    <rect x="42" y="150" width="36" height="20" fill="#C73E3A"/>
+    <path d="M28 152 L60 132 L92 152 Z" fill="#3B4A45"/>
+    <rect x="46" y="122" width="28" height="18" fill="#C73E3A"/>
+    <path d="M34 124 L60 106 L86 124 Z" fill="#3B4A45"/>
+    <rect x="50" y="96" width="20" height="16" fill="#C73E3A"/>
+    <path d="M40 98 L60 82 L80 98 Z" fill="#3B4A45"/>
+    <line x1="60" y1="82" x2="60" y2="62"/>
+  </g>
+  <!-- main hall -->
+  <g stroke="#33302B" stroke-width="3">
+    <path d="M110 96 L195 56 L280 96 C 250 88, 140 88, 110 96 Z" fill="#3B4A45"/>
+    <rect x="126" y="94" width="138" height="64" fill="#C73E3A"/>
+    <rect x="140" y="106" width="26" height="52" fill="#7B4A2D"/>
+    <rect x="182" y="106" width="26" height="52" fill="#7B4A2D"/>
+    <rect x="224" y="106" width="26" height="52" fill="#7B4A2D"/>
+    <path d="M118 158 H272 L282 172 H108 Z" fill="#B4A98D"/>
+    <path d="M124 172 H266 L276 186 H114 Z" fill="#CFC3A6"/>
+    <path d="M130 186 H260 L270 200 H120 Z" fill="#B4A98D"/>
+  </g>
+  <!-- incense burner -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <ellipse cx="102" cy="236" rx="34" ry="12" fill="#5B6668"/>
+    <path d="M68 236 C 68 214, 136 214, 136 236 L130 254 C 118 260, 86 260, 74 254 Z" fill="#6E797B"/>
+    <path d="M78 222 L72 210 M126 222 L132 210" stroke-width="3"/>
+  </g>
+  <g fill="#fff" opacity=".55">
+    <ellipse class="smoke smoke1" cx="96" cy="200" rx="9" ry="13"/>
+    <ellipse class="smoke smoke2" cx="110" cy="184" rx="7" ry="11"/>
+    <ellipse class="smoke smoke3" cx="100" cy="166" rx="6" ry="9"/>
+  </g>
+  <!-- omikuji stand -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="296" y="150" width="72" height="14" fill="#A32E2C"/>
+    <rect x="300" y="164" width="10" height="76" fill="#7B4A2D"/>
+    <rect x="354" y="164" width="10" height="76" fill="#7B4A2D"/>
+    <rect x="306" y="176" width="52" height="40" fill="#FFFDF7"/>
+    <text x="332" y="202" text-anchor="middle" font-family="serif" font-size="14" fill="#33302B" stroke="none">御籤</text>
+    <rect x="310" y="222" width="44" height="24" fill="#8B5A2B"/>
+  </g>
+  <style>
+    .smoke{animation:rise 4s ease-in-out infinite}
+    .smoke2{animation-delay:1.3s}
+    .smoke3{animation-delay:2.6s}
+    @keyframes rise{0%{transform:translateY(8px);opacity:.0}30%{opacity:.55}100%{transform:translateY(-26px);opacity:0}}
+    @media (prefers-reduced-motion: reduce){.smoke{animation:none}}
+  </style>
+</svg>`,
+s4: `
+<svg viewBox="0 0 390 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="300" fill="#EFE3C8"/>
+  <rect y="240" width="390" height="60" fill="#B8AB8C"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="10" y="70" width="140" height="170" fill="#4A3A2C"/>
+    <rect x="24" y="100" width="112" height="90" fill="#FBF3E2"/>
+    <path d="M0 74 L80 44 L160 74 Z" fill="#3B4A45"/>
+    <rect x="240" y="70" width="140" height="170" fill="#4A3A2C"/>
+    <rect x="254" y="100" width="112" height="90" fill="#FBF3E2"/>
+    <path d="M230 74 L310 44 L390 74 Z" fill="#3B4A45"/>
+    <rect x="160" y="96" width="70" height="144" fill="#5A4634"/>
+    <rect x="170" y="120" width="50" height="70" fill="#FBF3E2"/>
+    <path d="M152 100 L195 72 L238 100 Z" fill="#3B4A45"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2">
+    <rect x="30" y="76" width="100" height="18" fill="#26466D"/>
+    <rect x="260" y="76" width="100" height="18" fill="#C73E3A"/>
+    <rect x="172" y="100" width="46" height="14" fill="#7A8450"/>
+  </g>
+  <g font-family="serif" font-size="13" fill="#FFFDF7">
+    <text x="80" y="89" text-anchor="middle">蕎麦</text>
+    <text x="310" y="89" text-anchor="middle">芋ようかん</text>
+    <text x="195" y="111" text-anchor="middle" font-size="10">手ぬぐい</text>
+  </g>
+  <g stroke="#33302B" stroke-width="2">
+    <ellipse cx="316" cy="40" rx="12" ry="10" fill="#8B6F4B"/>
+    <circle cx="326" cy="33" r="6.5" fill="#8B6F4B"/>
+    <path d="M322 28 L321 23 L325 26 Z M329 27 L332 22 L333 27 Z" fill="#8B6F4B"/>
+    <circle cx="325" cy="32" r="1" fill="#33302B"/>
+    <circle cx="329" cy="32" r="1" fill="#33302B"/>
+  </g>
+  <path d="M0 258 H390" stroke="#9A8E70" stroke-width="2" stroke-dasharray="10 8"/>
+</svg>`,
+s5: `
+<svg viewBox="0 0 390 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="300" fill="#D8ECF2"/>
+  <circle cx="52" cy="46" r="20" fill="#F3D9A6" opacity=".9"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="298" y="30" width="16" height="120" fill="#B9C4CC"/>
+    <path d="M290 150 L322 150 L318 96 L294 96 Z" fill="#CBD5DB"/>
+    <path d="M306 30 L306 14" stroke-width="3"/>
+    <path d="M296 60 H316 M294 84 H318 M292 112 H320" stroke-width="1.5"/>
+    <rect x="236" y="120" width="44" height="60" fill="#F5C518"/>
+    <path d="M236 120 C 244 100, 272 100, 280 120 Z" fill="#F5C518"/>
+  </g>
+  <rect y="180" width="390" height="120" fill="#7FA8C9"/>
+  <path d="M0 180 H390" stroke="#33302B" stroke-width="2.5"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M0 200 C 100 168, 290 168, 390 200" fill="none" stroke-width="5" stroke="#C73E3A"/>
+    <path d="M40 192 V240 M130 178 V252 M260 178 V252 M350 192 V240" stroke="#A32E2C" stroke-width="4"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2">
+    <path d="M60 262 L84 250 L150 250 L158 262 C 130 270, 88 270, 60 262 Z" fill="#FFFDF7"/>
+    <rect x="96" y="238" width="40" height="14" fill="#26466D"/>
+  </g>
+  <g fill="#fff" stroke="#33302B" stroke-width="1.5">
+    <path d="M300 216 q6 -7 12 0 q6 -7 12 0" fill="none"/>
+    <path d="M60 96 q5 -6 10 0 q5 -6 10 0" fill="none"/>
+  </g>
+  <g stroke="#E8A7B8" stroke-width="0" fill="#F2BFCB">
+    <circle cx="30" cy="150" r="14"/><circle cx="52" cy="140" r="12"/><circle cx="18" cy="134" r="10"/>
+    <circle cx="366" cy="150" r="13"/><circle cx="380" cy="136" r="10"/>
+  </g>
+  <path d="M30 164 V180 M366 164 V180" stroke="#7B4A2D" stroke-width="4"/>
+</svg>`,
+s6: `
+<svg viewBox="0 0 390 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="300" fill="#3A3A52"/>
+  <rect y="244" width="390" height="56" fill="#55555F"/>
+  <g stroke="#1E1E30" stroke-width="2.5">
+    <rect x="8" y="70" width="150" height="174" fill="#5A4634"/>
+    <rect x="20" y="120" width="126" height="80" fill="#F7E9C8"/>
+    <rect x="20" y="96" width="126" height="22" fill="#26466D"/>
+    <rect x="232" y="70" width="150" height="174" fill="#5A4634"/>
+    <rect x="244" y="120" width="126" height="80" fill="#F7E9C8"/>
+    <rect x="244" y="96" width="126" height="22" fill="#C73E3A"/>
+  </g>
+  <g font-family="serif" fill="#FFFDF7">
+    <text x="83" y="112" text-anchor="middle" font-size="13">居酒屋</text>
+    <text x="307" y="112" text-anchor="middle" font-size="13">やきとり</text>
+  </g>
+  <rect x="166" y="26" width="58" height="30" rx="4" fill="#F7E9C8" stroke="#1E1E30" stroke-width="2.5"/>
+  <text x="195" y="46" text-anchor="middle" font-family="serif" font-size="12" fill="#C73E3A">ホッピー</text>
+  <g stroke="#1E1E30" stroke-width="2">
+    <ellipse cx="60" cy="228" rx="10" ry="13" fill="#E8524A"/>
+    <ellipse cx="140" cy="228" rx="10" ry="13" fill="#E8524A"/>
+    <ellipse cx="250" cy="228" rx="10" ry="13" fill="#E8524A"/>
+    <ellipse cx="330" cy="228" rx="10" ry="13" fill="#E8524A"/>
+  </g>
+  <g fill="#F7E9C8" opacity=".85">
+    <circle cx="60" cy="224" r="4"/><circle cx="140" cy="224" r="4"/>
+    <circle cx="250" cy="224" r="4"/><circle cx="330" cy="224" r="4"/>
+  </g>
+  <g stroke="#1E1E30" stroke-width="2">
+    <path d="M180 210 C 178 226, 190 232, 206 230 L214 230 C 220 220, 216 206, 204 202 C 190 198, 182 202, 180 210 Z" fill="#8B96A6"/>
+    <path d="M188 196 q3 -10 -2 -18 M198 196 q3 -10 -2 -18" fill="none" stroke="#C9CFD8"/>
+  </g>
+</svg>`,
+s7: `
+<svg viewBox="0 0 390 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="300" fill="#E9E4D8"/>
+  <rect y="70" width="390" height="10" fill="#C73E3A"/>
+  <rect y="230" width="390" height="70" fill="#B8B2A2"/>
+  <rect y="226" width="390" height="6" fill="#F5C518" stroke="#33302B" stroke-width="1.5"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="14" y="110" width="64" height="100" rx="4" fill="#DDE3E6"/>
+    <rect x="22" y="120" width="48" height="30" fill="#26466D"/>
+    <rect x="22" y="158" width="48" height="40" fill="#F7E9C8"/>
+    <rect x="96" y="110" width="64" height="100" rx="4" fill="#DDE3E6"/>
+    <rect x="104" y="120" width="48" height="30" fill="#26466D"/>
+    <rect x="104" y="158" width="48" height="40" fill="#F7E9C8"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="196" y="120" width="14" height="92" fill="#8C96A6"/>
+    <rect x="238" y="120" width="14" height="92" fill="#8C96A6"/>
+    <path d="M196 140 H252" stroke="#C73E3A" stroke-width="6"/>
+  </g>
+  <rect x="188" y="92" width="72" height="20" rx="3" fill="#26466D" stroke="#33302B" stroke-width="2"/>
+  <text x="224" y="106" text-anchor="middle" font-family="serif" font-size="11" fill="#FFFDF7">改札口</text>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="286" y="238" width="96" height="52" rx="6" fill="#7FA8C9"/>
+    <rect x="294" y="248" width="80" height="24" fill="#DDE9F0"/>
+    <circle cx="306" cy="284" r="0"/>
+    <path d="M286 238 C 296 230, 372 230, 382 238" fill="#7FA8C9"/>
+    <rect x="300" y="252" width="16" height="16" fill="#F7E9C8" stroke-width="1.5"/>
+    <rect x="352" y="252" width="16" height="16" fill="#F7E9C8" stroke-width="1.5"/>
+  </g>
+  <text x="334" y="226" text-anchor="middle" font-family="serif" font-size="10" fill="#33302B">▶ 電車がまいります</text>
+  <text x="82" y="102" text-anchor="middle" font-family="serif" font-size="11" fill="#33302B">きっぷうりば</text>
+</svg>`
+};
+
+
+function openScene(sc){
+  currentScene = sc;
+  $("#scene-title").textContent = sc.name;
+  const stage = $("#scene-stage");
+  stage.innerHTML = SVG_ART[sc.svg] + '<div id="egg-bubble"></div>';
+  sc.hotspots.forEach(h=>{
+    const spot = el("button","spot"+(h.egg?" egg":""));
+    if (state.gold[h.id]) spot.classList.add("gold");
+    else if (state.cleared[h.id]) spot.classList.add("cleared");
+    else if (state.learned[h.id]) spot.classList.add("learned");
+    spot.style.left = h.x+"%";
+    spot.style.top = h.y+"%";
+    spot.innerHTML = '<span class="dot"></span><span class="tag">'+h.name+'</span>';
+    spot.addEventListener("click", ()=>tapHotspot(h, spot));
+    stage.appendChild(spot);
+  });
+  updateSceneProg();
+  show("view-scene");
+}
+function updateSceneProg(){
+  const hs = quizHotspots(currentScene);
+  const done = hs.filter(h=>state.gold[h.id]).length;
+  $("#scene-prog").textContent = "金印 "+done+" / "+hs.length;
+  $("#stamp-count").textContent = stampCount()+"/"+totalStamps();
+}
+
+/* =====================================================
+   HOTSPOT TAP
+===================================================== */
+function tapHotspot(h, spotEl){
+  if (h.egg) return tapEgg(h, spotEl);
+  if (h.mikuji) return openOmikuji();
+  if (!state.learned[h.id]) openLearn(h, false);
+  else openQuiz(h);
+}
+
+/* ---------- easter eggs ---------- */
+function tapEgg(h, spotEl){
+  state.eggTaps[h.id] = (state.eggTaps[h.id]||0)+1;
+  const n = state.eggTaps[h.id];
+  const bubble = $("#egg-bubble");
+  bubble.style.left = h.x+"%";
+  bubble.style.top = (h.y-6)+"%";
+  bubble.textContent = (n>=h.eggFinalAt) ? h.eggFinal : h.eggLines[(n-1)%h.eggLines.length];
+  bubble.style.display = "block";
+  clearTimeout(bubble._t);
+  bubble._t = setTimeout(()=>{ bubble.style.display="none"; }, 1800);
+  // animation
+  if (h.id==="pigeons"){
+    const g = $("#pigeon-group");
+    if (g){
+      g.style.transition = "transform .6s ease";
+      g.style.transform = "translateY(-34px)";
+      setTimeout(()=>{ g.style.transform="translateY(0)"; }, 650);
+    }
+  }
+  if (h.id==="cat"){
+    const tail = $("#cat-tail");
+    if (tail){
+      tail.setAttribute("d", n%2 ? "M172 310 Q158 300 170 294" : "M172 310 Q160 316 168 300");
+    }
+  }
+  saveState();
+}
+
+/* =====================================================
+   BOTTOM SHEET
+===================================================== */
+function openSheet(html){
+  $("#sheet-content").innerHTML = html;
+  $("#sheet-mask").style.display = "block";
+  requestAnimationFrame(()=>$("#sheet").classList.add("open"));
+}
+function closeSheet(){
+  $("#sheet").classList.remove("open");
+  $("#sheet-mask").style.display = "none";
+  if ("speechSynthesis" in window) speechSynthesis.cancel();
+}
+$("#sheet-mask").addEventListener("click", closeSheet);
+
+/* ---------- learn card ---------- */
+function openLearn(h, isReview){
+  let html = '<div class="sheet-eyebrow">学習カード</div>' +
+    '<div class="sheet-title">'+h.name+'</div>';
+  h.learn.words.forEach(w=>{
+    html += '<div class="word-row">'+
+      '<div class="w-main"><div class="w-kanji">'+w.jp+'</div>'+
+      '<div class="w-kana">'+w.kana+' · '+w.romaji+'</div>'+
+      '<div class="w-zh">'+w.zh+'</div></div>'+
+      '<button class="btn-tts" data-say="'+w.kana+'">🔊</button></div>';
+  });
+  html += '<div class="learn-note"><div class="n-ja">'+h.learn.noteJa+'</div>'+
+    '<div class="n-zh" style="color:#26466D">'+h.learn.noteRomaji+'</div>'+
+    '<div class="n-zh">'+h.learn.noteZh+'</div>'+
+    '<div class="n-play"><button class="btn-tts" data-say="'+h.learn.noteKana+'">🔊</button></div></div>';
+  if (isReview){
+    html += '<button class="btn-main" id="btn-to-quiz">去做题</button>';
+  } else {
+    html += '<button class="btn-main" id="btn-learned">记住了</button>';
+  }
+  openSheet(html);
+  bindTts();
+  if (isReview){
+    $("#btn-to-quiz").addEventListener("click", ()=>openQuiz(h));
+  } else {
+    $("#btn-learned").addEventListener("click", async ()=>{
+      state.learned[h.id] = true;
+      await saveState();
+      closeSheet();
+      refreshSpots();
+    });
+  }
+}
+function bindTts(){
+  document.querySelectorAll(".btn-tts").forEach(b=>{
+    if (b.dataset.bound) return;
+    b.dataset.bound = "1";
+    b.addEventListener("click", ()=>speak(b.dataset.say));
+  });
+}
+function refreshSpots(){
+  if (currentScene) openScene(currentScene);
+}
+
+/* ---------- quiz ---------- */
+function shuffleArr(a){
+  for (let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+function openQuiz(h){
+  const pool = h.questions;
+  const doneSet = state.qdone[h.id] || {};
+  const undone = shuffleArr(pool.map((_,i)=>i).filter(i=>!doneSet[i]));
+  const doneIdx = shuffleArr(pool.map((_,i)=>i).filter(i=>doneSet[i]));
+  const want = Math.min(3, pool.length);
+  const picks = undone.slice(0, want);
+  let di = 0;
+  while (picks.length < want && di < doneIdx.length){ picks.push(doneIdx[di++]); }
+  const run = { qi:picks, i:0, wrong:0, order:picks.map(pi=>shuffledOptions(pool[pi])) };
+  renderQuestion(h, run);
+}
+function renderQuestion(h, run){
+  const q = h.questions[run.qi[run.i]];
+  const ord = run.order[run.i];
+  let html = '<div class="sheet-eyebrow">'+h.name+'</div>';
+  html += '<div class="quiz-prog">'+run.qi.map((_,k)=>
+    '<i class="'+(k<run.i?"done":k===run.i?"on":"")+'"></i>').join("")+'</div>';
+
+  if (q.type==="listen"){
+    html += '<div class="q-text">听一遍，选出正确的意思：</div>'+
+      '<div class="q-listen"><button class="btn-tts" data-say="'+(q.ttsKana||q.tts)+'">🔊</button>'+
+      '<span class="hint">可以反复播放 · 真实语速</span></div>';
+  } else {
+    html += '<div class="q-text">'+
+      (q.type==="read" ? '<span class="jp">'+q.prompt+'</span>' : q.prompt)+'</div>';
+  }
+  html += '<div class="opts">'+ord.map(oi=>
+    '<button class="opt'+((q.jpOptions||q.type==="read")?' jp':'')+'" data-oi="'+oi+'">'+q.options[oi]+'</button>').join("")+'</div>';
+  html += '<div class="q-explain" id="q-explain"></div>';
+  html += '<button class="btn-main" id="btn-next" style="display:none"></button>';
+  html += '<button class="link-plain" id="btn-review" style="margin-top:8px">复习学习卡</button>';
+
+  openSheet(html);
+  bindTts();
+  if (q.type==="listen") speak(q.ttsKana||q.tts);
+
+  document.querySelectorAll(".opt").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const chosen = Number(btn.dataset.oi);
+      const nextBtn = $("#btn-next");
+      document.querySelectorAll(".opt").forEach(b=>{
+        b.disabled = true;
+        if (Number(b.dataset.oi)===q.answer) b.classList.add("correct");
+      });
+      if (chosen!==q.answer){
+        btn.classList.add("wrong");
+        run.wrong++;
+        nextBtn.dataset.retry = "1";
+        nextBtn.textContent = "再答一次（答对才能过）";
+      } else {
+        if (!state.qdone[h.id]) state.qdone[h.id] = {};
+        state.qdone[h.id][run.qi[run.i]] = true;
+        await saveState();
+        nextBtn.dataset.retry = "";
+        nextBtn.textContent = (run.i<run.qi.length-1?"下一题":"看结果");
+      }
+      const ex = $("#q-explain");
+      let extra = "";
+      if (q.type==="listen"){
+        extra = '<span class="tr">「'+q.tts+'」</span>'+
+          '<span style="display:block;color:#26466D;font-size:12px;margin-bottom:6px">'+(q.ttsKana||"")+'</span>';
+      }
+      let sayAfter = null;
+      if (q.type==="read") sayAfter = q.options[q.answer];
+      if (q.phraseKana) sayAfter = q.phraseKana;
+      ex.innerHTML = extra + q.explain +
+        (sayAfter ? '<div style="margin-top:8px"><button class="btn-tts" data-say="'+sayAfter+'" style="width:34px;height:34px;font-size:14px">🔊</button> <span style="font-size:11px;color:#8a8272">听正确答案</span></div>' : '');
+      ex.style.display = "block";
+      bindTts();
+      nextBtn.style.display = "block";
+    });
+  });
+  $("#btn-next").addEventListener("click", ()=>{
+    if ($("#btn-next").dataset.retry){
+      run.order[run.i] = shuffledOptions(q);
+      renderQuestion(h, run);
+      return;
+    }
+    if (run.i < run.qi.length-1){ run.i++; renderQuestion(h, run); }
+    else finishQuiz(h, run);
+  });
+  $("#btn-review").addEventListener("click", ()=>openLearn(h, true));
+}
+async function finishQuiz(h, run){
+  const pool = h.questions;
+  const doneSet = state.qdone[h.id] || {};
+  const dcount = Object.keys(doneSet).length;
+  const nowGold = dcount >= pool.length;
+  const newGold = nowGold && !state.gold[h.id];
+  state.cleared[h.id] = true;
+  if (nowGold) state.gold[h.id] = true;
+  await saveState();
+  let html = '<div class="result-wrap">'+
+    '<div class="r-title">'+(nowGold?"金印達成！":"通関！")+'</div>'+
+    '<div class="r-sub">'+(nowGold ? "这里的题全部答完了，盖金印" :
+      ("本处题库已答完 "+dcount+" / "+pool.length+" 题<br>每次进来题目会换，把剩下的答完就是金印"))+'</div>'+
+    '<div class="seal'+(nowGold?" gold":"")+'"><div class="s-inner"><span class="s-name">'+h.name+'</span></div></div>'+
+    (nowGold?'<span class="perfect-tag">金 印</span>':'')+
+    '</div>'+
+    '<button class="btn-main" id="btn-close-result">返回场景</button>'+
+    (!nowGold?'<button class="btn-ghost" id="btn-retry">继续做剩下的题</button>':'');
+  openSheet(html);
+  $("#btn-close-result").addEventListener("click", ()=>{
+    closeSheet(); refreshSpots();
+    if (newGold) checkChapter(h);
+  });
+  const retry = $("#btn-retry");
+  if (retry) retry.addEventListener("click", ()=>openQuiz(h));
+}
+function checkChapter(h){
+  const sc = SCENES.find(s=>s.hotspots.includes(h));
+  if (!sc) return;
+  if (!chapterAllGold(sc.chapter)) return;
+  if (sc.chapter < 3) showCongrats(sc.chapter);
+  else showFinale();
+}
+function overlayCard(inner){
+  let g = document.getElementById("ovl");
+  if (!g){
+    g = document.createElement("div");
+    g.id = "ovl";
+    document.body.appendChild(g);
+  }
+  g.innerHTML = '<div class="g-card">'+inner+'</div>';
+  g.style.display = "flex";
+  return g;
+}
+function showCongrats(ch){
+  const next = ch+1;
+  const nextNames = SCENES.filter(s=>s.chapter===next).map(s=>s.name).join("・");
+  const g = overlayCard(
+    '<div style="text-align:center;font-size:40px;margin-bottom:6px">🏮</div>'+
+    '<h3>第'+ch+'章 制覇！</h3>'+
+    '<p style="text-align:center;font-size:14px;line-height:1.8;margin-bottom:6px">'+
+    '这一章的每一个角落，你都拿到了金印。<br><b>おめでとうございます！</b></p>'+
+    '<p style="text-align:center;font-size:13px;color:#7c7566;line-height:1.7;margin-bottom:4px">'+
+    '地图上新点亮了：<br><b>'+nextNames+'</b></p>'+
+    '<button class="btn-main" id="btn-congrats-go">去看新地图</button>');
+  document.getElementById("btn-congrats-go").addEventListener("click", ()=>{
+    g.style.display = "none";
+    renderMap(); show("view-map");
+  });
+}
+function showFinale(){
+  const g = overlayCard(
+    '<div style="text-align:center;font-size:40px;margin-bottom:6px">🗺️</div>'+
+    '<h3>三章 全制覇！</h3>'+
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:8px">'+
+    '浅草一丁目的每一盏灯笼，都被你点亮了。<br>'+
+    '120道题、91个单词，全部收进了你的御朱印帳。<br><b>本当にすごいです！</b></p>'+
+    '<p style="text-align:center;font-size:14px;color:#C73E3A;font-weight:600;line-height:1.8;margin-bottom:4px">'+
+    '这张地图已经装不下你了——<br>该找你宝贝女儿给你画新地图啦 🎨</p>'+
+    '<button class="btn-main" id="btn-finale-close">まだまだ歩ける</button>');
+  document.getElementById("btn-finale-close").addEventListener("click", ()=>{
+    g.style.display = "none";
+    renderMap(); show("view-map");
+  });
+}
+
+/* =====================================================
+   OMIKUJI
+===================================================== */
+function drawOmikuji(excludeKyo){
+  const groups = excludeKyo
+    ? [{idx:[0,1,2], w:30},{idx:[3,4,5,6], w:70}]
+    : OMIKUJI_WEIGHTS;
+  let r = Math.random()*100, pick = groups[0];
+  for (const g of groups){ if (r < g.w){ pick = g; break; } r -= g.w; }
+  return pick.idx[Math.floor(Math.random()*pick.idx.length)];
+}
+function openOmikuji(){
+  const today = todayStr();
+  const drawn = state.omikuji && state.omikuji.date===today;
+  const prevWasKyo = state.omikuji && state.omikuji.date!==today && OMIKUJI[state.omikuji.idx].cls==="kyo";
+  let html = '<div class="sheet-eyebrow">毎日一回</div><div class="sheet-title">おみくじ</div>'+
+    '<div class="mikuji-box" id="mikuji-box"><div class="hole"></div><span class="label">御神籤</span></div>'+
+    '<div class="mikuji-slip" id="mikuji-slip"></div>';
+  if (drawn){
+    html += '<p class="mikuji-note">今天的签就是它了 · 明日また来てね</p>';
+  } else {
+    html += '<button class="btn-main" id="btn-draw">摇一支签</button>'+
+      '<p class="mikuji-note">每天一支，新的一天新的运气</p>';
+  }
+  openSheet(html);
+  if (drawn){ showSlip(state.omikuji.idx, true); }
+  else {
+    $("#btn-draw").addEventListener("click", async ()=>{
+      const box = $("#mikuji-box");
+      box.classList.add("shaking");
+      $("#btn-draw").style.display = "none";
+      setTimeout(async ()=>{
+        const idx = drawOmikuji(prevWasKyo);
+        state.omikuji = {date:today, idx:idx};
+        await saveState();
+        showSlip(idx, false);
+      }, 900);
+    });
+  }
+}
+function showSlip(idx, instant){
+  const f = OMIKUJI[idx];
+  const slip = $("#mikuji-slip");
+  slip.innerHTML = '<div class="m-rank '+f.cls+'">'+f.rank+'</div>'+
+    '<div class="m-body">'+f.body+'</div>'+
+    '<div class="m-zh" id="m-zh">'+f.zh+'</div>'+
+    '<button class="link-plain" id="btn-kaisetsu">解説（认输看中文）</button>'+
+    (f.cls==="kyo"?'<p class="mikuji-note">凶签系在树上留下就好，明天再来抽过</p>':'');
+  slip.style.display = "block";
+  if (instant) slip.style.animation = "none";
+  $("#btn-kaisetsu").addEventListener("click", function(){
+    $("#m-zh").style.display = "block";
+    this.style.display = "none";
+  });
+}
+
+/* =====================================================
+   STAMP BOOK
+===================================================== */
+function renderStamps(){
+  const grid = $("#stamp-grid");
+  grid.innerHTML = "";
+  let got = 0;
+  SCENES.forEach(sc=>{
+    quizHotspots(sc).forEach(h=>{
+      const has = !!state.cleared[h.id];
+      const gold = !!state.gold[h.id];
+      if (has) got++;
+      const cell = el("div","stamp-cell "+(has?("got"+(gold?" gold":"")):"empty"));
+      cell.innerHTML = '<div class="c-seal"><div class="c-inner"><span class="c-name">'+h.name+'</span></div></div>'+
+        '<div class="c-label">'+sc.short+(gold?' · 金':'')+'</div>';
+      grid.appendChild(cell);
+    });
+  });
+  $("#book-sub").textContent = "已集 "+got+" / "+totalStamps()+" 枚 · 答完一处全部题目得金印";
+}
+
+/* =====================================================
+   INIT
+===================================================== */
+(function bindHelp(){
+  const b = document.getElementById("btn-help");
+  if (b) b.addEventListener("click", ()=>showGuide(false));
+})();
+function showGuide(firstTime){
+  let g = document.getElementById("guide");
+  if (!g){
+    g = document.createElement("div");
+    g.id = "guide";
+    document.body.appendChild(g);
+  }
+  g.innerHTML = '<div class="g-card">'+
+    '<h3>遊び方 · 怎么玩</h3>'+
+    '<div class="g-step"><span class="g-ico">🏮</span><span>点地图上的<b>红灯笼</b>，走进一个区域。灰灯笼还在建，以后更新。</span></div>'+
+    '<div class="g-step"><span class="g-ico">🔴</span><span><b>红点</b>是新内容：先看学习卡，点 🔊 听发音，看完按「记住了」。</span></div>'+
+    '<div class="g-step"><span class="g-ico">🔵</span><span>变<b>蓝</b>之后再点它，开始做题：每次随机3题，答错当场重答。</span></div>'+
+    '<div class="g-step"><span class="g-ico">✨</span><span>每个地点藏着5道题，<b>全部答完</b>朱印就变金印。<b>一章集齐全部金印</b>，下一章的灯笼自动点亮。</span></div>'+
+    '<div class="g-step"><span class="g-ico">🎋</span><span><b>おみくじ</b>每天能抽一支新签；集到的朱印在右上角「印」里随时翻看。</span></div>'+
+    '<button class="btn-main" id="btn-guide-go">开始逛浅草</button></div>';
+  g.style.display = "flex";
+  document.getElementById("btn-guide-go").addEventListener("click", async ()=>{
+    g.style.display = "none";
+    if (firstTime){ state.seenGuide = true; await saveState(); }
+  });
+}
+(async function init(){
+  await loadState();
+  renderMap();
+  if (!state.seenGuide) showGuide(true);
+})();
+
+</script>
+</body>
+</html>
