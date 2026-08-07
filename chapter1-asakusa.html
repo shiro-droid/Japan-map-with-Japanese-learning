@@ -66,7 +66,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .map-head{text-align:center;margin-bottom:6px}
 .map-head h1{font-family:var(--serif);font-size:20px;letter-spacing:6px}
 .map-head p{font-size:11px;color:#6d675c;letter-spacing:2px;margin-top:3px}
-#map-canvas{position:relative;height:560px}
+#map-canvas{position:relative;height:940px}
 #map-canvas svg.path-bg{position:absolute;inset:0;width:100%;height:100%}
 .lantern-node{
   position:absolute;transform:translate(-50%,-50%);text-align:center;width:108px;
@@ -97,8 +97,8 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 }
 .lantern-node.locked .lamp .nm{color:#f2eee4;text-shadow:none}
 .lantern-node.locked .ribbon{
-  position:absolute;top:34px;left:50%;transform:translate(-50%,0) rotate(-8deg);
-  background:var(--ink);color:var(--paper);font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:2px;
+  position:absolute;top:5px;left:50%;transform:translate(-50%,0) rotate(-8deg);
+  background:var(--ink);color:var(--paper);font-size:9px;letter-spacing:1px;padding:1px 7px;border-radius:2px;
 }
 .lantern-node.small{width:88px}
 .lantern-node.small .lamp{width:56px;height:66px}
@@ -128,6 +128,15 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .spot .tag{font-size:10px;background:rgba(255,253,247,.92);border:1px solid #cfc4ab;border-radius:999px;
   padding:2px 8px;letter-spacing:1px;white-space:nowrap}
 .spot.egg .dot{background:var(--moss);box-shadow:0 0 0 3px rgba(122,132,80,.3);animation:none;opacity:.85}
+/* 文人碑 hotspot：方碑形，跟普通圆点区分 */
+.spot.bunjin .dot{width:15px;height:20px;border-radius:5px 5px 2px 2px;background:var(--shu);
+  border:2px solid var(--white);box-shadow:0 0 0 3px rgba(199,62,58,.35)}
+.spot.bunjin.learned .dot{background:var(--kon);box-shadow:0 0 0 3px rgba(38,70,109,.3)}
+.spot.bunjin.cleared .dot{background:var(--shu-deep);box-shadow:0 0 0 3px rgba(163,46,44,.35)}
+.spot.bunjin.gold .dot{background:var(--gold);box-shadow:0 0 0 3px rgba(217,164,65,.45)}
+.spot.bunjin .dot::after{content:"碑";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:var(--white);font-size:9px;font-family:var(--serif)}
+.spot.bunjin .tag{border-color:#b3aa96;background:rgba(251,243,226,.95)}
 .scene-tip{margin:12px 18px 0;font-size:12px;color:#8a8272;text-align:center;letter-spacing:1px}
 
 /* egg speech bubble */
@@ -168,6 +177,20 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .learn-note .n-zh{font-size:12px;color:#7c7566;margin-top:6px;line-height:1.6}
 .learn-note .n-play{margin-top:8px}
 .link-plain{font-size:12px;color:var(--kon);text-decoration:underline;padding:6px 0}
+
+/* 文人碑 card */
+.bunjin-tag{display:inline-block;font-size:11px;color:var(--kon);border:1px solid #c9d3e0;background:#F0F4F8;
+  border-radius:999px;padding:3px 11px;margin-bottom:12px;letter-spacing:1px}
+.bunjin-story{font-size:13px;line-height:1.9;color:#4a4640;margin-bottom:16px}
+.bunjin-quote{margin:0 0 4px;padding:16px 16px 14px;background:var(--paper);
+  border:1px solid #e4d9c0;border-left:4px solid var(--kon);border-radius:0 10px 10px 0}
+.bunjin-quote .q-jp{font-family:var(--serif);font-size:17px;line-height:1.9;letter-spacing:1px}
+.bunjin-quote .q-kana{font-size:12px;color:var(--kon);margin-top:8px;line-height:1.7}
+.bunjin-quote .q-zh{font-size:12.5px;color:#7c7566;margin-top:8px;line-height:1.7}
+.bunjin-quote .q-src{font-size:11px;color:#8a8272;text-align:right;margin-top:10px;letter-spacing:1px}
+.bunjin-quote .q-play{margin-top:10px}
+.bunjin-sep{display:flex;align-items:center;gap:10px;margin:20px 0 2px;font-size:11px;color:#a89f8c;letter-spacing:3px}
+.bunjin-sep::before,.bunjin-sep::after{content:"";flex:1;height:1px;background:#e0d6bd}
 
 /* buttons */
 .btn-main{
@@ -290,7 +313,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   <button id="btn-back"><span class="arr">‹</span> 地图</button>
   <div id="topbar-title">
     <div class="title">浅草めぐり</div>
-    <div class="sub">ことばで巡る浅草一丁目</div>
+    <div class="sub">ことばで巡る浅草・奥浅草</div>
   </div>
   <button id="btn-help" aria-label="怎么玩">？</button>
   <button id="btn-stamps"><span class="seal-mini">印</span><span id="stamp-count">0</span></button>
@@ -300,22 +323,42 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 <main id="view-map" class="view active">
   <div class="map-frame">
     <div class="map-head">
-      <p class="chap">第 一 章</p>
-      <h1>浅草寺絵図</h1>
+      <p class="chap" id="map-chap">第 一 章</p>
+      <h1>浅草絵図</h1>
       <p>点亮灯笼，走进去看看 · 每处都藏着题</p>
     </div>
     <div id="map-canvas">
-      <svg class="path-bg" viewBox="0 0 390 560" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M195 500 C 195 440, 195 400, 195 340 C 195 280, 195 250, 195 185"
+      <svg class="path-bg" viewBox="0 0 390 940" preserveAspectRatio="none" aria-hidden="true">
+        <!-- 参道：雷門→仲見世→本堂 -->
+        <path d="M172 862 C 172 800, 172 720, 172 640"
               fill="none" stroke="#C73E3A" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round" opacity=".55"/>
-        <path d="M195 340 C 150 330, 120 315, 92 268" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
-        <path d="M195 360 C 250 355, 290 335, 316 300" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
-        <path d="M195 210 C 150 200, 110 185, 82 150" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
-        <path d="M195 480 C 250 478, 285 490, 308 500" fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
+        <!-- 本堂から西へ：伝法院・ホッピー・六区・合羽橋 -->
+        <g fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5">
+          <path d="M156 626 C 124 646, 96 660, 74 670"/>
+          <path d="M60 648 C 56 616, 56 588, 58 562"/>
+          <path d="M58 508 C 60 480, 64 452, 68 438"/>
+          <path d="M68 386 C 66 352, 66 322, 70 300"/>
+          <!-- 本堂から東へ：隅田川・神谷バー・浅草駅 -->
+          <path d="M190 622 C 238 630, 280 642, 308 652"/>
+          <path d="M320 692 C 322 720, 322 740, 320 748"/>
+          <path d="M320 804 C 322 832, 322 850, 320 860"/>
+          <!-- 北へ：六区→千束→吉原、本堂→待乳山 -->
+          <path d="M92 400 C 132 372, 172 302, 196 276"/>
+          <path d="M190 230 C 168 200, 142 152, 124 132"/>
+          <path d="M198 598 C 240 548, 284 472, 302 440"/>
+        </g>
+        <!-- 隅田川（東の帯） -->
+        <path d="M372 620 C 358 700, 362 800, 350 900" fill="none" stroke="#9EC3D4" stroke-width="9" stroke-linecap="round" opacity=".45"/>
+        <!-- スカイツリー（飾り） -->
+        <g opacity=".28" stroke="#7A8450" fill="none" stroke-width="2.5" stroke-linecap="round">
+          <path d="M330 210 L336 118 L342 210"/>
+          <path d="M336 118 L336 86"/>
+          <path d="M327 168 L345 168 M330 196 L342 196"/>
+        </g>
       </svg>
       <!-- nodes injected by JS -->
     </div>
-    <div class="map-foot">灰灯笼＝集齐上一章全部金印后点亮</div>
+    <div class="map-foot">灰灯笼＝集齐上一章全部金印后点亮 · 碑形标记＝文人碑</div>
   </div>
 </main>
 
@@ -329,7 +372,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <!-- svg + spots injected -->
     <div id="egg-bubble"></div>
   </div>
-  <p class="scene-tip">红点＝新内容 · 蓝点＝点它做题（每次3题都不同）· 金印＝题库全部答完</p>
+  <p class="scene-tip">红点＝新内容 · 蓝点＝点它做题（每次3题都不同）· 金印＝题库全部答完<br>碑形的标记是「文人碑」，先读故事再做题</p>
 </main>
 
 <!-- ============ STAMP BOOK ============ -->
@@ -1191,6 +1234,916 @@ const SCENES = [
         eggFinal:"日本の駅は、それぞれ発車メロディを持っています", eggFinalAt:8
       }
     ]
+  },
+  /* ============ 第4章 ============ */
+  {
+    id:"rokku", name:"浅草六区", short:"六区", chapter:4,
+    svg:"s8",
+    hotspots:[
+      {
+        id:"engeihall", name:"浅草演芸ホール", x:22, y:38,
+        learn:{
+          words:[
+            {jp:"寄席", kana:"よせ", romaji:"yose", zh:"落语剧场"},
+            {jp:"落語", kana:"らくご", romaji:"rakugo", zh:"落语（单口相声）"},
+            {jp:"真打", kana:"しんうち", romaji:"shin'uchi", zh:"压轴主演（落语最高位）"},
+            {jp:"笑う", kana:"わらう", romaji:"warau", zh:"笑"}
+          ],
+          noteJa:"浅草演芸ホールは一年中休みません。落語も漫才も、朝から夜まで続きます。",
+          noteKana:"あさくさえんげいホールは いちねんじゅう やすみません。らくごも まんざいも、あさから よるまで つづきます。",
+          noteRomaji:"Asakusa Engei Hōru wa ichinenjū yasumimasen. Rakugo mo manzai mo, asa kara yoru made tsuzukimasu.",
+          noteZh:"浅草演艺厅一年到头不休息，落语、漫才从早演到晚。中途进场、中途离场都没关系，很多老人买张票坐一整天。"
+        },
+        questions:[
+          {type:"read", prompt:"「寄席」の読み方は？", options:["よせ","きせき","よりせき"], answer:0,
+           explain:"熟字训——「人が寄る席」整体读よせ，拆开读必错。按字读きせき那是「奇跡」，差了一个宇宙。"},
+          {type:"read", prompt:"「真打」の読み方は？", options:["しんうち","まうち","しんだ"], answer:0,
+           explain:"しんうち＝落语家的最高段位，压轴登场那位。打つ在这里读うち。"},
+          {type:"listen", tts:"落語は初めてですか。途中から入っても大丈夫ですよ。",
+           ttsKana:"らくごは はじめてですか。とちゅうから はいっても だいじょうぶですよ。",
+           options:["第一次听落语吗？中途进场也没关系","落语快结束了","中途不能进场"], answer:0,
+           explain:"途中から＝从中途。「〜ても大丈夫」＝就算…也没事，出门在外一天能用五次。"},
+          {type:"scene", prompt:"想问「还有座位吗」，说哪句？", jpOptions:true,
+           options:["まだ席はありますか","座りたいです","ここは私の席です"], answer:0,
+           phraseKana:"まだ せきは ありますか",
+           explain:"まだ＝还。席（せき）＝座位。第三句是「这是我的位子」，说出来就变成抢座了。"},
+          {type:"vocab", prompt:"「笑う」的读法和意思？",
+           options:["わらう · 笑","えむ · 微笑","しょう · 笑话"], answer:0,
+           explain:"わらう＝笑，名词形是笑い（わらい）。微笑む（ほほえむ）是微笑，另一个词。"}
+        ]
+      },
+      {
+        id:"hanayashiki", name:"花やしき", x:78, y:36,
+        learn:{
+          words:[
+            {jp:"遊園地", kana:"ゆうえんち", romaji:"yūenchi", zh:"游乐园"},
+            {jp:"乗り物", kana:"のりもの", romaji:"norimono", zh:"游乐设施／交通工具"},
+            {jp:"一番古い", kana:"いちばんふるい", romaji:"ichiban furui", zh:"最古老的"},
+            {jp:"怖い", kana:"こわい", romaji:"kowai", zh:"可怕"}
+          ],
+          noteJa:"花やしきは1853年にできた、日本で一番古い遊園地です。ジェットコースターも日本最古です。",
+          noteKana:"はなやしきは せんはっぴゃくごじゅうさんねんに できた、にほんで いちばん ふるい ゆうえんちです。ジェットコースターも にほんさいこです。",
+          noteRomaji:"Hanayashiki wa 1853-nen ni dekita, Nihon de ichiban furui yūenchi desu. Jetto kōsutā mo Nihon saiko desu.",
+          noteZh:"花屋敷开于1853年（嘉永六年），是日本最老的游乐园。里面的过山车也是全日本最老的一台——时速只有42公里，但它擦着民居屋顶跑，吓人程度不输大型游乐园。"
+        },
+        questions:[
+          {type:"read", prompt:"「遊園地」の読み方は？", options:["ゆうえんち","ゆえんじ","あそびえんち"], answer:0,
+           explain:"三个音读连读ゆう・えん・ち。遊在遊ぶ里读あそ，别串台。"},
+          {type:"read", prompt:"「乗り物」の読み方は？", options:["のりもの","じょうぶつ","のせもの"], answer:0,
+           explain:"训读のり＋もの。じょうぶつ写成「成仏」是往生，读错场面会很安静。"},
+          {type:"listen", tts:"このジェットコースター、家の屋根すれすれを走るんですよ。",
+           ttsKana:"この ジェットコースター、いえの やねすれすれを はしるんですよ。",
+           options:["这台过山车擦着民居屋顶跑","这台过山车正在检修","屋顶上可以看过山车"], answer:0,
+           explain:"すれすれ＝几乎擦到。「〜んですよ」是带点得意的解释语气。"},
+          {type:"scene", prompt:"想说「有点吓人，但很好玩」，哪句最自然？", jpOptions:true,
+           options:["ちょっと怖いけど、楽しい","怖いです。だめです","楽しいから怖くない"], answer:0,
+           phraseKana:"ちょっと こわいけど、たのしい",
+           explain:"「〜けど」是日语最常用的转折。前面加个ちょっと，语气立刻软下来。"},
+          {type:"vocab", prompt:"「一番古い」是什么意思？",
+           options:["最古老的","第一次去的","很有名的"], answer:0,
+           explain:"一番＋形容词＝最…。一番おいしい、一番近い，套进去就能用。"}
+        ]
+      },
+      {
+        id:"starhiroba", name:"スターの広場", x:24, y:70,
+        learn:{
+          words:[
+            {jp:"手形", kana:"てがた", romaji:"tegata", zh:"手印"},
+            {jp:"俳優", kana:"はいゆう", romaji:"haiyū", zh:"演员"},
+            {jp:"芸人", kana:"げいにん", romaji:"geinin", zh:"谐星／表演者"},
+            {jp:"憧れ", kana:"あこがれ", romaji:"akogare", zh:"憧憬"}
+          ],
+          noteJa:"浅草公会堂の前には、芸人や俳優の手形が並んでいます。浅草で育った人が多いです。",
+          noteKana:"あさくさこうかいどうの まえには、げいにんや はいゆうの てがたが ならんで います。あさくさで そだった ひとが おおいです。",
+          noteRomaji:"Asakusa Kōkaidō no mae ni wa, geinin ya haiyū no tegata ga narande imasu. Asakusa de sodatta hito ga ōi desu.",
+          noteZh:"浅草公会堂门前的地面上嵌着艺人和演员的手印，像好莱坞星光大道的浅草版。名单里很多人是从六区的小剧场熬出来的。"
+        },
+        questions:[
+          {type:"read", prompt:"「手形」の読み方は？", options:["てがた","しゅけい","てかたち"], answer:0,
+           explain:"て＋がた（连浊）。顺便，「手形」在银行用语里是汇票，同一个词两个世界。"},
+          {type:"read", prompt:"「俳優」の読み方は？", options:["はいゆう","はいゆ","ばいゆう"], answer:0,
+           explain:"はいゆう，长音要拉满。女演员可以叫女優（じょゆう）。"},
+          {type:"listen", tts:"手を重ねてみてください。思ったより小さいでしょう。",
+           ttsKana:"てを かさねて みて ください。おもったより ちいさいでしょう。",
+           options:["把手叠上去试试，比想象的小吧","请不要触摸","手印比真手大"], answer:0,
+           explain:"重ねる（かさねる）＝叠。「思ったより」＝比想象中…，日常高频。"},
+          {type:"vocab", prompt:"「芸人」指的是？",
+           options:["搞笑艺人、表演者","工艺匠人","乐器演奏家"], answer:0,
+           explain:"芸人（げいにん）现在多指お笑い芸人。工匠是職人（しょくにん），别混。"},
+          {type:"scene", prompt:"想问「这是谁的手印」，说哪句？", jpOptions:true,
+           options:["これは誰の手形ですか","誰ですか","この人は有名ですか"], answer:0,
+           phraseKana:"これは だれの てがたですか",
+           explain:"誰の＋名词＝谁的…。光说「誰ですか」是在问对方是谁，容易变质问。"}
+        ]
+      },
+      {
+        id:"bunjin_atsumi", name:"渥美清の碑", x:56, y:66,
+        bunjin:{
+          life:"1928–1996", tag:"『男はつらいよ』車寅次郎",
+          story:"演了48部《寅次郎的故事》的渥美清，出道就在六区的「フランス座」——白天跳脱衣舞，幕间插一段短剧，他就是演短剧那个。同一个后台，二十年后有个叫北野武的年轻人在开电梯、打杂，也是从这里熬出去的。渥美清晚年几乎不露面，去世后浅草人把他的句碑立在了传法院通旁边。他生前是个俳人，俳号「風天」——跟寅次郎那种四海为家的「フーテン」正好同音。",
+          quote:{jp:"お遍路が一列に行く虹の中", kana:"おへんろが いちれつに ゆく にじの なか",
+                 romaji:"Ohenro ga ichiretsu ni yuku niji no naka",
+                 zh:"朝圣的人排成一列，走进虹里", src:"渥美清（俳号・風天）"}
+        },
+        learn:{
+          words:[
+            {jp:"俳句", kana:"はいく", romaji:"haiku", zh:"俳句"},
+            {jp:"虹", kana:"にじ", romaji:"niji", zh:"彩虹"},
+            {jp:"一列", kana:"いちれつ", romaji:"ichiretsu", zh:"一列"},
+            {jp:"旅", kana:"たび", romaji:"tabi", zh:"旅行"}
+          ],
+          noteJa:"渥美清は俳句が好きで、「風天」という俳号を使っていました。この句は、雨上がりの虹の中を歩く人たちを詠んでいます。",
+          noteKana:"あつみきよしは はいくが すきで、「ふうてん」という はいごうを つかって いました。この くは、あめあがりの にじの なかを あるく ひとたちを よんで います。",
+          noteRomaji:"Atsumi Kiyoshi wa haiku ga suki de, \"Fūten\" to iu haigō o tsukatte imashita. Kono ku wa, ameagari no niji no naka o aruku hitotachi o yonde imasu.",
+          noteZh:"渥美清爱写俳句，一辈子写了几百首，都没署真名。这句写的是雨后彩虹里，朝圣者排成一列走过去——十七个音，一幅画。"
+        },
+        questions:[
+          {type:"read", prompt:"「虹」の読み方は？", options:["にじ","こう","むし"], answer:0,
+           explain:"にじ。左边是虫字旁——古人以为虹是天上的大虫。但别真读むし。"},
+          {type:"read", prompt:"「一列」の読み方は？", options:["いちれつ","ひとれつ","いつれつ"], answer:0,
+           explain:"いちれつ。列前面固定用いち，不用ひと。"},
+          {type:"listen", tts:"雨が上がって、虹が出ましたよ。",
+           ttsKana:"あめが あがって、にじが でましたよ。",
+           options:["雨停了，出彩虹了","要下雨了","彩虹消失了"], answer:0,
+           explain:"雨が上がる＝雨停（不是「上升」）。虹が出る＝出彩虹。两个都是固定搭配。"},
+          {type:"vocab", prompt:"俳句的音数格式是？",
+           options:["五・七・五","五・七・五・七・七","七・五"], answer:0,
+           explain:"俳句是五七五共17音；五七五七七的31音那叫短歌（たんか）。"},
+          {type:"vocab", prompt:"「男はつらいよ」怎么理解？",
+           options:["当男人真辛苦啊","男人很坚强","男人正在受苦"], answer:0,
+           explain:"つらい＝辛苦、难受。「〜よ」是感叹。就是寅次郎式的自嘲。"}
+        ]
+      },
+      {
+        id:"bunjin_kawabata", name:"川端康成の碑", x:82, y:68,
+        bunjin:{
+          life:"1899–1972", tag:"『浅草紅団』『雪国』",
+          story:"1929年，30岁的川端康成搬到浅草，天天泡在六区看歌舞、看电影、看这条街上讨生活的人，写成了《浅草红团》。那时六区有四十多家戏院和电影院，一天能进出十万人。他后来靠《雪国》拿了诺贝尔奖，但他自己说过，写浅草的那两年，才是他最贴着地面写字的时候。",
+          quote:{jp:"浅草は東京の心臓である。", kana:"あさくさは とうきょうの しんぞうで ある。",
+                 romaji:"Asakusa wa Tōkyō no shinzō de aru.",
+                 zh:"浅草是东京的心脏。", src:"川端康成『浅草紅団』"}
+        },
+        learn:{
+          words:[
+            {jp:"心臓", kana:"しんぞう", romaji:"shinzō", zh:"心脏"},
+            {jp:"小説家", kana:"しょうせつか", romaji:"shōsetsuka", zh:"小说家"},
+            {jp:"賑やか", kana:"にぎやか", romaji:"nigiyaka", zh:"热闹"},
+            {jp:"昔", kana:"むかし", romaji:"mukashi", zh:"从前"}
+          ],
+          noteJa:"「浅草は東京の心臓である。」——川端康成は昭和のはじめ、一番賑やかだった六区を歩いて、この言葉を書きました。",
+          noteKana:"「あさくさは とうきょうの しんぞうで ある。」——かわばたやすなりは しょうわの はじめ、いちばん にぎやかだった ろっくを あるいて、この ことばを かきました。",
+          noteRomaji:"\"Asakusa wa Tōkyō no shinzō de aru.\" — Kawabata Yasunari wa Shōwa no hajime, ichiban nigiyaka datta Rokku o aruite, kono kotoba o kakimashita.",
+          noteZh:"句尾的「である」是书面体的「です」，一股论文和文学腔。口语里说である，会像在念稿子。"
+        },
+        questions:[
+          {type:"read", prompt:"「心臓」の読み方は？", options:["しんぞう","しんそう","こころぞう"], answer:0,
+           explain:"しんぞう，臓要浊音。しんそう写成「真相」——一个是器官，一个是悬案。"},
+          {type:"read", prompt:"「賑やか」の読み方は？", options:["にぎやか","しんやか","ちんやか"], answer:0,
+           explain:"にぎやか＝热闹。这个汉字基本只在这个词里出现，认脸就行。"},
+          {type:"vocab", prompt:"「〜である」和「〜です」的区别？",
+           options:["である是书面体，です是口语敬体","である更客气","である是过去式"], answer:0,
+           explain:"である多用于论文、评论、文学。意思一样，场合完全不同。"},
+          {type:"listen", tts:"昭和のはじめ、この通りは人でいっぱいだったそうです。",
+           ttsKana:"しょうわの はじめ、この とおりは ひとで いっぱいだった そうです。",
+           options:["据说昭和初年这条街上挤满了人","昭和初年这里没什么人","这条街现在很挤"], answer:0,
+           explain:"人でいっぱい＝挤满人。「〜だったそうです」＝据说（过去）曾经是。"},
+          {type:"scene", prompt:"想说「这里以前很热闹」，哪句最自然？", jpOptions:true,
+           options:["ここは昔、賑やかでした","ここは賑やかです","ここは賑やかになります"], answer:0,
+           phraseKana:"ここは むかし、にぎやかでした",
+           explain:"な形容词的过去式是「賑やかでした」，别说成「賑やかいでした」。"}
+        ]
+      },
+      {
+        id:"chindon", name:"ちんどん屋", x:46, y:88, egg:true,
+        eggLines:["ちんどん、ちんどん","♪ぴーひゃらら","どんつく、どんつく"],
+        eggFinal:"ちんどん屋は、街を歩いて宣伝する楽団です", eggFinalAt:9
+      }
+    ]
+  },
+  {
+    id:"kamiya", name:"神谷バー・雷門南", short:"神谷バー", chapter:4,
+    svg:"s9",
+    hotspots:[
+      {
+        id:"denkibran", name:"神谷バー", x:22, y:38,
+        learn:{
+          words:[
+            {jp:"電気ブラン", kana:"でんきブラン", romaji:"denki-buran", zh:"电气白兰（招牌酒）"},
+            {jp:"一杯", kana:"いっぱい", romaji:"ippai", zh:"一杯"},
+            {jp:"名物", kana:"めいぶつ", romaji:"meibutsu", zh:"招牌／名产"},
+            {jp:"明治", kana:"めいじ", romaji:"Meiji", zh:"明治（年号）"}
+          ],
+          noteJa:"神谷バーは1880年に始まった、日本で最初のバーです。名物の電気ブランは明治時代から同じ味です。",
+          noteKana:"かみやバーは せんはっぴゃくはちじゅうねんに はじまった、にほんで さいしょの バーです。めいぶつの でんきブランは めいじじだいから おなじ あじです。",
+          noteRomaji:"Kamiya Bā wa 1880-nen ni hajimatta, Nihon de saisho no bā desu. Meibutsu no Denki Buran wa Meiji jidai kara onaji aji desu.",
+          noteZh:"神谷酒吧1880年（明治13年）开张，是日本第一家バー。招牌酒「电气白兰」30度——明治年间「电气」是最时髦的词，就跟今天说「AI」一样。标准喝法是配一杯生啤送服。"
+        },
+        questions:[
+          {type:"read", prompt:"「一杯」の読み方は？", options:["いっぱい","いちはい","ひとさかずき"], answer:0,
+           explain:"一＋杯（はい）促音＋半浊＝いっぱい。二杯にはい、三杯さんばい，各变各的——日语量词的经典难关。"},
+          {type:"read", prompt:"「名物」の読み方は？", options:["めいぶつ","なもの","みょうぶつ"], answer:0,
+           explain:"めいぶつ＝当地招牌。菜单和土产店天天见。"},
+          {type:"listen", tts:"電気ブランをひとつ、それとビールもお願いします。",
+           ttsKana:"でんきブランを ひとつ、それと ビールも おねがいします。",
+           options:["来一杯电气白兰，再加一杯啤酒","只要啤酒","电气白兰卖完了"], answer:0,
+           explain:"それと＝还有。「〜をお願いします」是点单最稳的说法。"},
+          {type:"vocab", prompt:"明治时代大概是什么时候？",
+           options:["1868–1912年","1926–1989年","1603–1868年"], answer:0,
+           explain:"明治1868–1912。第二个是昭和，第三个是江户。神谷バー开在明治13年，也就是1880年。"},
+          {type:"scene", prompt:"酒量不行，想问「有没有度数低的」，说哪句？", jpOptions:true,
+           options:["弱いお酒はありますか","お酒が飲めません","水をください"], answer:0,
+           phraseKana:"よわい おさけは ありますか",
+           explain:"弱いお酒＝度数低的酒（烈的是強いお酒）。这么问店员会给你推荐，比直接说不能喝更进一步。"}
+        ]
+      },
+      {
+        id:"bunjin_dazai", name:"太宰治の碑", x:78, y:36,
+        bunjin:{
+          life:"1909–1948", tag:"『人間失格』『走れメロス』",
+          story:"太宰治是神谷バー的常客。《人间失格》里，叶藏和堀木在浅草喝的正是电气白兰——那是穷学生能买到的、最快让人醉的东西。太宰从青森来东京，一辈子在「想被爱」和「不配被爱」之间来回，39岁在玉川上水投水。浅草这一杯，是他笔下少数写得轻快的场面。",
+          quote:{jp:"恥の多い生涯を送って来ました。", kana:"はじの おおい しょうがいを おくって きました。",
+                 romaji:"Haji no ōi shōgai o okutte kimashita.",
+                 zh:"我这一生，尽是羞耻之事。", src:"太宰治『人間失格』冒頭"}
+        },
+        learn:{
+          words:[
+            {jp:"恥", kana:"はじ", romaji:"haji", zh:"羞耻"},
+            {jp:"生涯", kana:"しょうがい", romaji:"shōgai", zh:"一生"},
+            {jp:"小説", kana:"しょうせつ", romaji:"shōsetsu", zh:"小说"},
+            {jp:"送る", kana:"おくる", romaji:"okuru", zh:"度过／寄送"}
+          ],
+          noteJa:"「恥の多い生涯を送って来ました。」——『人間失格』の有名な書き出しです。ここの「送る」は「時間を過ごす」という意味です。",
+          noteKana:"「はじの おおい しょうがいを おくって きました。」——『にんげんしっかく』の ゆうめいな かきだしです。ここの「おくる」は「じかんを すごす」という いみです。",
+          noteRomaji:"\"Haji no ōi shōgai o okutte kimashita.\" — Ningen Shikkaku no yūmei na kakidashi desu. Koko no \"okuru\" wa \"jikan o sugosu\" to iu imi desu.",
+          noteZh:"注意这里的「送る」不是「寄送」，而是「度过（一段人生）」——生涯を送る＝过完一生。这个用法很文学，但也常见于讣告和简历。"
+        },
+        questions:[
+          {type:"read", prompt:"「生涯」の読み方は？", options:["しょうがい","せいがい","いきがい"], answer:0,
+           explain:"しょうがい。生的音读有せい和しょう，这里用しょう。いきがい写成「生きがい」是「活着的意义」，只差一点点。"},
+          {type:"read", prompt:"「恥」の読み方は？", options:["はじ","ち","はずかし"], answer:0,
+           explain:"名词是はじ，形容词是恥ずかしい（はずかしい）。音读ち用在「恥辱（ちじょく）」。"},
+          {type:"vocab", prompt:"「生涯を送る」的意思是？",
+           options:["度过一生","把一生寄出去","结束一生"], answer:0,
+           explain:"送る＝度过（时间）。学生生活を送る＝过学生生活，同一个用法。"},
+          {type:"listen", tts:"太宰も、ここでこの酒を飲んでいたそうです。",
+           ttsKana:"だざいも、ここで この さけを のんで いた そうです。",
+           options:["据说太宰也在这里喝过这种酒","太宰不喝酒","太宰讨厌这里"], answer:0,
+           explain:"「〜そうです」接在句子后面＝据说。前面是「〜ていた」过去持续，合起来就是：据说当年一直在…。"},
+          {type:"scene", prompt:"想说「我读过这本书」，哪句最自然？", jpOptions:true,
+           options:["この本、読んだことがあります","この本を読みます","この本が好きでした"], answer:0,
+           phraseKana:"この ほん、よんだことが あります",
+           explain:"「〜たことがある」＝有过…的经历。谈读过的书、去过的地方，全靠它。"}
+        ]
+      },
+      {
+        id:"chikagai", name:"浅草地下街", x:24, y:70,
+        learn:{
+          words:[
+            {jp:"地下街", kana:"ちかがい", romaji:"chikagai", zh:"地下街"},
+            {jp:"昭和", kana:"しょうわ", romaji:"Shōwa", zh:"昭和（年号）"},
+            {jp:"床屋", kana:"とこや", romaji:"tokoya", zh:"理发店"},
+            {jp:"昔ながら", kana:"むかしながら", romaji:"mukashi-nagara", zh:"一如往昔"}
+          ],
+          noteJa:"浅草地下街は1955年にできた、日本で一番古い地下街です。焼きそば屋や床屋が、昔ながらの姿で残っています。",
+          noteKana:"あさくさちかがいは せんきゅうひゃくごじゅうごねんに できた、にほんで いちばん ふるい ちかがいです。やきそばやや とこやが、むかしながらの すがたで のこって います。",
+          noteRomaji:"Asakusa Chikagai wa 1955-nen ni dekita, Nihon de ichiban furui chikagai desu. Yakisoba-ya ya tokoya ga, mukashi-nagara no sugata de nokotte imasu.",
+          noteZh:"1955年建成，是日本现存最老的地下街。天花板矮、灯光昏黄，炒面店、算命摊、理发店还是昭和三十年代的样子。就在雷门旁边的地铁口下去，几十米就走完。"
+        },
+        questions:[
+          {type:"read", prompt:"「床屋」の読み方は？", options:["とこや","ゆかや","しょうおく"], answer:0,
+           explain:"とこや＝理发店。床单独读ゆか是地板，但「床屋」是熟语，读とこ。"},
+          {type:"read", prompt:"「地下街」の読み方は？", options:["ちかがい","じげまち","ちしたがい"], answer:0,
+           explain:"ちかがい。街单独读まち，组词时多读がい：商店街、繁華街。"},
+          {type:"listen", tts:"天井が低いので、気をつけてくださいね。",
+           ttsKana:"てんじょうが ひくいので、きを つけて くださいね。",
+           options:["天花板矮，请当心","这里很暗","请不要拍照"], answer:0,
+           explain:"天井（てんじょう）＝天花板。「〜ので」＝因为（比から客气）。気をつけて＝小心。"},
+          {type:"vocab", prompt:"「昔ながら」是什么意思？",
+           options:["和从前一样、老样子","很久以前","比从前更好"], answer:0,
+           explain:"昔ながらの味＝老味道。旅游宣传里的高频词。"},
+          {type:"scene", prompt:"想问「这家店开了多久了」，说哪句？", jpOptions:true,
+           options:["この店は何年やっていますか","この店は古いですか","いつ開きますか"], answer:0,
+           phraseKana:"この みせは なんねん やって いますか",
+           explain:"何年やっている＝做了几年了。「いつ開きますか」问的是今天几点开门，答非所问。"}
+        ]
+      },
+      {
+        id:"dozeu", name:"駒形どぜう", x:78, y:70,
+        learn:{
+          words:[
+            {jp:"どじょう", kana:"どじょう", romaji:"dojō", zh:"泥鳅"},
+            {jp:"鍋", kana:"なべ", romaji:"nabe", zh:"锅／火锅"},
+            {jp:"江戸前", kana:"えどまえ", romaji:"edomae", zh:"江户前（东京湾风味）"},
+            {jp:"二百年", kana:"にひゃくねん", romaji:"nihyakunen", zh:"两百年"}
+          ],
+          noteJa:"駒形どぜうは1801年に開いた、どじょう鍋の店です。「どぜう」は昔の書き方で、今は「どじょう」と書きます。",
+          noteKana:"こまがたどぜうは せんはっぴゃくいちねんに ひらいた、どじょうなべの みせです。「どぜう」は むかしの かきかたで、いまは「どじょう」と かきます。",
+          noteRomaji:"Komagata Dozeu wa 1801-nen ni hiraita, dojō-nabe no mise desu. \"Dozeu\" wa mukashi no kakikata de, ima wa \"dojō\" to kakimasu.",
+          noteZh:"驹形どぜう开于1801年，卖泥鳅锅两百多年。招牌上的「どぜう」是旧假名写法——当年店主嫌四个假名不吉利，改成三个字，生意果然更好了。店里还是坐榻榻米、用长条木板桌。"
+        },
+        questions:[
+          {type:"read", prompt:"招牌上的「どぜう」，现在的写法是？", options:["どじょう","どぞう","どせう"], answer:0,
+           explain:"旧假名遣い写作どぜう／どじやう，1946年假名改革后统一成どじょう。老店保留旧招牌是一种骄傲。"},
+          {type:"read", prompt:"「鍋」の読み方は？", options:["なべ","か","なびら"], answer:0,
+           explain:"なべ。鍋料理（なべりょうり）＝火锅类，土鍋（どなべ）＝砂锅。"},
+          {type:"listen", tts:"ねぎをたくさんのせて、煮えたら食べてください。",
+           ttsKana:"ねぎを たくさん のせて、にえたら たべて ください。",
+           options:["多放点葱，煮好了就吃","葱要另外点","不要放葱"], answer:0,
+           explain:"のせる＝放上去。煮える（にえる）＝煮熟。「〜たら」＝…了之后。吃泥鳅锅的标准说明书。"},
+          {type:"vocab", prompt:"「江戸前」原本指的是？",
+           options:["江户（东京湾）附近捕的鱼","江户时代以前","店门口"], answer:0,
+           explain:"江戸前＝江户城前面那片海。江戸前寿司就是这么来的。"},
+          {type:"scene", prompt:"想说「我第一次吃这个」，哪句最自然？", jpOptions:true,
+           options:["これ、初めて食べます","これを食べたいです","これは何ですか"], answer:0,
+           phraseKana:"これ、はじめて たべます",
+           explain:"初めて＋动词＝第一次做…。说这句，店员通常会主动教你怎么吃。"}
+        ]
+      },
+      {
+        id:"yakatabune", name:"屋形船", x:50, y:90, egg:true,
+        eggLines:["ぽん、ぽん、ぽん","（三味線の音）","ゆらり、ゆらり"],
+        eggFinal:"屋形船（やかたぶね）は、ごはんを食べながら川を回る船です", eggFinalAt:9
+      }
+    ]
+  },
+  /* ============ 第5章 ============ */
+  {
+    id:"matsuchiyama", name:"待乳山・今戸", short:"待乳山", chapter:5,
+    svg:"s10",
+    hotspots:[
+      {
+        id:"shoden", name:"待乳山聖天", x:24, y:38,
+        learn:{
+          words:[
+            {jp:"大根", kana:"だいこん", romaji:"daikon", zh:"白萝卜"},
+            {jp:"お供え", kana:"おそなえ", romaji:"osonae", zh:"供品"},
+            {jp:"ご利益", kana:"ごりやく", romaji:"goriyaku", zh:"神佛的灵验／保佑"},
+            {jp:"坂", kana:"さか", romaji:"saka", zh:"坡"}
+          ],
+          noteJa:"待乳山聖天では、大根をお供えします。大根は体を清めるしるしで、境内のあちこちに大根の飾りがあります。",
+          noteKana:"まつちやましょうでんでは、だいこんを おそなえ します。だいこんは からだを きよめる しるしで、けいだいの あちこちに だいこんの かざりが あります。",
+          noteRomaji:"Matsuchiyama Shōden de wa, daikon o osonae shimasu. Daikon wa karada o kiyomeru shirushi de, keidai no achikochi ni daikon no kazari ga arimasu.",
+          noteZh:"待乳山圣天供的不是花，是白萝卜——象征涤除身心的浊气。屋檐、灯笼、瓦当上到处是交叉的双萝卜纹。山高只有十米，却是浅草唯一的「山」，站上去能看见晴空塔。"
+        },
+        questions:[
+          {type:"read", prompt:"「大根」の読み方は？", options:["だいこん","おおね","たいこん"], answer:0,
+           explain:"だいこん。大读だい，根浊化成こん。おおね是古语，现在只在和歌里见得到。"},
+          {type:"read", prompt:"「ご利益」の読み方は？", options:["ごりやく","ごりえき","おんりやく"], answer:0,
+           explain:"ごりやく＝神佛的保佑。写法和「利益（りえき＝利润）」一模一样，读法一改，一个进庙一个进公司。"},
+          {type:"listen", tts:"ここは十メートルしかないけど、浅草で一番高い山ですよ。",
+           ttsKana:"ここは じゅうメートルしか ないけど、あさくさで いちばん たかい やまですよ。",
+           options:["这里只有十米，却是浅草最高的山","这座山有一百米","浅草没有山"], answer:0,
+           explain:"「〜しかない」＝只有…（带「才这么点」的语气）。注意しか后面必须接否定，跟「〜だけ」不一样。"},
+          {type:"vocab", prompt:"「お供え」是什么？",
+           options:["供奉给神佛的东西","一起去的人","备用品"], answer:0,
+           explain:"供える（そなえる）＝供奉。同音的備える（そなえる）是「准备、防备」，汉字不同。"},
+          {type:"scene", prompt:"爬完坡想说「有点累了」，哪句最自然？", jpOptions:true,
+           options:["ちょっと疲れました","疲れます","疲れています"], answer:0,
+           phraseKana:"ちょっと つかれました",
+           explain:"刚累完用过去式「疲れました」。「疲れています」是长期处于疲惫状态，说出来像在感慨人生。"}
+        ]
+      },
+      {
+        id:"imado", name:"今戸神社", x:76, y:29,
+        learn:{
+          words:[
+            {jp:"招き猫", kana:"まねきねこ", romaji:"manekineko", zh:"招财猫"},
+            {jp:"縁結び", kana:"えんむすび", romaji:"enmusubi", zh:"结缘"},
+            {jp:"絵馬", kana:"えま", romaji:"ema", zh:"绘马（许愿木牌）"},
+            {jp:"発祥", kana:"はっしょう", romaji:"hasshō", zh:"发祥"}
+          ],
+          noteJa:"今戸神社は招き猫の発祥地の一つと言われています。縁結びの神社なので、絵馬も丸い形をしています。",
+          noteKana:"いまどじんじゃは まねきねこの はっしょうちの ひとつと いわれて います。えんむすびの じんじゃなので、えまも まるい かたちを して います。",
+          noteRomaji:"Imado Jinja wa manekineko no hasshōchi no hitotsu to iwarete imasu. Enmusubi no jinja na node, ema mo marui katachi o shite imasu.",
+          noteZh:"今户神社是招财猫发祥地之一（另一说是世田谷的豪德寺，两边至今各执一词）。这里也是结缘神社，绘马做成圆形，取「良缘圆满」的意思。院里还坐着一对巨大的双猫。"
+        },
+        questions:[
+          {type:"read", prompt:"「縁結び」の読み方は？", options:["えんむすび","えんゆうび","ふちむすび"], answer:0,
+           explain:"縁（えん）＋結び（むすび）。缘分这个词中日共用，日语读えん。"},
+          {type:"read", prompt:"「発祥」の読み方は？", options:["はっしょう","はつしょう","はっそう"], answer:0,
+           explain:"つ＋し变促音，读はっしょう。はっそう是「発想」（点子），一字之差。"},
+          {type:"listen", tts:"絵馬に願い事を書いて、あちらに掛けてください。",
+           ttsKana:"えまに ねがいごとを かいて、あちらに かけて ください。",
+           options:["把愿望写在绘马上，挂到那边去","绘马在那边卖","请不要写字"], answer:0,
+           explain:"願い事（ねがいごと）＝心愿。掛ける（かける）＝挂。每个神社都会听到的一句。"},
+          {type:"vocab", prompt:"「〜と言われています」的意思是？",
+           options:["据说、被认为","被说坏话了","正在说"], answer:0,
+           explain:"客观转述的固定说法，介绍名胜和传说时最常用，比「〜そうです」正式一点。"},
+          {type:"scene", prompt:"想问「绘马多少钱」，说哪句？", jpOptions:true,
+           options:["絵馬はいくらですか","絵馬をください","絵馬が欲しいです"], answer:0,
+           phraseKana:"えまは いくらですか",
+           explain:"神社里绘马和御守严格说不叫「买」，但用「いくらですか」问价最安全。郑重的说法是「初穂料（はつほりょう）」。"}
+        ]
+      },
+      {
+        id:"sanyabori", name:"山谷堀公園", x:24, y:70,
+        learn:{
+          words:[
+            {jp:"堀", kana:"ほり", romaji:"hori", zh:"护城河／水渠"},
+            {jp:"並木", kana:"なみき", romaji:"namiki", zh:"行道树"},
+            {jp:"舟", kana:"ふね", romaji:"fune", zh:"小船"},
+            {jp:"埋める", kana:"うめる", romaji:"umeru", zh:"填埋"}
+          ],
+          noteJa:"山谷堀は、隅田川から吉原へ行く舟の水路でした。今は埋められて、桜並木の細長い公園になっています。",
+          noteKana:"さんやぼりは、すみだがわから よしわらへ いく ふねの すいろでした。いまは うめられて、さくらなみきの ほそながい こうえんに なって います。",
+          noteRomaji:"Sanyabori wa, Sumidagawa kara Yoshiwara e iku fune no suiro deshita. Ima wa umerarete, sakura-namiki no hosonagai kōen ni natte imasu.",
+          noteZh:"山谷堀曾是从隅田川通往吉原的水路，江户人坐着细长的「猪牙舟」溯流而上。1975年填平，现在是一条七百米长、种满樱花的细长公园，从今户一直走到吉原。"
+        },
+        questions:[
+          {type:"read", prompt:"「堀」の読み方は？", options:["ほり","くつ","ぼり"], answer:0,
+           explain:"单独是ほり，接在词后浊化成ぼり：山谷堀（さんやぼり）、外堀（そとぼり）。"},
+          {type:"read", prompt:"「並木」の読み方は？", options:["なみき","へいき","ならびき"], answer:0,
+           explain:"なみき＝成排的行道树。並ぶ（ならぶ）是排队，同一个字读法完全不同。"},
+          {type:"listen", tts:"昔はここを舟が通っていたんですよ。",
+           ttsKana:"むかしは ここを ふねが とおって いたんですよ。",
+           options:["以前这里是走船的","这里现在能坐船","这里禁止通行"], answer:0,
+           explain:"「ここを通る」——移动经过的场所用を，不用で。这是助词题的常客。"},
+          {type:"vocab", prompt:"「埋める」是什么意思？",
+           options:["填埋、填上","堆起来","挖开"], answer:0,
+           explain:"うめる＝填。空欄を埋める＝填空。挖是掘る（ほる）。"},
+          {type:"scene", prompt:"想说「樱花开的时候一定很美」，哪句最自然？", jpOptions:true,
+           options:["桜の季節はきれいでしょうね","桜はきれいです","桜が咲きました"], answer:0,
+           phraseKana:"さくらの きせつは きれいでしょうね",
+           explain:"「〜でしょうね」＝（我猜）一定…吧，带一点共情。对着光秃秃的树说这句，日本人会很高兴。"}
+        ]
+      },
+      {
+        id:"bunjin_ikenami", name:"池波正太郎の碑", x:76, y:70,
+        bunjin:{
+          life:"1923–1990", tag:"『鬼平犯科帳』『剣客商売』",
+          story:"池波正太郎生在浅草圣天町，就在待乳山脚下。他小时候在这一带跑，长大后写《鬼平犯科帐》，让长谷川平藏在同样的巷子里追捕盗贼。他也是出了名的爱吃，写过一堆随笔谈东京的老馆子——驹形どぜう、并木薮荞麦，都在他的名单上。台东区中央图书馆里有一间「池波正太郎纪念文库」，把他的书房整间搬了进去。",
+          quote:{jp:"人間は、いいことをしながら悪いことをする。", kana:"にんげんは、いいことを しながら わるいことを する。",
+                 romaji:"Ningen wa, ii koto o shinagara warui koto o suru.",
+                 zh:"人一边做着好事，一边做着坏事。", src:"池波正太郎『鬼平犯科帳』"}
+        },
+        learn:{
+          words:[
+            {jp:"人間", kana:"にんげん", romaji:"ningen", zh:"人"},
+            {jp:"悪い", kana:"わるい", romaji:"warui", zh:"坏"},
+            {jp:"泥棒", kana:"どろぼう", romaji:"dorobō", zh:"小偷"},
+            {jp:"生まれ育つ", kana:"うまれそだつ", romaji:"umare-sodatsu", zh:"出生长大"}
+          ],
+          noteJa:"池波正太郎は浅草で生まれ育ちました。「人間は、いいことをしながら悪いことをする」——これが『鬼平犯科帳』の人間の見方です。",
+          noteKana:"いけなみしょうたろうは あさくさで うまれそだちました。「にんげんは、いいことを しながら わるいことを する」——これが『おにへいはんかちょう』の にんげんの みかたです。",
+          noteRomaji:"Ikenami Shōtarō wa Asakusa de umare-sodachimashita. \"Ningen wa, ii koto o shinagara warui koto o suru\" — kore ga Onihei Hankachō no ningen no mikata desu.",
+          noteZh:"这句话是《鬼平犯科帐》的人性观——他笔下没有纯粹的恶人，也没有干净的好人。写的是江户，其实写的是他从小在浅草看见的那些人。"
+        },
+        questions:[
+          {type:"read", prompt:"「人間」の読み方は？", options:["にんげん","じんかん","ひとま"], answer:0,
+           explain:"にんげん。人的音读じん和にん都有，这里用にん。じんかん只在「人間万事（じんかんばんじ）」这类古文里出现。"},
+          {type:"vocab", prompt:"「〜しながら〜する」表示什么？",
+           options:["一边…一边…（同时进行）","做完…之后再…","因为…所以…"], answer:0,
+           explain:"动词ます形去ます＋ながら。注意：ながら前后必须是同一个人做的两件事。"},
+          {type:"read", prompt:"「泥棒」の読み方は？", options:["どろぼう","でいぼう","どろぼ"], answer:0,
+           explain:"どろぼう，最后要长音。字面是「泥棍子」，据说来自往身上抹泥好夜行的说法。"},
+          {type:"listen", tts:"この辺りで生まれ育ったそうです。",
+           ttsKana:"この あたりで うまれそだった そうです。",
+           options:["据说他就在这一带出生长大","据说他搬到这附近了","他想住在这附近"], answer:0,
+           explain:"この辺り（あたり）＝这一带。生まれ育つ是两个动词粘成的复合词，介绍某人来历时常用。"},
+          {type:"scene", prompt:"想说「我读的是中文版」，哪句最自然？", jpOptions:true,
+           options:["中国語版で読みました","中国語を読みました","中国語の本です"], answer:0,
+           phraseKana:"ちゅうごくごばんで よみました",
+           explain:"「〜版で読む」＝用某个版本读。助词で表示手段。"}
+        ]
+      },
+      {
+        id:"daikon", name:"大根", x:50, y:90, egg:true,
+        eggLines:["ころん","ごろごろ","（大根が転がった）"],
+        eggFinal:"大根（だいこん）は、聖天さまの一番の好物です", eggFinalAt:9
+      }
+    ]
+  },
+  {
+    id:"senzoku", name:"千束・国際通り", short:"千束", chapter:5,
+    svg:"s11",
+    hotspots:[
+      {
+        id:"hisago", name:"ひさご通り", x:22, y:38,
+        learn:{
+          words:[
+            {jp:"商店街", kana:"しょうてんがい", romaji:"shōtengai", zh:"商店街"},
+            {jp:"瓢箪", kana:"ひょうたん", romaji:"hyōtan", zh:"葫芦"},
+            {jp:"池", kana:"いけ", romaji:"ike", zh:"池塘"},
+            {jp:"跡", kana:"あと", romaji:"ato", zh:"遗址／痕迹"}
+          ],
+          noteJa:"ひさご通りの「ひさご」は瓢箪のことです。昔ここに瓢箪池があって、その跡に商店街ができました。",
+          noteKana:"ひさごどおりの「ひさご」は ひょうたんの ことです。むかし ここに ひょうたんいけが あって、その あとに しょうてんがいが できました。",
+          noteRomaji:"Hisago-dōri no \"hisago\" wa hyōtan no koto desu. Mukashi koko ni Hyōtan-ike ga atte, sono ato ni shōtengai ga dekimashita.",
+          noteZh:"「ひさご」是葫芦的古称。这里原本有个葫芦形的池塘（瓢箪池），六区最热闹的时候池边全是小摊。池填了之后，就成了这条有顶棚的商店街。"
+        },
+        questions:[
+          {type:"read", prompt:"「瓢箪」の読み方は？", options:["ひょうたん","ひさご","ぴょうたん"], answer:0,
+           explain:"现代读ひょうたん；ひさご是同一样东西的古语说法，所以街名才叫ひさご通り。两个都指葫芦，但问读み方时答ひょうたん。"},
+          {type:"read", prompt:"「跡」の読み方は？", options:["あと","せき","こん"], answer:0,
+           explain:"あと＝遗址、痕迹。城跡（しろあと）、足跡（あしあと）。音读せき用在「遺跡（いせき）」。"},
+          {type:"listen", tts:"アーケードがあるから、雨の日でも大丈夫です。",
+           ttsKana:"アーケードが あるから、あめの ひでも だいじょうぶです。",
+           options:["有顶棚，下雨天也没问题","下雨天关门","这里会漏雨"], answer:0,
+           explain:"「〜でも」＝就算…也。雨の日でも／夜でも，套进去就能用。"},
+          {type:"vocab", prompt:"「商店街」和「デパート」的区别？",
+           options:["前者是一条街的独立小店，后者是一栋百货公司","完全一样","前者只卖食品"], answer:0,
+           explain:"日本人对这两个词的画面感差得很远：一个是街，一个是楼。"},
+          {type:"scene", prompt:"店家问「何かお探しですか」，你只想随便看看，怎么答？", jpOptions:true,
+           options:["見ているだけです","何もありません","買いません"], answer:0,
+           phraseKana:"みて いるだけです",
+           explain:"「見ているだけです」＝只是看看，前面加个すみません更柔和。后两句听起来像在赶人走。"}
+        ]
+      },
+      {
+        id:"senzokudori", name:"千束通り商店街", x:78, y:38,
+        learn:{
+          words:[
+            {jp:"八百屋", kana:"やおや", romaji:"yaoya", zh:"蔬果店"},
+            {jp:"地元", kana:"じもと", romaji:"jimoto", zh:"本地"},
+            {jp:"値段", kana:"ねだん", romaji:"nedan", zh:"价格"},
+            {jp:"安い", kana:"やすい", romaji:"yasui", zh:"便宜"}
+          ],
+          noteJa:"千束通りは地元の人が買い物をする商店街です。八百屋も魚屋も、観光地より値段が安いです。",
+          noteKana:"せんぞくどおりは じもとの ひとが かいものを する しょうてんがいです。やおやも さかなやも、かんこうちより ねだんが やすいです。",
+          noteRomaji:"Senzoku-dōri wa jimoto no hito ga kaimono o suru shōtengai desu. Yaoya mo sakana-ya mo, kankōchi yori nedan ga yasui desu.",
+          noteZh:"千束通り是本地人买菜的街。从雷门走过来十来分钟，游客突然就没了。蔬果店、鱼店、豆腐店、卖拖鞋的，价格是浅草寺门口的一半。傍晚五点前后最热闹。"
+        },
+        questions:[
+          {type:"read", prompt:"「八百屋」の読み方は？", options:["やおや","はっぴゃくや","やおくや"], answer:0,
+           explain:"やおや。八百＝很多（八百万の神也是这个「很多」），意思是卖很多种菜的店，跟数字800没关系。"},
+          {type:"read", prompt:"「値段」の読み方は？", options:["ねだん","ちだん","あたいだん"], answer:0,
+           explain:"ねだん。値（ね）是训读，段（だん）是音读——训＋音的混搭叫「湯桶読み」。"},
+          {type:"listen", tts:"これ、三つで五百円だよ。安いでしょ。",
+           ttsKana:"これ、みっつで ごひゃくえんだよ。やすいでしょ。",
+           options:["这个三个五百日元，便宜吧","这个五百日元一个","一共三百日元"], answer:0,
+           explain:"「三つで五百円」＝三个共五百。で表示「以…为一组」。「でしょ」是商店街大叔的标配语尾。"},
+          {type:"vocab", prompt:"「地元」是什么意思？",
+           options:["本地、当地","地下","地板"], answer:0,
+           explain:"地元の人＝本地人。日本人自我介绍常说「地元は〇〇です」＝我老家是…。"},
+          {type:"scene", prompt:"想问「能便宜点吗」，在商店街说哪句最自然？", jpOptions:true,
+           options:["ちょっと安くなりませんか","安くしろ","高いです"], answer:0,
+           phraseKana:"ちょっと やすく なりませんか",
+           explain:"否定疑问「〜ませんか」＝委婉请求。注意：日本大部分店不砍价，商店街的熟客氛围里偶尔可以，超市绝对不行。"}
+        ]
+      },
+      {
+        id:"kokusaidori", name:"国際通り", x:24, y:70,
+        learn:{
+          words:[
+            {jp:"通り", kana:"とおり", romaji:"tōri", zh:"大街"},
+            {jp:"劇場", kana:"げきじょう", romaji:"gekijō", zh:"剧场"},
+            {jp:"跡地", kana:"あとち", romaji:"atochi", zh:"旧址"},
+            {jp:"踊り子", kana:"おどりこ", romaji:"odoriko", zh:"舞者"}
+          ],
+          noteJa:"国際通りの名前は、昔ここにあった「国際劇場」から来ています。跡地は今、浅草ビューホテルになっています。",
+          noteKana:"こくさいどおりの なまえは、むかし ここに あった「こくさいげきじょう」から きて います。あとちは いま、あさくさビューホテルに なって います。",
+          noteRomaji:"Kokusai-dōri no namae wa, mukashi koko ni atta \"Kokusai Gekijō\" kara kite imasu. Atochi wa ima, Asakusa Byū Hoteru ni natte imasu.",
+          noteZh:"这条大马路的名字来自1937年开的「国际剧场」——松竹歌剧团的主场，能坐三千六百人，舞台上一排排踊り子是昭和的招牌画面。1982年拆掉，原地盖起浅草View Hotel。街名把剧场留下来了。"
+        },
+        questions:[
+          {type:"read", prompt:"「劇場」の読み方は？", options:["げきじょう","けきじょう","げきば"], answer:0,
+           explain:"げきじょう。場在复合词里多读じょう：工場、会場、駐車場。"},
+          {type:"read", prompt:"「踊り子」の読み方は？", options:["おどりこ","ようりこ","おどりし"], answer:0,
+           explain:"おどりこ。踊る（おどる）＝跳舞。顺便，伊豆的特急列车就叫「踊り子号」。"},
+          {type:"listen", tts:"この道はまっすぐ行くと、スカイツリーが見えます。",
+           ttsKana:"この みちは まっすぐ いくと、スカイツリーが みえます。",
+           options:["这条路一直走就能看见晴空塔","这条路走不通","晴空塔在反方向"], answer:0,
+           explain:"「〜と」＝一…就…（自然结果）。まっすぐ行く＝直走。问路时对方十有八九用这个句式回答。"},
+          {type:"vocab", prompt:"「跡地」是什么意思？",
+           options:["旧址、原址空地","后面那块地","新开发的地"], answer:0,
+           explain:"跡（あと）＋地（ち）。工場跡地、駅跡地——日本城市里到处是这个词。"},
+          {type:"scene", prompt:"想问「浅草站怎么走」，哪句最自然？", jpOptions:true,
+           options:["浅草駅はどう行きますか","浅草駅はどこですか","浅草駅に行きたい"], answer:0,
+           phraseKana:"あさくさえきは どう いきますか",
+           explain:"「どう行きますか」问路线，「どこですか」问位置。想让人给你指路，前者更准。"}
+        ]
+      },
+      {
+        id:"bunjin_kafu", name:"永井荷風の碑", x:76, y:70,
+        bunjin:{
+          life:"1879–1959", tag:"『濹東綺譚』『断腸亭日乗』",
+          story:"永井荷风写了四十二年日记，一天不落，叫《断肠亭日乘》。晚年他每天从市川坐电车来浅草：先去六区看轻歌剧，再到国际通り附近一家叫「アリゾナ」的西餐馆，吃永远一样的那几道菜，吃完回家写日记。1959年他在家中独自去世，桌上还摊着当天的日记。他一辈子讨厌现代化的东京，却每天来看这条最吵的街。",
+          quote:{jp:"日は暮れて、風は冷たし。", kana:"ひは くれて、かぜは つめたし。",
+                 romaji:"Hi wa kurete, kaze wa tsumetashi.",
+                 zh:"日已西沉，风是冷的。", src:"永井荷風『断腸亭日乗』"}
+        },
+        learn:{
+          words:[
+            {jp:"日記", kana:"にっき", romaji:"nikki", zh:"日记"},
+            {jp:"毎日", kana:"まいにち", romaji:"mainichi", zh:"每天"},
+            {jp:"暮れる", kana:"くれる", romaji:"kureru", zh:"天黑／日落"},
+            {jp:"冷たい", kana:"つめたい", romaji:"tsumetai", zh:"冷"}
+          ],
+          noteJa:"荷風は42年間、毎日日記を書きました。「日は暮れて、風は冷たし」の「冷たし」は古い言い方で、今なら「冷たい」です。",
+          noteKana:"かふうは よんじゅうにねんかん、まいにち にっきを かきました。「ひは くれて、かぜは つめたし」の「つめたし」は ふるい いいかたで、いまなら「つめたい」です。",
+          noteRomaji:"Kafū wa 42-nenkan, mainichi nikki o kakimashita. \"Hi wa kurete, kaze wa tsumetashi\" no \"tsumetashi\" wa furui iikata de, ima nara \"tsumetai\" desu.",
+          noteZh:"「冷たし」是文言的形容词终止形，现代日语就是「冷たい」——所有い形容词的古形都是「〜し」（美し→美しい、寒し→寒い）。看懂这一条，明治大正的文章就能啃了。"
+        },
+        questions:[
+          {type:"read", prompt:"「日記」の読み方は？", options:["にっき","ひき","にちき"], answer:0,
+           explain:"にっき。日（にち）后接き时促音化。日程（にってい）、日中（にっちゅう）同理。"},
+          {type:"vocab", prompt:"文言的「冷たし」对应现代日语的？",
+           options:["冷たい","冷たくない","冷たかった"], answer:0,
+           explain:"古语形容词终止形「〜し」→现代「〜い」。这是读明治大正文学的第一把钥匙。"},
+          {type:"read", prompt:"「暮れる」の読み方は？", options:["くれる","ぼれる","くらる"], answer:0,
+           explain:"くれる＝天黑、（一年）到头。日が暮れる＝日落。跟「くれる（给我）」同音不同字，靠语境分。"},
+          {type:"listen", tts:"荷風はここで、毎日同じものを食べていたそうです。",
+           ttsKana:"かふうは ここで、まいにち おなじ ものを たべて いた そうです。",
+           options:["据说荷风每天在这里吃一样的东西","荷风只来过一次","这里的菜每天都换"], answer:0,
+           explain:"同じもの＝同样的东西。「〜ていたそうです」＝据说那时候一直在…。"},
+          {type:"scene", prompt:"想说「我也每天写日记」，哪句最自然？", jpOptions:true,
+           options:["私も毎日日記をつけています","私も日記を書きたい","日記が好きです"], answer:0,
+           phraseKana:"わたしも まいにち にっきを つけて います",
+           explain:"日记的固定搭配动词是「つける」（書く也行）。「〜ています」表示持续的习惯。"}
+        ]
+      },
+      {
+        id:"mikoshi", name:"町会の神輿", x:50, y:90, egg:true,
+        eggLines:["わっしょい！","そいや、そいや","（太鼓）どんどん"],
+        eggFinal:"三社祭（さんじゃまつり）は五月。この町から神輿が出ます", eggFinalAt:9
+      }
+    ]
+  },
+  /* ============ 第6章 ============ */
+  {
+    id:"kappabashi", name:"合羽橋・蔵前", short:"合羽橋", chapter:6,
+    svg:"s12",
+    hotspots:[
+      {
+        id:"sample", name:"食品サンプル", x:22, y:38,
+        learn:{
+          words:[
+            {jp:"食品サンプル", kana:"しょくひんサンプル", romaji:"shokuhin sanpuru", zh:"食品模型"},
+            {jp:"蝋", kana:"ろう", romaji:"rō", zh:"蜡"},
+            {jp:"本物", kana:"ほんもの", romaji:"honmono", zh:"真货"},
+            {jp:"そっくり", kana:"そっくり", romaji:"sokkuri", zh:"一模一样"}
+          ],
+          noteJa:"合羽橋には食品サンプルの店があります。昔は蝋で作りましたが、今は樹脂です。本物そっくりで、食べられそうに見えます。",
+          noteKana:"かっぱばしには しょくひんサンプルの みせが あります。むかしは ろうで つくりましたが、いまは じゅしです。ほんもの そっくりで、たべられそうに みえます。",
+          noteRomaji:"Kappabashi ni wa shokuhin sanpuru no mise ga arimasu. Mukashi wa rō de tsukurimashita ga, ima wa jushi desu. Honmono sokkuri de, taberaresō ni miemasu.",
+          noteZh:"食品模型是日本发明的。早年用蜡，现在用树脂。合羽桥有好几家专门店，还能报名体验课自己捏个天妇罗。做成炸虾、拉面样子的冰箱贴和手机架，是最好玩的伴手礼之一。"
+        },
+        questions:[
+          {type:"read", prompt:"「本物」の読み方は？", options:["ほんもの","ほんぶつ","もともの"], answer:0,
+           explain:"ほんもの＝真货，反义词是偽物（にせもの）。物在这类词里读もの不读ぶつ。"},
+          {type:"vocab", prompt:"「そっくり」是什么意思？",
+           options:["一模一样","全部","突然"], answer:0,
+           explain:"お母さんにそっくり＝跟妈妈长得一个样。另有「原封不动地全部」的用法：そっくり残す。"},
+          {type:"listen", tts:"これ、食べられませんよ。サンプルです。",
+           ttsKana:"これ、たべられませんよ。サンプルです。",
+           options:["这个不能吃，是模型","这个可以试吃","这个卖完了"], answer:0,
+           explain:"食べられません＝不能吃（可能形的否定）。店员对着盯着炸虾发呆的客人，一天要说好几遍。"},
+          {type:"read", prompt:"「蝋」の読み方は？", options:["ろう","らん","つや"], answer:0,
+           explain:"ろう＝蜡。蝋燭（ろうそく）＝蜡烛。现在这个字多写成假名ロウ。"},
+          {type:"scene", prompt:"想问「可以拍照吗」，说哪句？", jpOptions:true,
+           options:["写真を撮ってもいいですか","写真を撮ります","写真がほしいです"], answer:0,
+           phraseKana:"しゃしんを とっても いいですか",
+           explain:"「〜てもいいですか」＝可以…吗。店内拍照前问一句，很多店还会补一句「SNSにあげてもいいですよ」。"}
+        ]
+      },
+      {
+        id:"houcho", name:"包丁屋", x:78, y:38,
+        learn:{
+          words:[
+            {jp:"包丁", kana:"ほうちょう", romaji:"hōchō", zh:"菜刀"},
+            {jp:"切れ味", kana:"きれあじ", romaji:"kireaji", zh:"锋利度"},
+            {jp:"研ぐ", kana:"とぐ", romaji:"togu", zh:"磨（刀）"},
+            {jp:"名入れ", kana:"ないれ", romaji:"naire", zh:"刻名字"}
+          ],
+          noteJa:"合羽橋の包丁屋では、その場で名前を彫ってくれます。切れ味が悪くなったら、研ぎに出せます。",
+          noteKana:"かっぱばしの ほうちょうやでは、その ばで なまえを ほって くれます。きれあじが わるく なったら、とぎに だせます。",
+          noteRomaji:"Kappabashi no hōchō-ya de wa, sono ba de namae o hotte kuremasu. Kireaji ga waruku nattara, togi ni dasemasu.",
+          noteZh:"合羽桥的刀具店可以当场在刀身上刻名字（汉字、片假名都行），十几分钟就好。刀钝了还能寄回来重新研磨。这条街本来是给餐馆老板配货的，现在一半客人是外国游客。"
+        },
+        questions:[
+          {type:"read", prompt:"「包丁」の読み方は？", options:["ほうちょう","ぽうてい","つつみちょう"], answer:0,
+           explain:"ほうちょう。词源是《庄子》庖丁解牛里那个厨师——日语借过来，当了菜刀。"},
+          {type:"read", prompt:"「研ぐ」の読み方は？", options:["とぐ","けんぐ","みがぐ"], answer:0,
+           explain:"とぐ＝磨（刀）、淘（米）。米を研ぐ也是这个词。音读けん在「研究」。"},
+          {type:"listen", tts:"お名前をお入れしますが、漢字とローマ字、どちらにしますか。",
+           ttsKana:"おなまえを おいれしますが、かんじと ローマじ、どちらに しますか。",
+           options:["要刻名字的话，汉字还是罗马字？","名字写错了","不能刻名字"], answer:0,
+           explain:"「お＋动词ます形＋します」是谦让语，店员对客人的标准说法。どちらにしますか＝您选哪个。"},
+          {type:"vocab", prompt:"「切れ味」指的是？",
+           options:["刀的锋利程度","切出来的味道","切法"], answer:0,
+           explain:"味（あじ）在这里不是味道，是手感、质感。乗り心地、書き味，同一类构词。"},
+          {type:"scene", prompt:"想说「这是送给妈妈的礼物」，哪句最自然？", jpOptions:true,
+           options:["母へのプレゼントです","母がプレゼントです","母にプレゼントします"], answer:0,
+           phraseKana:"ははへの プレゼントです",
+           explain:"「〜への」＝给…的（名词修饰名词）。跟别人提自己妈妈用「母（はは）」，不用「お母さん」。"}
+        ]
+      },
+      {
+        id:"kappa", name:"かっぱ河太郎", x:24, y:78,
+        learn:{
+          words:[
+            {jp:"河童", kana:"かっぱ", romaji:"kappa", zh:"河童"},
+            {jp:"伝説", kana:"でんせつ", romaji:"densetsu", zh:"传说"},
+            {jp:"手伝う", kana:"てつだう", romaji:"tetsudau", zh:"帮忙"},
+            {jp:"像", kana:"ぞう", romaji:"zō", zh:"雕像"}
+          ],
+          noteJa:"合羽橋の名前には二つの説があります。一つは雨合羽を干していたから、もう一つは河童が工事を手伝ったからです。",
+          noteKana:"かっぱばしの なまえには ふたつの せつが あります。ひとつは あまがっぱを ほして いたから、もう ひとつは かっぱが こうじを てつだったからです。",
+          noteRomaji:"Kappabashi no namae ni wa futatsu no setsu ga arimasu. Hitotsu wa amagappa o hoshite ita kara, mō hitotsu wa kappa ga kōji o tetsudatta kara desu.",
+          noteZh:"「合羽桥」的来历有两说：一说这里曾有做雨衣（雨合羽）的作坊，把雨衣晾在河边；一说江户时代有个叫合羽屋喜八的人自掏腰包挖排水渠，河童感念他，夜里出来帮工。街口那尊金色河童像叫「かっぱ河太郎」。"
+        },
+        questions:[
+          {type:"read", prompt:"「伝説」の読み方は？", options:["でんせつ","てんせつ","つたえせつ"], answer:0,
+           explain:"でんせつ。伝的音读是でん（伝統、伝言），训读是つた（伝える）。"},
+          {type:"read", prompt:"「像」の読み方は？", options:["ぞう","しょう","かたち"], answer:0,
+           explain:"ぞう。銅像（どうぞう）、仏像（ぶつぞう）。跟「象（ぞう＝大象）」同音，日本人也常写错。"},
+          {type:"listen", tts:"河童はきゅうりが大好きだと言われています。",
+           ttsKana:"かっぱは きゅうりが だいすきだと いわれて います。",
+           options:["据说河童最爱吃黄瓜","河童讨厌黄瓜","这里在卖黄瓜"], answer:0,
+           explain:"所以卷了黄瓜的寿司叫「かっぱ巻き」。「〜だと言われています」＝据说是…。"},
+          {type:"vocab", prompt:"「手伝う」是什么意思？",
+           options:["帮忙","递东西","用手做"], answer:0,
+           explain:"てつだう＝帮忙，名词是手伝い（てつだい）。注意读法不规则：不是てづたう。"},
+          {type:"scene", prompt:"想说「有两种说法」，哪句最自然？", jpOptions:true,
+           options:["二つの説があります","二つ言います","二回言いました"], answer:0,
+           phraseKana:"ふたつの せつが あります",
+           explain:"説（せつ）＝说法、学说。介绍地名由来、历史争议时的固定句型。"}
+        ]
+      },
+      {
+        id:"kuramae", name:"蔵前", x:76, y:78,
+        learn:{
+          words:[
+            {jp:"蔵", kana:"くら", romaji:"kura", zh:"仓库"},
+            {jp:"米", kana:"こめ", romaji:"kome", zh:"米"},
+            {jp:"焙煎", kana:"ばいせん", romaji:"baisen", zh:"烘焙（咖啡）"},
+            {jp:"職人", kana:"しょくにん", romaji:"shokunin", zh:"匠人"}
+          ],
+          noteJa:"蔵前には江戸時代、幕府の米蔵がありました。今は古い倉庫を使ったコーヒー屋や革の工房が増えています。",
+          noteKana:"くらまえには えどじだい、ばくふの こめぐらが ありました。いまは ふるい そうこを つかった コーヒーやや かわの こうぼうが ふえて います。",
+          noteRomaji:"Kuramae ni wa Edo jidai, bakufu no komegura ga arimashita. Ima wa furui sōko o tsukatta kōhī-ya ya kawa no kōbō ga fuete imasu.",
+          noteZh:"蔵前的「蔵」是江户幕府的米仓——全国收上来的年贡米堆在这里，武士的俸禄也在这里领。仓库拆了，街名留下了。这十来年老仓库改成了咖啡烘焙店、皮具工房、文具店，被叫作「东京的布鲁克林」。"
+        },
+        questions:[
+          {type:"read", prompt:"「蔵」の読み方は？", options:["くら","ぞう","かくら"], answer:0,
+           explain:"训读くら＝仓库。音读ぞう在「冷蔵庫（れいぞうこ）」「地蔵（じぞう）」里。"},
+          {type:"read", prompt:"「職人」の読み方は？", options:["しょくにん","しきにん","しょくじん"], answer:0,
+           explain:"しょくにん＝手艺人。人在这类词里读にん（芸人、商人しょうにん），不读じん。"},
+          {type:"listen", tts:"ここは古い倉庫をそのまま使っているんです。",
+           ttsKana:"ここは ふるい そうこを そのまま つかって いるんです。",
+           options:["这里是把老仓库原样改用的","这里在盖新仓库","仓库已经拆掉了"], answer:0,
+           explain:"そのまま＝原封不动地。改造老建筑的店，介绍自己时几乎都会说这句。"},
+          {type:"vocab", prompt:"「焙煎」大概是什么意思？",
+           options:["烘焙（咖啡豆）","煎鸡蛋","晒干"], answer:0,
+           explain:"ばいせん。自家焙煎（じかばいせん）＝自家烘焙，咖啡店招牌上的高频词。"},
+          {type:"scene", prompt:"想问「可以在店里喝吗」，说哪句？", jpOptions:true,
+           options:["店内で飲めますか","持って帰ります","コーヒーをください"], answer:0,
+           phraseKana:"てんないで のめますか",
+           explain:"店内（てんない）で＝在店里。反过来外带是「持ち帰り（もちかえり）」或「テイクアウト」。"}
+        ]
+      },
+      {
+        id:"kappa_ko", name:"小さな河童", x:50, y:90, egg:true,
+        eggLines:["きゅう","きゅうり、ちょうだい","（水の音）ぽちゃん"],
+        eggFinal:"かっぱ巻きは、河童の好物からついた名前です", eggFinalAt:9
+      }
+    ]
+  },
+  {
+    id:"yoshiwara", name:"吉原・竜泉", short:"吉原", chapter:6,
+    svg:"s13",
+    hotspots:[
+      {
+        id:"mikaeriyanagi", name:"見返り柳", x:22, y:38,
+        learn:{
+          words:[
+            {jp:"柳", kana:"やなぎ", romaji:"yanagi", zh:"柳树"},
+            {jp:"振り返る", kana:"ふりかえる", romaji:"furikaeru", zh:"回头看"},
+            {jp:"名残", kana:"なごり", romaji:"nagori", zh:"残留的痕迹／依依不舍"},
+            {jp:"曲がる", kana:"まがる", romaji:"magaru", zh:"拐弯"}
+          ],
+          noteJa:"見返り柳は、帰る人が振り返った場所だと言われています。今の柳は何代目かで、道の角に立っています。",
+          noteKana:"みかえりやなぎは、かえる ひとが ふりかえった ばしょだと いわれて います。いまの やなぎは なんだいめかで、みちの かどに たって います。",
+          noteRomaji:"Mikaeri Yanagi wa, kaeru hito ga furikaetta basho da to iwarete imasu. Ima no yanagi wa nandaime ka de, michi no kado ni tatte imasu.",
+          noteZh:"「回首柳」立在通往吉原的路口。江户人天亮离开吉原，走到这里会回头再看一眼，柳树因此得名。原树早已不在，现在这棵不知是第几代，孤零零站在马路拐角，旁边就是便利店。"
+        },
+        questions:[
+          {type:"read", prompt:"「柳」の読み方は？", options:["やなぎ","りゅう","やなが"], answer:0,
+           explain:"やなぎ。音读りゅう在「川柳（せんりゅう）」里——那是俳句的搞笑版。"},
+          {type:"read", prompt:"「振り返る」の読み方は？", options:["ふりかえる","しんかえる","ふりへんる"], answer:0,
+           explain:"ふりかえる＝回头看、回顾。一年を振り返る＝回顾一年。"},
+          {type:"vocab", prompt:"「名残」是什么意思？",
+           options:["残留的痕迹、依依不舍","有名的地方","名字的由来"], answer:0,
+           explain:"なごり。名残惜しい（なごりおしい）＝舍不得。读法完全不按汉字来，是熟字训。"},
+          {type:"listen", tts:"角を曲がったところに、柳が一本立っています。",
+           ttsKana:"かどを まがった ところに、やなぎが いっぽん たって います。",
+           options:["拐角处立着一棵柳树","柳树在路的正中间","这里没有柳树"], answer:0,
+           explain:"「〜たところに」＝在…的地方。一本（いっぽん）＝一棵（细长物的量词）。"},
+          {type:"scene", prompt:"想说「就在那个拐角」，哪句最自然？", jpOptions:true,
+           options:["あの角のところです","あそこに曲がります","角があります"], answer:0,
+           phraseKana:"あの かどの ところです",
+           explain:"「〜のところ」＝…的位置。指路时最好用的万能表达。"}
+        ]
+      },
+      {
+        id:"yoshiwaradaimon", name:"吉原大門跡", x:78, y:38,
+        learn:{
+          words:[
+            {jp:"大門", kana:"おおもん", romaji:"ōmon", zh:"大门"},
+            {jp:"江戸", kana:"えど", romaji:"Edo", zh:"江户（东京旧称）"},
+            {jp:"交差点", kana:"こうさてん", romaji:"kōsaten", zh:"十字路口"},
+            {jp:"残る", kana:"のこる", romaji:"nokoru", zh:"留下、残存"}
+          ],
+          noteJa:"吉原は江戸時代の遊郭でした。今は大門も塀もなく、「吉原大門」という交差点の名前だけが残っています。",
+          noteKana:"よしわらは えどじだいの ゆうかくでした。いまは おおもんも へいも なく、「よしわらおおもん」という こうさてんの なまえだけが のこって います。",
+          noteRomaji:"Yoshiwara wa Edo jidai no yūkaku deshita. Ima wa ōmon mo hei mo naku, \"Yoshiwara Ōmon\" to iu kōsaten no namae dake ga nokotte imasu.",
+          noteZh:"吉原是江户时代幕府公认的游廓，四周围着壕沟和土墙，只有一道大门出入。进门前那段刻意弯成S形的坡叫「衣紋坂・五十間道」——弯路是为了让人从外面看不见门内。1958年卖春防止法施行，作为花街的吉原结束。现在只剩「吉原大門」这个红绿灯路口的名字。"
+        },
+        questions:[
+          {type:"read", prompt:"「江戸」の読み方は？", options:["えど","こうど","えと"], answer:0,
+           explain:"えど。江的音读こう（長江），训读え只在江戸、入り江（いりえ＝海湾）这类词里。"},
+          {type:"read", prompt:"吉原这里的「大門」怎么读？", options:["おおもん","だいもん","たいもん"], answer:0,
+           explain:"这里读おおもん（训＋音的混读）。同样两个字在浜松町的车站读だいもん——地名读法是永远的陷阱。"},
+          {type:"vocab", prompt:"江户时代大约是哪段时间？",
+           options:["1603–1868年","1868–1912年","1336–1573年"], answer:0,
+           explain:"江户1603–1868，共265年。第二个是明治，第三个是室町。日本时代剧十有八九发生在江户。"},
+          {type:"listen", tts:"ここに大きな門があって、出入りはここだけでした。",
+           ttsKana:"ここに おおきな もんが あって、でいりは ここだけでした。",
+           options:["这里曾有一道大门，出入只能走这里","这里有很多门","门现在还在"], answer:0,
+           explain:"出入り（でいり）＝进出。「〜だけでした」＝当时只有…。"},
+          {type:"scene", prompt:"想说「现在只剩名字了」，哪句最自然？", jpOptions:true,
+           options:["今は名前だけが残っています","今は名前がありません","名前を残しました"], answer:0,
+           phraseKana:"いまは なまえだけが のこって います",
+           explain:"残る（のこる）是自动词用が，残す（のこす）是他动词用を。这一对自他动词必考。"}
+        ]
+      },
+      {
+        id:"ichiyokinenkan", name:"一葉記念館", x:24, y:70,
+        learn:{
+          words:[
+            {jp:"記念館", kana:"きねんかん", romaji:"kinenkan", zh:"纪念馆"},
+            {jp:"作家", kana:"さっか", romaji:"sakka", zh:"作家"},
+            {jp:"駄菓子屋", kana:"だがしや", romaji:"dagashiya", zh:"廉价糖果零食店"},
+            {jp:"五千円札", kana:"ごせんえんさつ", romaji:"gosen'en-satsu", zh:"五千日元纸币"}
+          ],
+          noteJa:"樋口一葉は竜泉で駄菓子屋をやりながら小説を書きました。今は記念館があり、2004年から五千円札の顔になりました。",
+          noteKana:"ひぐちいちようは りゅうせんで だがしやを やりながら しょうせつを かきました。いまは きねんかんが あり、にせんよねんから ごせんえんさつの かおに なりました。",
+          noteRomaji:"Higuchi Ichiyō wa Ryūsen de dagashi-ya o yari nagara shōsetsu o kakimashita. Ima wa kinenkan ga ari, 2004-nen kara gosen'en-satsu no kao ni narimashita.",
+          noteZh:"樋口一叶曾在竜泉这一带一边开小杂货铺卖糖果杂物、一边写小说。那十个月的所见，后来成了《青梅竹马》。2004到2024年，五千日元纸币上印的就是她。纪念馆里有她的手稿，和那间小店的复原。"
+        },
+        questions:[
+          {type:"read", prompt:"「作家」の読み方は？", options:["さっか","さくか","さくいえ"], answer:0,
+           explain:"さっか。作（さく）后接か时促音化，作曲（さっきょく）同理。"},
+          {type:"read", prompt:"「記念館」の読み方は？", options:["きねんかん","きねんやかた","きえんかん"], answer:0,
+           explain:"きねんかん。館在复合词里读かん：美術館、図書館、大使館。"},
+          {type:"listen", tts:"一葉は二十四歳で亡くなりました。",
+           ttsKana:"いちようは にじゅうよんさいで なくなりました。",
+           options:["一叶24岁去世","一叶24岁成名","一叶活到了74岁"], answer:0,
+           explain:"亡くなる（なくなる）＝去世的委婉说法。跟「無くなる（丢了、没了）」同音不同字，写的时候千万别搞错。"},
+          {type:"vocab", prompt:"「駄菓子屋」是什么店？",
+           options:["卖廉价糖果零食的小店","高级点心店","杂志店"], answer:0,
+           explain:"駄（だ）＝粗糙、不值钱的。駄菓子＝几十日元一个的童年零食，跟「和菓子」那种精致点心是两个世界。"},
+          {type:"scene", prompt:"想说「一边打工一边写小说」，哪句最自然？", jpOptions:true,
+           options:["アルバイトをしながら小説を書きました","アルバイトの後で小説を書きました","アルバイトと小説を書きました"], answer:0,
+           phraseKana:"アルバイトを しながら しょうせつを かきました",
+           explain:"「〜ながら」＝一边…一边…。第二句变成了「打完工再写」，第三句语法不成立。"}
+        ]
+      },
+      {
+        id:"bunjin_ichiyo", name:"樋口一葉の碑", x:76, y:70,
+        bunjin:{
+          life:"1872–1896", tag:"『たけくらべ』『にごりえ』",
+          story:"樋口一叶本名夏子，十七岁父亲去世，她成了三口之家的户主。为了养活母亲和妹妹，她搬到吉原大门外的竜泉开小铺子，白天卖糖果笔墨，晚上写小说。铺子只撑了十个月。但那十个月里她天天看着吉原的孩子——将来要进游廓的女孩美登利、要出家的男孩信如——写出了《青梅竹马》。1896年她死于肺结核，二十四岁。她真正的写作生涯，只有十四个月。",
+          quote:{jp:"廻れば大門の見返り柳いと長けれど", kana:"まわれば おおもんの みかえりやなぎ いと ながけれど",
+                 romaji:"Mawareba ōmon no mikaeri yanagi ito nagakeredo",
+                 zh:"绕过去，大门前那株回首柳，枝条虽长——", src:"樋口一葉『たけくらべ』冒頭"}
+        },
+        learn:{
+          words:[
+            {jp:"一葉", kana:"いちよう", romaji:"Ichiyō", zh:"一叶（笔名）"},
+            {jp:"長い", kana:"ながい", romaji:"nagai", zh:"长"},
+            {jp:"貧しい", kana:"まずしい", romaji:"mazushii", zh:"贫穷"},
+            {jp:"亡くなる", kana:"なくなる", romaji:"nakunaru", zh:"去世"}
+          ],
+          noteJa:"『たけくらべ』の書き出しです。「いと」は古語で「とても」、「長けれど」は「長いけれど」という意味です。",
+          noteKana:"『たけくらべ』の かきだしです。「いと」は こごで「とても」、「ながけれど」は「ながいけれど」という いみです。",
+          noteRomaji:"Takekurabe no kakidashi desu. \"Ito\" wa kogo de \"totemo\", \"nagakeredo\" wa \"nagai keredo\" to iu imi desu.",
+          noteZh:"一叶写的是文语体，同时代的人读起来也觉得古雅。她只活了二十四岁，却是用旧文体写新女性的最后一人。"
+        },
+        questions:[
+          {type:"vocab", prompt:"古语的「いと」相当于现代日语的？",
+           options:["とても","いつも","糸（いと）"], answer:0,
+           explain:"いと＝很、非常。《枕草子》《源氏物语》里满篇都是。跟「糸（线）」同音纯属巧合。"},
+          {type:"read", prompt:"「貧しい」の読み方は？", options:["まずしい","ひんしい","まづしい"], answer:0,
+           explain:"まずしい。音读ひん在「貧乏（びんぼう）」——那个还要浊化成びん，日语音读真是各走各的。"},
+          {type:"read", prompt:"「一葉」の読み方は？", options:["いちよう","ひとは","いちば"], answer:0,
+           explain:"いちよう。笔名据说取自达摩「一苇渡江」——一片叶子也能渡河；她自嘲说自己是没有「お足（钱）」的一叶。"},
+          {type:"listen", tts:"二十四歳で亡くなるまでに、十四か月しか書いていません。",
+           ttsKana:"にじゅうよんさいで なくなるまでに、じゅうよんかげつしか かいて いません。",
+           options:["到24岁去世为止，她只写了十四个月","她写了十四年","她24岁才开始写"], answer:0,
+           explain:"「〜までに」＝到…为止。「〜しか〜ない」＝只有…，这里是しか＋書いていません。"},
+          {type:"scene", prompt:"想说「这本书我想读读看」，哪句最自然？", jpOptions:true,
+           options:["この本、読んでみたいです","この本を読みます","この本が読めます"], answer:0,
+           phraseKana:"この ほん、よんで みたいです",
+           explain:"「〜てみたい」＝想试着…看看。比单说「読みたい」多了一层「没读过，想尝试」的意思。"}
+        ]
+      },
+      {
+        id:"kitsune", name:"お稲荷さんの狐", x:50, y:90, egg:true,
+        eggLines:["こん","こんこん","（狐が首をかしげた）"],
+        eggFinal:"吉原神社には、五つのお稲荷さんが集められています", eggFinalAt:9
+      }
+    ]
   }
 ];
 
@@ -1228,7 +2181,7 @@ const OMIKUJI_WEIGHTS = [
    STORAGE  (window.storage -> localStorage -> memory)
 ===================================================== */
 const SAVE_KEY = "asakusa-meguri-save";
-let state = { learned:{}, cleared:{}, gold:{}, qdone:{}, omikuji:null, eggTaps:{}, seenGuide:false };
+let state = { learned:{}, cleared:{}, gold:{}, qdone:{}, omikuji:null, eggTaps:{}, seenGuide:false, seenV2:false };
 
 async function loadState(){
   if (window.storage) {
@@ -1338,10 +2291,17 @@ $("#btn-stamps").addEventListener("click", ()=>{ renderStamps(); show("view-stam
    MAP
 ===================================================== */
 const NODE_POS = {
-  kaminarimon:{x:50,y:88}, nakamise:{x:50,y:60}, hondo:{x:50,y:30},
-  denboin:{x:20,y:45}, sumida:{x:81,y:52},
-  hoppy:{x:20,y:17}, station:{x:80,y:88}
+  /* 浅草寺中軸（第1〜3章）＝地图下半 */
+  kaminarimon:{x:44,y:94}, nakamise:{x:44,y:80}, hondo:{x:44,y:65},
+  denboin:{x:16,y:72}, hoppy:{x:15,y:57},
+  sumida:{x:82,y:70}, kamiya:{x:82,y:82}, station:{x:82,y:94},
+  /* 周辺（第4〜6章）＝地图上半，大致按方位摆 */
+  rokku:{x:18,y:44}, matsuchiyama:{x:79,y:44},
+  kappabashi:{x:18,y:30}, senzoku:{x:52,y:27},
+  yoshiwara:{x:30,y:12}
 };
+const MAX_CHAPTER = 6;
+const CH_KANJI = ["","一","二","三","四","五","六"];
 function chapterAllGold(ch){
   return SCENES.filter(s=>s.chapter===ch)
     .every(s=>quizHotspots(s).every(h=>state.gold[h.id]));
@@ -1370,6 +2330,10 @@ function renderMap(){
     });
     canvas.appendChild(node);
   });
+  let open = 1;
+  for (let c=1;c<=MAX_CHAPTER;c++){ if (chapterUnlocked(c)) open = c; }
+  const chEl = $("#map-chap");
+  if (chEl) chEl.textContent = "第 "+CH_KANJI[open]+" 章 · 全 "+CH_KANJI[MAX_CHAPTER]+" 章";
   $("#stamp-count").textContent = stampCount()+"/"+totalStamps();
 }
 
@@ -1652,6 +2616,355 @@ s7: `
   </g>
   <text x="334" y="226" text-anchor="middle" font-family="serif" font-size="10" fill="#33302B">▶ 電車がまいります</text>
   <text x="82" y="102" text-anchor="middle" font-family="serif" font-size="11" fill="#33302B">きっぷうりば</text>
+</svg>`,
+s8: `
+<svg viewBox="0 0 390 310" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="310" fill="#DCEBEF"/>
+  <ellipse cx="200" cy="40" rx="50" ry="13" fill="#fff" opacity=".7"/>
+  <rect y="180" width="390" height="130" fill="#CFC3A6"/>
+  <rect y="178" width="390" height="4" fill="#B4A98D"/>
+  <!-- 浅草演芸ホール -->
+  <rect x="26" y="62" width="120" height="118" fill="#FFFDF7" stroke="#33302B" stroke-width="3"/>
+  <rect x="26" y="60" width="120" height="26" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <text x="86" y="79" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif" font-weight="700">演芸ホール</text>
+  <g stroke="#33302B" stroke-width="2" fill="#D9A441">
+    <circle cx="44" cy="102" r="8"/><circle cx="65" cy="102" r="8"/><circle cx="86" cy="102" r="8"/>
+    <circle cx="107" cy="102" r="8"/><circle cx="128" cy="102" r="8"/>
+  </g>
+  <rect x="40" y="122" width="42" height="58" fill="#26466D" stroke="#33302B" stroke-width="2.5"/>
+  <rect x="92" y="122" width="42" height="58" fill="#F3E2C2" stroke="#33302B" stroke-width="2.5"/>
+  <text x="113" y="160" text-anchor="middle" font-size="22" fill="#A32E2C" font-family="serif" font-weight="700">寄</text>
+  <!-- 花やしき -->
+  <rect x="248" y="72" width="120" height="108" fill="#E8D5AE" stroke="#33302B" stroke-width="3"/>
+  <path d="M254 152 C 276 100, 302 100, 324 134 C 340 158, 354 152, 364 136"
+        fill="none" stroke="#8E7B58" stroke-width="3"/>
+  <path d="M254 144 C 276 92, 302 92, 324 126 C 340 150, 354 144, 364 128"
+        fill="none" stroke="#A32E2C" stroke-width="4"/>
+  <g stroke="#33302B" stroke-width="2">
+    <rect x="288" y="96" width="28" height="16" rx="3" fill="#C73E3A"/>
+    <circle cx="295" cy="116" r="4" fill="#33302B"/>
+    <circle cx="309" cy="116" r="4" fill="#33302B"/>
+  </g>
+  <rect x="248" y="58" width="120" height="20" fill="#7A8450" stroke="#33302B" stroke-width="3"/>
+  <text x="308" y="73" text-anchor="middle" font-size="13" fill="#FFFDF7" font-family="serif">花やしき</text>
+  <!-- スターの広場（手形） -->
+  <g stroke="#33302B" stroke-width="2">
+    <rect x="40" y="196" width="34" height="34" rx="4" fill="#D9A441"/>
+    <rect x="80" y="196" width="34" height="34" rx="4" fill="#D9A441"/>
+    <rect x="120" y="196" width="34" height="34" rx="4" fill="#D9A441"/>
+    <rect x="60" y="238" width="34" height="34" rx="4" fill="#C9A24A"/>
+    <rect x="100" y="238" width="34" height="34" rx="4" fill="#C9A24A"/>
+  </g>
+  <g fill="#8E7B58" font-family="serif" font-size="17" text-anchor="middle">
+    <text x="57" y="220">★</text><text x="97" y="220">★</text><text x="137" y="220">★</text>
+    <text x="77" y="262">★</text><text x="117" y="262">★</text>
+  </g>
+  <!-- 渥美清の碑 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="194" y="214" width="46" height="12" rx="2" fill="#B9B0A0"/>
+    <path d="M202 214 L202 176 Q202 168 217 166 Q232 168 232 176 L232 214 Z" fill="#8C857A"/>
+  </g>
+  <text x="217" y="196" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif">碑</text>
+  <!-- 川端康成の碑 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="297" y="222" width="46" height="12" rx="2" fill="#B9B0A0"/>
+    <path d="M305 222 L305 184 Q305 176 320 174 Q335 176 335 184 L335 222 Z" fill="#8C857A"/>
+  </g>
+  <text x="320" y="204" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif">碑</text>
+  <!-- ちんどん屋 -->
+  <g id="chindon-group" stroke="#33302B" stroke-width="2.5">
+    <path d="M168 250 q11 -11 22 0 Z" fill="#33302B"/>
+    <circle cx="179" cy="256" r="12" fill="#F3D9A6"/>
+    <rect x="168" y="268" width="22" height="26" rx="5" fill="#C73E3A"/>
+    <circle cx="179" cy="281" r="10" fill="#FFFDF7"/>
+    <path d="M168 272 L154 262 M190 272 L204 262" stroke-linecap="round"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2" fill="#D9A441">
+    <circle cx="151" cy="259" r="5"/><circle cx="207" cy="259" r="5"/>
+  </g>
+</svg>`,
+s9: `
+<svg viewBox="0 0 390 310" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="310" fill="#DCEBEF"/>
+  <circle cx="52" cy="40" r="20" fill="#F3D9A6" opacity=".85"/>
+  <rect y="170" width="390" height="82" fill="#CFC3A6"/>
+  <rect y="168" width="390" height="4" fill="#B4A98D"/>
+  <rect y="250" width="390" height="60" fill="#9EC3D4"/>
+  <path d="M0 258 q42 7 84 0 t84 0 t84 0 t84 0 t84 0" fill="none" stroke="#FFFDF7" stroke-width="2.5" opacity=".55"/>
+  <!-- 神谷バー -->
+  <rect x="28" y="56" width="118" height="112" fill="#C88A5C" stroke="#33302B" stroke-width="3"/>
+  <rect x="28" y="54" width="118" height="26" fill="#A32E2C" stroke="#33302B" stroke-width="3"/>
+  <text x="87" y="73" text-anchor="middle" font-size="15" fill="#FFFDF7" font-family="serif" font-weight="700">神谷バー</text>
+  <g stroke="#33302B" stroke-width="2.5" fill="#DCEBEF">
+    <rect x="40" y="92" width="28" height="30"/><rect x="73" y="92" width="28" height="30"/><rect x="106" y="92" width="28" height="30"/>
+  </g>
+  <rect x="66" y="134" width="40" height="34" fill="#33302B"/>
+  <!-- 電気ブランのグラス -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M152 112 L176 112 L170 146 L158 146 Z" fill="#D9A441"/>
+    <rect x="161" y="146" width="6" height="12" fill="#8C857A"/>
+    <path d="M152 160 h24" stroke-linecap="round"/>
+  </g>
+  <!-- 太宰治の碑 -->
+  <ellipse cx="305" cy="146" rx="56" ry="13" fill="#7A8450" opacity=".45"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="282" y="128" width="46" height="12" rx="2" fill="#B9B0A0"/>
+    <path d="M290 128 L290 84 Q290 76 305 74 Q320 76 320 84 L320 128 Z" fill="#8C857A"/>
+  </g>
+  <text x="305" y="108" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif">碑</text>
+  <!-- 浅草地下街 -->
+  <rect x="58" y="174" width="80" height="17" rx="3" fill="#26466D" stroke="#33302B" stroke-width="2.5"/>
+  <text x="98" y="187" text-anchor="middle" font-size="11" fill="#FFFDF7" font-family="serif">地下街</text>
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M136 192 L136 204 L114 204 L114 216 L92 216 L92 228 L70 228 L70 240 L52 240 L52 248 L136 248 Z" fill="#8C857A"/>
+  </g>
+  <!-- 駒形どぜう -->
+  <rect x="248" y="176" width="118" height="74" fill="#F3E2C2" stroke="#33302B" stroke-width="3"/>
+  <rect x="246" y="172" width="122" height="16" fill="#3B4A45" stroke="#33302B" stroke-width="2.5"/>
+  <rect x="258" y="196" width="98" height="32" fill="#26466D" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M290 196 v32 M324 196 v32" stroke="#FFFDF7" stroke-width="2" opacity=".65"/>
+  <text x="307" y="218" text-anchor="middle" font-size="16" fill="#FFFDF7" font-family="serif" font-weight="700">どぜう</text>
+  <rect x="286" y="230" width="42" height="20" fill="#8C857A" stroke="#33302B" stroke-width="2.5"/>
+  <!-- 屋形船 -->
+  <g id="yakata-group" stroke="#33302B" stroke-width="2.5">
+    <path d="M150 288 L242 288 L232 302 L160 302 Z" fill="#8B5A2B"/>
+    <rect x="160" y="262" width="72" height="26" fill="#A32E2C"/>
+    <rect x="158" y="254" width="76" height="9" fill="#33302B"/>
+    <g fill="#D9A441" stroke="none">
+      <circle cx="173" cy="275" r="4"/><circle cx="188" cy="275" r="4"/>
+      <circle cx="203" cy="275" r="4"/><circle cx="218" cy="275" r="4"/>
+    </g>
+  </g>
+</svg>`,
+s10: `
+<svg viewBox="0 0 390 310" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="310" fill="#DCEBEF"/>
+  <ellipse cx="200" cy="36" rx="44" ry="12" fill="#fff" opacity=".7"/>
+  <rect y="168" width="390" height="142" fill="#CFC3A6"/>
+  <rect y="166" width="390" height="4" fill="#B4A98D"/>
+  <!-- 待乳山（丘＋聖天堂） -->
+  <path d="M14 168 Q94 84 174 168 Z" fill="#7A8450" stroke="#33302B" stroke-width="3"/>
+  <path d="M56 130 L94 104 L132 130 Z" fill="#3B4A45" stroke="#33302B" stroke-width="3"/>
+  <rect x="70" y="128" width="48" height="36" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <g stroke="#FFFDF7" stroke-width="3.5" stroke-linecap="round">
+    <path d="M80 138 L108 156 M108 138 L80 156"/>
+  </g>
+  <!-- 今戸神社（鳥居＋招き猫） -->
+  <g stroke="#33302B" stroke-width="3">
+    <rect x="246" y="94" width="11" height="74" fill="#C73E3A"/>
+    <rect x="335" y="94" width="11" height="74" fill="#C73E3A"/>
+    <rect x="236" y="80" width="120" height="13" rx="3" fill="#A32E2C"/>
+    <rect x="246" y="103" width="100" height="9" fill="#A32E2C"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2.5">
+    <ellipse cx="296" cy="148" rx="23" ry="20" fill="#FFFDF7"/>
+    <circle cx="296" cy="124" r="16" fill="#FFFDF7"/>
+    <path d="M284 113 L282 101 L293 109 Z" fill="#FFFDF7"/>
+    <path d="M308 113 L310 101 L299 109 Z" fill="#FFFDF7"/>
+    <path d="M317 140 q11 -11 5 -22" fill="none"/>
+  </g>
+  <g fill="#33302B"><circle cx="291" cy="124" r="2"/><circle cx="301" cy="124" r="2"/></g>
+  <circle cx="296" cy="152" r="7" fill="#D9A441" stroke="#33302B" stroke-width="2"/>
+  <!-- 山谷堀公園（桜並木） -->
+  <path d="M14 258 L58 192 L130 192 L174 258 Z" fill="#E0D6BD" stroke="#B4A98D" stroke-width="2"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="41" y="198" width="8" height="36" fill="#8B5A2B"/>
+    <ellipse cx="45" cy="194" rx="23" ry="14" fill="#F2C8D2"/>
+    <rect x="139" y="198" width="8" height="36" fill="#8B5A2B"/>
+    <ellipse cx="143" cy="194" rx="23" ry="14" fill="#F2C8D2"/>
+  </g>
+  <g fill="#F2C8D2" opacity=".85">
+    <circle cx="72" cy="218" r="3"/><circle cx="112" cy="230" r="3"/><circle cx="92" cy="248" r="3"/><circle cx="126" cy="252" r="3"/>
+  </g>
+  <!-- 池波正太郎の碑 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="272" y="232" width="48" height="12" rx="2" fill="#B9B0A0"/>
+    <path d="M280 232 L280 190 Q280 182 296 180 Q312 182 312 190 L312 232 Z" fill="#8C857A"/>
+  </g>
+  <text x="296" y="212" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif">碑</text>
+  <!-- 大根（イースターエッグ） -->
+  <g id="daikon-group" stroke="#33302B" stroke-width="2.5">
+    <path d="M182 266 q-7 18 3 28 q11 11 17 -1 q7 -14 1 -27 q-11 -6 -21 0 Z" fill="#FFFDF7"/>
+    <path d="M188 265 q-5 -13 -12 -17 M198 264 q1 -14 8 -19" fill="none" stroke="#7A8450" stroke-width="3.5" stroke-linecap="round"/>
+  </g>
+</svg>`,
+s11: `
+<svg viewBox="0 0 390 310" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="310" fill="#DCEBEF"/>
+  <rect y="172" width="390" height="138" fill="#CFC3A6"/>
+  <rect y="170" width="390" height="4" fill="#B4A98D"/>
+  <!-- ひさご通り（アーケード） -->
+  <rect x="16" y="70" width="140" height="100" fill="#FFFDF7" stroke="#33302B" stroke-width="3"/>
+  <path d="M10 72 Q86 40 162 72 L162 84 Q86 52 10 84 Z" fill="#7A8450" stroke="#33302B" stroke-width="3"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="26" y="96" width="54" height="34" fill="#F3E2C2"/>
+    <rect x="92" y="96" width="54" height="34" fill="#F3E2C2"/>
+    <rect x="26" y="138" width="54" height="32" fill="#26466D"/>
+    <rect x="92" y="138" width="54" height="32" fill="#C73E3A"/>
+  </g>
+  <!-- 瓢箪の看板 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M86 100 q-9 6 -9 13 q0 7 5 10 q-8 4 -8 12 q0 11 12 11 q12 0 12 -11 q0 -8 -8 -12 q5 -3 5 -10 q0 -7 -9 -13 Z" fill="#D9A441"/>
+  </g>
+  <!-- 千束通り商店街（八百屋） -->
+  <rect x="236" y="76" width="140" height="94" fill="#FFFDF7" stroke="#33302B" stroke-width="3"/>
+  <rect x="230" y="66" width="152" height="20" fill="#D9A441" stroke="#33302B" stroke-width="3"/>
+  <text x="306" y="81" text-anchor="middle" font-size="12" fill="#33302B" font-family="serif" font-weight="700">千束通り</text>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="246" y="122" width="52" height="30" fill="#8B5A2B"/>
+    <rect x="312" y="122" width="52" height="30" fill="#8B5A2B"/>
+    <rect x="252" y="154" width="46" height="16" fill="#A0703F"/>
+    <rect x="316" y="154" width="46" height="16" fill="#A0703F"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2">
+    <circle cx="258" cy="116" r="8" fill="#C73E3A"/><circle cx="274" cy="114" r="8" fill="#C73E3A"/>
+    <circle cx="290" cy="116" r="8" fill="#D9A441"/>
+    <circle cx="324" cy="116" r="8" fill="#7A8450"/><circle cx="340" cy="114" r="8" fill="#7A8450"/>
+    <circle cx="356" cy="116" r="8" fill="#D9A441"/>
+  </g>
+  <!-- 国際通り（大通り＋信号） -->
+  <path d="M0 196 L390 196 L390 224 L0 224 Z" fill="#8C857A"/>
+  <path d="M8 210 h34 M62 210 h34 M116 210 h34 M170 210 h34 M224 210 h34 M278 210 h34 M332 210 h34"
+        stroke="#FFFDF7" stroke-width="3" opacity=".8"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="88" y="234" width="7" height="46" fill="#5D6A57"/>
+    <rect x="70" y="230" width="44" height="18" rx="4" fill="#3B4A45"/>
+  </g>
+  <g stroke="none">
+    <circle cx="80" cy="239" r="5" fill="#C73E3A"/><circle cx="92" cy="239" r="5" fill="#D9A441"/><circle cx="104" cy="239" r="5" fill="#7A8450"/>
+  </g>
+  <!-- 永井荷風の碑 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="272" y="248" width="48" height="12" rx="2" fill="#B9B0A0"/>
+    <path d="M280 248 L280 208 Q280 200 296 198 Q312 200 312 208 L312 248 Z" fill="#8C857A"/>
+  </g>
+  <text x="296" y="229" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif">碑</text>
+  <!-- 神輿 -->
+  <g id="mikoshi-group" stroke="#33302B" stroke-width="2.5">
+    <rect x="168" y="270" width="54" height="26" fill="#A32E2C"/>
+    <path d="M160 270 L195 250 L230 270 Z" fill="#D9A441"/>
+    <path d="M152 296 h86" stroke-linecap="round" stroke-width="4"/>
+    <circle cx="195" cy="245" r="5" fill="#D9A441"/>
+  </g>
+</svg>`,
+s12: `
+<svg viewBox="0 0 390 310" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="310" fill="#DCEBEF"/>
+  <rect y="174" width="390" height="136" fill="#CFC3A6"/>
+  <rect y="172" width="390" height="4" fill="#B4A98D"/>
+  <!-- 食品サンプルの店 -->
+  <rect x="18" y="70" width="140" height="102" fill="#FFFDF7" stroke="#33302B" stroke-width="3"/>
+  <rect x="14" y="58" width="148" height="20" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <text x="88" y="73" text-anchor="middle" font-size="11" fill="#FFFDF7" font-family="serif">食品サンプル</text>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="28" y="88" width="120" height="40" fill="#F3E2C2"/>
+    <rect x="28" y="132" width="120" height="40" fill="#F3E2C2"/>
+  </g>
+  <!-- 天ぷらのサンプル -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M42 120 q6 -22 16 -22 q10 0 8 18 l14 4" fill="#E0A860"/>
+    <path d="M92 118 q8 -20 18 -18 q9 2 6 18" fill="#E0A860"/>
+  </g>
+  <!-- ラーメンのサンプル -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M52 148 q0 18 22 18 q22 0 22 -18 Z" fill="#FFFDF7"/>
+    <path d="M58 148 h32" stroke="#D9A441" stroke-width="3"/>
+    <path d="M100 142 L128 154" stroke-linecap="round"/>
+  </g>
+  <!-- 包丁屋 -->
+  <rect x="234" y="76" width="142" height="96" fill="#F3E2C2" stroke="#33302B" stroke-width="3"/>
+  <rect x="230" y="64" width="150" height="20" fill="#26466D" stroke="#33302B" stroke-width="3"/>
+  <text x="305" y="79" text-anchor="middle" font-size="12" fill="#FFFDF7" font-family="serif">包丁・道具</text>
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M250 100 L318 100 L318 116 L250 120 Z" fill="#C6CCD2"/>
+    <rect x="318" y="100" width="34" height="14" rx="3" fill="#5C4630"/>
+    <path d="M250 132 L312 132 L312 146 L250 150 Z" fill="#C6CCD2"/>
+    <rect x="312" y="132" width="34" height="14" rx="3" fill="#5C4630"/>
+  </g>
+  <path d="M250 160 h96" stroke="#B4A98D" stroke-width="3"/>
+  <!-- かっぱ河太郎（像） -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="66" y="240" width="56" height="14" rx="2" fill="#B9B0A0"/>
+    <ellipse cx="94" cy="222" rx="22" ry="20" fill="#D9A441"/>
+    <circle cx="94" cy="196" r="16" fill="#D9A441"/>
+    <ellipse cx="94" cy="188" rx="11" ry="5" fill="#7A8450"/>
+    <path d="M76 214 q-12 4 -12 14 M112 214 q12 4 12 14" fill="none" stroke-linecap="round"/>
+  </g>
+  <g fill="#33302B"><circle cx="89" cy="196" r="2"/><circle cx="99" cy="196" r="2"/></g>
+  <path d="M88 204 q6 4 12 0" fill="none" stroke="#33302B" stroke-width="2"/>
+  <!-- 蔵前（倉庫カフェ） -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="262" y="204" width="94" height="56" fill="#8C857A"/>
+    <path d="M256 204 L309 182 L362 204 Z" fill="#3B4A45"/>
+    <rect x="282" y="224" width="24" height="36" fill="#F3E2C2"/>
+    <rect x="318" y="224" width="24" height="22" fill="#DCEBEF"/>
+  </g>
+  <text x="309" y="200" text-anchor="middle" font-size="12" fill="#FFFDF7" font-family="serif">蔵</text>
+  <g stroke="#8C857A" stroke-width="2.5" fill="none" opacity=".7" stroke-linecap="round">
+    <path d="M290 178 q5 -8 0 -16 M300 176 q5 -8 0 -16"/>
+  </g>
+  <!-- 小さな河童 -->
+  <g id="kappako-group" stroke="#33302B" stroke-width="2.5">
+    <ellipse cx="195" cy="286" rx="14" ry="12" fill="#7A8450"/>
+    <circle cx="195" cy="270" r="10" fill="#7A8450"/>
+    <ellipse cx="195" cy="264" rx="7" ry="3" fill="#D9A441"/>
+  </g>
+  <g fill="#33302B"><circle cx="192" cy="270" r="1.6"/><circle cx="199" cy="270" r="1.6"/></g>
+</svg>`,
+s13: `
+<svg viewBox="0 0 390 310" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="310" fill="#DCEBEF"/>
+  <ellipse cx="300" cy="42" rx="46" ry="12" fill="#fff" opacity=".7"/>
+  <rect y="176" width="390" height="134" fill="#CFC3A6"/>
+  <rect y="174" width="390" height="4" fill="#B4A98D"/>
+  <!-- 見返り柳 -->
+  <g stroke="#33302B" stroke-width="3">
+    <path d="M82 176 L82 116" stroke-width="8" stroke-linecap="round" fill="none"/>
+  </g>
+  <g stroke="#7A8450" stroke-width="3" fill="none" stroke-linecap="round" opacity=".95">
+    <path d="M82 118 q-26 6 -32 46"/>
+    <path d="M82 116 q-14 8 -16 52"/>
+    <path d="M82 116 q14 8 16 52"/>
+    <path d="M82 118 q26 6 32 46"/>
+    <path d="M82 120 q-6 14 -4 44"/>
+    <path d="M82 120 q6 14 4 44"/>
+  </g>
+  <ellipse cx="82" cy="112" rx="30" ry="12" fill="#7A8450" stroke="#33302B" stroke-width="2.5"/>
+  <!-- 吉原大門跡（交差点） -->
+  <path d="M232 96 L390 96 L390 130 L232 130 Z" fill="#8C857A"/>
+  <path d="M240 113 h30 M290 113 h30 M340 113 h30" stroke="#FFFDF7" stroke-width="3" opacity=".8"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="300" y="130" width="7" height="44" fill="#5D6A57"/>
+    <rect x="262" y="126" width="84" height="20" rx="3" fill="#FFFDF7"/>
+  </g>
+  <text x="304" y="141" text-anchor="middle" font-size="11" fill="#33302B" font-family="serif">吉原大門</text>
+  <path d="M232 150 q40 -18 78 -6" fill="none" stroke="#B4A98D" stroke-width="3" stroke-dasharray="4 6"/>
+  <!-- 一葉記念館 -->
+  <g stroke="#33302B" stroke-width="3">
+    <rect x="24" y="204" width="130" height="64" fill="#FFFDF7"/>
+    <rect x="18" y="192" width="142" height="16" fill="#26466D"/>
+    <rect x="40" y="222" width="30" height="46" fill="#DCEBEF"/>
+    <rect x="82" y="222" width="30" height="30" fill="#DCEBEF"/>
+    <rect x="122" y="222" width="22" height="30" fill="#DCEBEF"/>
+  </g>
+  <text x="89" y="204" text-anchor="middle" font-size="11" fill="#FFFDF7" font-family="serif">一葉記念館</text>
+  <!-- 樋口一葉の碑 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="272" y="234" width="48" height="12" rx="2" fill="#B9B0A0"/>
+    <path d="M280 234 L280 192 Q280 184 296 182 Q312 184 312 192 L312 234 Z" fill="#8C857A"/>
+  </g>
+  <text x="296" y="214" text-anchor="middle" font-size="14" fill="#FFFDF7" font-family="serif">碑</text>
+  <!-- お稲荷さんの狐 -->
+  <g id="kitsune-group" stroke="#33302B" stroke-width="2.5">
+    <path d="M184 296 q0 -20 11 -20 q11 0 11 20 Z" fill="#FFFDF7"/>
+    <circle cx="195" cy="268" r="11" fill="#FFFDF7"/>
+    <path d="M186 260 L183 248 L193 256 Z" fill="#FFFDF7"/>
+    <path d="M204 260 L207 248 L197 256 Z" fill="#FFFDF7"/>
+    <path d="M206 292 q14 -4 12 -18" fill="none" stroke-linecap="round"/>
+  </g>
+  <g fill="#33302B"><circle cx="191" cy="267" r="1.8"/><circle cx="199" cy="267" r="1.8"/></g>
+  <path d="M193 273 q2 3 4 0" fill="none" stroke="#33302B" stroke-width="2"/>
+  <rect x="188" y="238" width="14" height="5" rx="2" fill="#C73E3A" stroke="#33302B" stroke-width="2"/>
 </svg>`
 };
 
@@ -1662,7 +2975,7 @@ function openScene(sc){
   const stage = $("#scene-stage");
   stage.innerHTML = SVG_ART[sc.svg] + '<div id="egg-bubble"></div>';
   sc.hotspots.forEach(h=>{
-    const spot = el("button","spot"+(h.egg?" egg":""));
+    const spot = el("button","spot"+(h.egg?" egg":"")+(h.bunjin?" bunjin":""));
     if (state.gold[h.id]) spot.classList.add("gold");
     else if (state.cleared[h.id]) spot.classList.add("cleared");
     else if (state.learned[h.id]) spot.classList.add("learned");
@@ -1738,8 +3051,21 @@ $("#sheet-mask").addEventListener("click", closeSheet);
 
 /* ---------- learn card ---------- */
 function openLearn(h, isReview){
-  let html = '<div class="sheet-eyebrow">学習カード</div>' +
+  const b = h.bunjin;
+  let html = '<div class="sheet-eyebrow">'+(b?"文 人 碑":"学習カード")+'</div>' +
     '<div class="sheet-title">'+h.name+'</div>';
+  if (b){
+    html += '<div class="bunjin-tag">'+b.life+' · '+b.tag+'</div>'+
+      '<div class="bunjin-story">'+b.story+'</div>'+
+      '<div class="bunjin-quote">'+
+        '<div class="q-jp">'+b.quote.jp+'</div>'+
+        '<div class="q-kana">'+b.quote.kana+'<br>'+b.quote.romaji+'</div>'+
+        '<div class="q-zh">'+b.quote.zh+'</div>'+
+        '<div class="q-src">——'+b.quote.src+'</div>'+
+        '<div class="q-play"><button class="btn-tts" data-say="'+b.quote.kana+'">🔊</button></div>'+
+      '</div>'+
+      '<div class="bunjin-sep">この碑のことば</div>';
+  }
   h.learn.words.forEach(w=>{
     html += '<div class="word-row">'+
       '<div class="w-main"><div class="w-kanji">'+w.jp+'</div>'+
@@ -1902,7 +3228,7 @@ function checkChapter(h){
   const sc = SCENES.find(s=>s.hotspots.includes(h));
   if (!sc) return;
   if (!chapterAllGold(sc.chapter)) return;
-  if (sc.chapter < 3) showCongrats(sc.chapter);
+  if (sc.chapter < MAX_CHAPTER) showCongrats(sc.chapter);
   else showFinale();
 }
 function overlayCard(inner){
@@ -1935,15 +3261,36 @@ function showCongrats(ch){
 function showFinale(){
   const g = overlayCard(
     '<div style="text-align:center;font-size:40px;margin-bottom:6px">🗺️</div>'+
-    '<h3>三章 全制覇！</h3>'+
+    '<h3>六章 全制覇！</h3>'+
     '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:8px">'+
-    '浅草一丁目的每一盏灯笼，都被你点亮了。<br>'+
-    '120道题、91个单词，全部收进了你的御朱印帳。<br><b>本当にすごいです！</b></p>'+
+    '从雷门一路走到吉原，<br>浅草的每一盏灯笼都被你点亮了。<br>'+
+    '245道题、191个单词、49枚朱印，<br>还有六位文人的碑。<br><b>本当にすごいです！</b></p>'+
     '<p style="text-align:center;font-size:14px;color:#C73E3A;font-weight:600;line-height:1.8;margin-bottom:4px">'+
-    '这张地图已经装不下你了——<br>该找你宝贝女儿给你画新地图啦 🎨</p>'+
+    '下次来浅草的时候<br>还有什么能考到你！<br>赶紧探索新地图吧！ 🎨</p>'+
     '<button class="btn-main" id="btn-finale-close">まだまだ歩ける</button>');
   document.getElementById("btn-finale-close").addEventListener("click", ()=>{
     g.style.display = "none";
+    renderMap(); show("view-map");
+  });
+}
+/* 老玩家（1〜3章已全金）第一次打开新版本时的招呼 */
+function showNewChapters(){
+  const g = overlayCard(
+    '<div style="text-align:center;font-size:40px;margin-bottom:6px">🏮</div>'+
+    '<h3>新しい地図</h3>'+
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:10px">'+
+    '妈妈，新地图画好了。<br>浅草寺你已经走完了，这次往外走。</p>'+
+    '<p style="text-align:center;font-size:13px;color:#7c7566;line-height:1.8;margin-bottom:10px">'+
+    '<b>第四章</b> 六区・神谷バー<br>'+
+    '<b>第五章</b> 待乳山・今戸・千束<br>'+
+    '<b>第六章</b> 合羽橋・蔵前・吉原</p>'+
+    '<p style="text-align:center;font-size:13px;color:#26466D;line-height:1.8;margin-bottom:4px">'+
+    '路上立了六块<b>文人碑</b>——<br>渥美清、川端康成、太宰治、<br>池波正太郎、永井荷風、樋口一葉。<br>'+
+    '<span style="color:#8a8272">他们都在浅草待过，点开碑能听原句。</span></p>'+
+    '<button class="btn-main" id="btn-nc-go">出発</button>');
+  document.getElementById("btn-nc-go").addEventListener("click", async ()=>{
+    g.style.display = "none";
+    state.seenV2 = true; await saveState();
     renderMap(); show("view-map");
   });
 }
@@ -2045,6 +3392,7 @@ function showGuide(firstTime){
     '<div class="g-step"><span class="g-ico">🔴</span><span><b>红点</b>是新内容：先看学习卡，点 🔊 听发音，看完按「记住了」。</span></div>'+
     '<div class="g-step"><span class="g-ico">🔵</span><span>变<b>蓝</b>之后再点它，开始做题：每次随机3题，答错当场重答。</span></div>'+
     '<div class="g-step"><span class="g-ico">✨</span><span>每个地点藏着5道题，<b>全部答完</b>朱印就变金印。<b>一章集齐全部金印</b>，下一章的灯笼自动点亮。</span></div>'+
+    '<div class="g-step"><span class="g-ico" style="font-family:var(--serif);color:#6E6759">碑</span><span><b>碑形</b>的标记是「文人碑」：先讲这个人在浅草的故事，再读他写的一句原文，然后才做题。</span></div>'+
     '<div class="g-step"><span class="g-ico">🎋</span><span><b>おみくじ</b>每天能抽一支新签；集到的朱印在右上角「印」里随时翻看。</span></div>'+
     '<button class="btn-main" id="btn-guide-go">开始逛浅草</button></div>';
   g.style.display = "flex";
@@ -2056,7 +3404,9 @@ function showGuide(firstTime){
 (async function init(){
   await loadState();
   renderMap();
-  if (!state.seenGuide) showGuide(true);
+  if (!state.seenGuide) { showGuide(true); state.seenV2 = true; await saveState(); }
+  else if (!state.seenV2 && chapterAllGold(3)) showNewChapters();
+  else if (!state.seenV2) { state.seenV2 = true; await saveState(); }
 })();
 
 </script>
