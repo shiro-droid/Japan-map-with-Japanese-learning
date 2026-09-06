@@ -129,7 +129,7 @@ const CH_TEXT = {
 
 const SCENES = [
   {
-    id:"tohaku", name:"東京国立博物館 本館", short:"東博", chapter:2,
+    id:"tohaku", name:"東京国立博物館 本館", short:"東博", chapter:3,
     svg:"u1",
     hotspots:[
       {
@@ -791,19 +791,648 @@ const SCENES = [
         eggFinalAt:8
       }
     ]
+  },
+{
+    id:"shinobazu", name:"不忍池", short:"不忍池", chapter:1,
+    svg:"u4",
+    hotspots:[
+      {
+        id:"hasu", name:"蓮の池", x:30, y:34,
+        learn:{
+          words:[
+            {jp:"蓮", kana:"はす", romaji:"hasu", zh:"莲"},
+            {jp:"葉", kana:"は", romaji:"ha", zh:"叶子"},
+            {jp:"見頃", kana:"みごろ", romaji:"migoro", zh:"最佳观赏期"},
+            {jp:"一面", kana:"いちめん", romaji:"ichimen", zh:"满满一片"}
+          ],
+          noteJa:"夏になると、池が蓮の葉で一面緑になります。花が開くのは朝早くで、昼にはもう閉じています。見頃は七月から八月です。",
+          noteKana:"なつに なると、いけが はすの はで いちめん みどりに なります。はなが ひらくのは あさ はやくで、ひるには もう とじて います。みごろは しちがつから はちがつです。",
+          noteRomaji:"Natsu ni naru to, ike ga hasu no ha de ichimen midori ni narimasu. Hana ga hiraku no wa asa hayaku de, hiru ni wa mō tojite imasu. Migoro wa shichigatsu kara hachigatsu desu.",
+          noteZh:"一到夏天，池子被莲叶铺成一整片绿。花是清早开的，到中午就已经合上了。最好看是七月到八月。"
+        },
+        questions:[
+          {type:"read", prompt:"「蓮」の読み方は？", options:["はす","れん","はち"], answer:0,
+           explain:"はす。训读。组词时念れん：蓮根（れんこん）＝藕。同一个字，单用和组词两个音。"},
+          {type:"read", prompt:"「一面」の読み方は？", options:["いちめん","いちおもて","ひとめん"], answer:0,
+           explain:"いちめん。一整片、满眼都是。「一面の菜の花」「一面の雪」——形容铺满视野。"},
+          {type:"vocab", prompt:"莲花什么时候开？",
+           options:["清早开，中午就合上","中午开，晚上合上","开了就一直不合"], answer:0,
+           explain:"所以看莲要早起。这是上野夏天的常识，也是这一格想让你记住的一句话。"},
+          {type:"listen", tts:"花は朝早く開いて、昼には閉じてしまいます。",
+           ttsKana:"はなは あさ はやく ひらいて、ひるには とじて しまいます。",
+           options:["花清早开，到中午就合上了","花中午才开","花开了整整一天"], answer:0,
+           explain:"「〜てしまう」＝（不由分说地）就…了，带一点惋惜。不是「闭上」，是「已经闭上了，来不及了」。"},
+          {type:"vocab", prompt:"「見頃」是什么意思？",
+           options:["正好看的时候","看得见的地方","观赏费用"], answer:0,
+           explain:"上野公园的樱花那格学过同一个词。花有花的见顷，果子有果子的食べ頃。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「蓮」怎么念？用假名写。", accept:["はす"], hint:"は…", kana:"はす",
+           explain:"はす。两个假名。你认得这个字几十年了，今天给它配上音。"},
+          {type:"write", prompt:"「一面」怎么念？", accept:["いちめん"], hint:"いち…", kana:"いちめん",
+           explain:"いちめん。「一面の〜」是描写风景最省力的一句：一面の緑、一面の雪、一面の菜の花。"},
+          {type:"build", prompt:"想说「一到夏天，池子就变成一片绿」。",
+           zhHint:"「〜になると」＝一到…就。",
+           tiles:["夏に","なると","池が","一面","緑になります"], extra:["から","なりました"],
+           kana:"なつに なると いけが いちめん みどりに なります",
+           explain:"「〜と」表示必然的条件——一到就一定会。浅草常香炉「あてると良くなる」、上野駅「慣れないと迷います」都是它。这是第三次。"},
+          {type:"build", prompt:"想说「中午就已经合上了」。",
+           zhHint:"「〜てしまいます」带一点「来不及了」的语气。",
+           tiles:["昼には","もう","閉じて","しまいます"], extra:["まだ","閉じます"],
+           kana:"ひるには もう とじて しまいます",
+           explain:"「〜てしまう」不只是完成，还有「可惜、无法挽回」。忘れてしまった（不小心忘了）、食べてしまった（吃光了）。这个语感中文里没有直接对应，要靠场景记。"},
+          {type:"shadow", hideKana:true, jp:"見頃は七月から八月です。",
+           kana:"みごろは しちがつから はちがつです。", zh:"最好看是七月到八月。",
+           explain:"七月念しちがつ不念ななつき，八月念はちがつ。月份的念法有几个坑：四月しがつ、七月しちがつ、九月くがつ——都不是你猜的那个。"}
+        ]
+      },
+      {
+        id:"boat", name:"貸しボート", x:66, y:52,
+        learn:{
+          words:[
+            {jp:"貸しボート", kana:"かしボート", romaji:"kashi bōto", zh:"出租小船"},
+            {jp:"漕ぐ", kana:"こぐ", romaji:"kogu", zh:"划（船）"},
+            {jp:"三十分", kana:"さんじゅっぷん", romaji:"sanjuppun", zh:"三十分钟"},
+            {jp:"延長", kana:"えんちょう", romaji:"enchō", zh:"延长（时间）"}
+          ],
+          noteJa:"不忍池には手漕ぎボートとスワンボートがあります。三十分から借りられて、時間が足りなければ延長もできます。",
+          noteKana:"しのばずのいけには てこぎボートと スワンボートが あります。さんじゅっぷんから かりられて、じかんが たりなければ えんちょうも できます。",
+          noteRomaji:"Shinobazu no Ike ni wa tekogi bōto to suwan bōto ga arimasu. Sanjuppun kara kariraete, jikan ga tarinakereba enchō mo dekimasu.",
+          noteZh:"不忍池有手划船和天鹅船。三十分钟起租，时间不够还能延长。"
+        },
+        questions:[
+          {type:"read", prompt:"「漕ぐ」の読み方は？", options:["こぐ","そうぐ","かぐ"], answer:0,
+           explain:"こぐ。划船、蹬自行车都用它：自転車を漕ぐ。"},
+          {type:"read", prompt:"「延長」の読み方は？", options:["えんちょう","のばちょう","えんなが"], answer:0,
+           explain:"えんちょう。跟中文 yáncháng 对得上，这类音读词是你的便宜。"},
+          {type:"vocab", prompt:"「三十分から借りられます」是什么意思？",
+           options:["三十分钟起租","三十分钟后才能租","只能租三十分钟"], answer:0,
+           explain:"「〜から」是起点。浅草团子那格的「一本から買えます」是同一个用法。"},
+          {type:"listen", tts:"時間が足りなければ、延長もできますよ。",
+           ttsKana:"じかんが たりなければ、えんちょうも できますよ。",
+           options:["时间不够的话还能延长","时间到了就必须还","延长要另外排队"], answer:0,
+           explain:"「〜なければ」＝如果不…的话。足りる（够）→足りない（不够）→足りなければ。"},
+          {type:"scene", prompt:"想说「先租三十分钟」，哪句最自然？", jpOptions:true,
+           options:["まず三十分でお願いします","三十分をください","三十分がほしいです"], answer:0,
+           phraseKana:"まず さんじゅっぷんで おねがいします",
+           explain:"这里的「で」表示条件——就按三十分钟这个条件。浅草烤鸡串「塩でお願いします」是同一个で。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「漕ぐ」怎么念？", accept:["こぐ"], hint:"こ…", kana:"こぐ",
+           explain:"こぐ。两个假名。划船、蹬车、荡秋千（ブランコを漕ぐ）都是它。"},
+          {type:"write", prompt:"「三十分」怎么念？", accept:["さんじゅっぷん","さんじっぷん"], hint:"さん…",
+           kana:"さんじゅっぷん",
+           explain:"さんじゅっぷん。分（ふん）在这里变成ぷん。一分いっぷん、三分さんぷん、六分ろっぷん、八分はっぷん、十分じゅっぷん——半数要变音。这是日语数词最烦的一处。"},
+          {type:"build", prompt:"租船：先来三十分钟。",
+           zhHint:"条件用「で」，不是「を」。",
+           tiles:["まず","三十分","で","お願いします"], extra:["を","ください"],
+           kana:"まず さんじゅっぷんで おねがいします",
+           explain:"「〜でお願いします」＝就按这个条件。浅草「塩でお願いします」、上野駅「指定席を一枚お願いします」——を是要东西，で是定条件，一字之差。"},
+          {type:"build", prompt:"想问「时间不够能延长吗？」",
+           zhHint:"「〜なければ」＝如果不…的话。",
+           tiles:["時間が","足りなければ","延長","できますか"], extra:["から","します"],
+           kana:"じかんが たりなければ えんちょう できますか",
+           explain:"「足りなければ」是否定的假定形。上野駅「歩けば着きます」是肯定的假定形——一正一反，两个都拿到手。"},
+          {type:"shadow", jp:"手漕ぎボートとスワンボートがあります。",
+           kana:"てこぎボートと スワンボートが あります。",
+           zh:"有手划船和天鹅船。",
+           explain:"「手漕ぎ」＝手划的，漕ぐ变名词。日语里动词变名词太常用了：乗り換え、待ち合わせ、場所取り、日持ち——这一章你已经见过一大把。"}
+        ]
+      },
+      {
+        id:"benten", name:"弁天堂", x:44, y:74,
+        learn:{
+          words:[
+            {jp:"弁天堂", kana:"べんてんどう", romaji:"Bentendō", zh:"弁天堂"},
+            {jp:"島", kana:"しま", romaji:"shima", zh:"岛"},
+            {jp:"参道", kana:"さんどう", romaji:"sandō", zh:"参道（通往寺社的路）"},
+            {jp:"芸事", kana:"げいごと", romaji:"geigoto", zh:"技艺（音乐、舞蹈等）"}
+          ],
+          noteJa:"池の中の島に建っているお堂です。弁天さまは芸事の神さまなので、音楽や踊りをする人がよくお参りに来ます。",
+          noteKana:"いけの なかの しまに たって いる おどうです。べんてんさまは げいごとの かみさまなので、おんがくや おどりを する ひとが よく おまいりに きます。",
+          noteRomaji:"Ike no naka no shima ni tatte iru odō desu. Benten-sama wa geigoto no kami-sama na node, ongaku ya odori o suru hito ga yoku omairi ni kimasu.",
+          noteZh:"建在池中小岛上的堂。弁天是掌管技艺的神，所以做音乐、跳舞的人常来参拜。"
+        },
+        questions:[
+          {type:"read", prompt:"「島」の読み方は？", options:["しま","とう","じま"], answer:0,
+           explain:"しま。单独用是训读しま，组词常浊化成じま（中之島＝なかのしま，福島＝ふくしま）。音读とう用在「半島（はんとう）」这类词里。"},
+          {type:"read", prompt:"「参道」の読み方は？", options:["さんどう","まいりみち","さんみち"], answer:0,
+           explain:"さんどう。通往寺社的那条路。浅草的仲見世就是浅草寺的参道。"},
+          {type:"vocab", prompt:"弁天是掌管什么的神？",
+           options:["技艺（音乐、舞蹈）","考试","生意"], answer:0,
+           explain:"所以搞音乐的人来这里许愿。日本的神各管一摊，去对地方才灵。"},
+          {type:"listen", tts:"池の中の島に建っています。",
+           ttsKana:"いけの なかの しまに たって います。",
+           options:["建在池中的岛上","建在池子旁边","池子里以前有岛"], answer:0,
+           explain:"「建っています」是状态。浅草仁王像「立っています」、见返り柳「立っています」——这是第三次遇到这个ている了。"},
+          {type:"vocab", prompt:"「お参りに来ます」是什么意思？",
+           options:["来参拜","来参观","来打听"], answer:0,
+           explain:"「〜に来る／行く」＝来／去做某事。花見に行く、研ぎに出す，都是同一个に。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「島」怎么念？", accept:["しま"], hint:"し…", kana:"しま",
+           explain:"しま。两个假名。日本是岛国，这个字你天天见——今天开始能念了。"},
+          {type:"write", prompt:"「参道」怎么念？", accept:["さんどう"], hint:"さん…", kana:"さんどう",
+           explain:"さんどう。浅草的仲見世就是参道。你走过那条路，现在知道它叫什么了。"},
+          {type:"build", prompt:"想说「建在池中的岛上」。",
+           zhHint:"位置用「に」，状态用「建っています」。",
+           tiles:["池の中の島に","建って","います"], extra:["で","建てます"],
+           kana:"いけの なかの しまに たって います",
+           explain:"「建つ」是自动词（自己立着），「建てる」是他动词（人去建）。浅草山谷堀的「埋める／埋まる」也是这一对关系。自他动词选错，句子就别扭。"},
+          {type:"build", prompt:"想说「做音乐的人常来参拜」。",
+           zhHint:"「〜に来ます」＝来做…。",
+           tiles:["音楽を","する人が","よく","お参りに来ます"], extra:["から","来ました"],
+           kana:"おんがくを する ひとが よく おまいりに きます",
+           explain:"「する人」——辞书形当定语，浅草「昼から飲める居酒屋」、上野「電車の中で食べるお弁当」是同一招。第三次了。"},
+          {type:"shadow", hideKana:true, jp:"弁天さまは芸事の神さまです。",
+           kana:"べんてんさまは げいごとの かみさまです。", zh:"弁天是掌管技艺的神。",
+           explain:"「〜さま」比「さん」更敬。神さま、お客さま、お月さま——对神、对客人、对自然，日本人都加さま。"}
+        ]
+      },
+      {
+        id:"mizudori", name:"水鳥", x:80, y:26, egg:true,
+        eggLines:["くわっ","ばしゃばしゃ","すいー","くわくわ"],
+        eggFinal:"冬になると、シベリアから鴨が渡ってきます",
+        eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"ameyoko", name:"アメ横センター", short:"アメ横", chapter:2,
+    svg:"u5",
+    hotspots:[
+      {
+        id:"negiru", name:"値切る", x:24, y:52,
+        learn:{
+          words:[
+            {jp:"値切る", kana:"ねぎる", romaji:"negiru", zh:"砍价"},
+            {jp:"おまけ", kana:"おまけ", romaji:"omake", zh:"额外多送的"},
+            {jp:"まける", kana:"まける", romaji:"makeru", zh:"（卖方）让价"},
+            {jp:"現金", kana:"げんきん", romaji:"genkin", zh:"现金"}
+          ],
+          noteJa:"日本ではふつう値切りませんが、アメ横だけは別です。「もうちょっと安くなりませんか」と言えば、まけてくれたり、おまけを付けてくれたりします。現金だと話が早いです。",
+          noteKana:"にほんでは ふつう ねぎりませんが、アメよこだけは べつです。もう ちょっと やすく なりませんかと いえば、まけて くれたり、おまけを つけて くれたり します。げんきんだと はなしが はやいです。",
+          noteRomaji:"Nihon de wa futsū negirimasen ga, Ameyoko dake wa betsu desu. Mō chotto yasuku narimasen ka to ieba, makete kuretari, omake o tsukete kuretari shimasu. Genkin da to hanashi ga hayai desu.",
+          noteZh:"日本一般不砍价，只有阿美横是例外。说一句「能再便宜点吗」，摊主要么让点价，要么多塞你一把。付现金谈得更快。"
+        },
+        questions:[
+          {type:"read", prompt:"「値切る」の読み方は？", options:["ねぎる","ちぎる","あたいきる"], answer:0,
+           explain:"ねぎる。値（ね）＝价钱。値段（ねだん）也是同一个ね。"},
+          {type:"vocab", prompt:"「おまけ」是什么意思？",
+           options:["额外多送你的东西","打折后的价钱","赠品券"], answer:0,
+           explain:"おまけ＝白送的添头。日本人不太爱降价，但很愿意多给你一个——这是他们让步的方式。"},
+          {type:"vocab", prompt:"想让摊主便宜点，哪句最自然？",
+           options:["もうちょっと安くなりませんか","安くしろ","高すぎます"], answer:0,
+           explain:"第一句是用否定问句委婉请求。第二句是命令形，绝对不能对人用。第三句只是抱怨，没有请求。"},
+          {type:"listen", tts:"現金なら、もう百円まけるよ。",
+           ttsKana:"げんきん なら、もう ひゃくえん まけるよ。",
+           options:["付现金的话再便宜一百","现金不收","一百日元是现金价"], answer:0,
+           explain:"「まける」在这里是卖方主动让价。同一个词还有「输」的意思——靠场合分。"},
+          {type:"read", prompt:"「現金」の読み方は？", options:["げんきん","げんかね","うつつかね"], answer:0,
+           explain:"げんきん。跟中文 xiànjīn 对得上。アメ横很多摊子只收现金。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「値切る」怎么念？", accept:["ねぎる"], hint:"ね…", kana:"ねぎる",
+           explain:"ねぎる。日本全国你大概只有在这条街能用上这个动词。"},
+          {type:"write", prompt:"「現金」怎么念？", accept:["げんきん"], hint:"げん…", kana:"げんきん",
+           explain:"げんきん。这个词还有「现实、势利」的意思：「現金な人だね」＝这人真现实。同字两义，靠语气分。"},
+          {type:"build", prompt:"想让摊主再便宜一点。",
+           zhHint:"用否定问句请求，是日语最柔和的要法。",
+           tiles:["もう","ちょっと","安く","なりませんか"], extra:["ならない","してください"],
+           kana:"もう ちょっと やすく なりませんか",
+           explain:"「安くなる」＝变便宜，主语是价钱不是人——不逼对方，只是问「它能不能变一点」。这是日语要东西时最讲究的一层分寸。整条街就靠这一句。"},
+          {type:"build", prompt:"想说「付现金的话谈得快」。",
+           zhHint:"「〜だと」＝如果是…的话。",
+           tiles:["現金だと","話が","早いです"], extra:["なら","早くなります"],
+           kana:"げんきんだと はなしが はやいです",
+           explain:"「話が早い」是惯用说法＝省事、痛快。字面是「话很快」，实际是「不用啰嗦」。这类惯用组合，语法上拆不出来，只能整句记。"},
+          {type:"shadow", hideKana:true, jp:"日本ではふつう値切りませんが、ここは別です。",
+           kana:"にほんでは ふつう ねぎりませんが、ここは べつです。",
+           zh:"日本一般不砍价，但这里是例外。",
+           explain:"「〜が、〜」表示转折。「別です」＝另当别论。这一句你可以到处套：普段は〜ですが、今日は別です。"}
+        ]
+      },
+      {
+        id:"sakanaya", name:"魚屋の掛け声", x:56, y:34,
+        learn:{
+          words:[
+            {jp:"掛け声", kana:"かけごえ", romaji:"kakegoe", zh:"吆喝"},
+            {jp:"新鮮", kana:"しんせん", romaji:"shinsen", zh:"新鲜"},
+            {jp:"刺身", kana:"さしみ", romaji:"sashimi", zh:"生鱼片"},
+            {jp:"どうぞ", kana:"どうぞ", romaji:"dōzo", zh:"请（拿／用）"}
+          ],
+          noteJa:"「安いよ、安いよ！」「見てって！」——アメ横の魚屋は声が大きいです。呼ばれても、買わなくて大丈夫です。日本の店ではめずらしい光景です。",
+          noteKana:"やすいよ、やすいよ！ みてって！——アメよこの さかなやは こえが おおきいです。よばれても、かわなくて だいじょうぶです。にほんの みせでは めずらしい こうけいです。",
+          noteRomaji:"Yasui yo, yasui yo! Mitette! — Ameyoko no sakanaya wa koe ga ōkii desu. Yobarete mo, kawanakute daijōbu desu. Nihon no mise de wa mezurashii kōkei desu.",
+          noteZh:"「便宜啦便宜啦！」「过来看看！」——阿美横的鱼摊嗓门大。被喊住了也不用买。这在日本的店里是很少见的景象。"
+        },
+        questions:[
+          {type:"read", prompt:"「掛け声」の読み方は？", options:["かけごえ","かけせい","はんごえ"], answer:0,
+           explain:"かけごえ。声（こえ）浊化成ごえ。掛ける＋声。"},
+          {type:"vocab", prompt:"「見てって！」是什么的简略？",
+           options:["見ていって（看一眼再走）","見てください（请看）","見ました（看过了）"], answer:0,
+           explain:"見ていって→見てって。口语里い常常被吃掉。这种缩音在吆喝、闲聊里到处都是，课本上不教。"},
+          {type:"read", prompt:"「新鮮」の読み方は？", options:["しんせん","あたらせん","しんあざやか"], answer:0,
+           explain:"しんせん。跟中文 xīnxiān 对得上。"},
+          {type:"listen", tts:"安いよ、見てって！", ttsKana:"やすいよ、みてって！",
+           options:["便宜啊，过来看看！","太贵了，别看了","看完请离开"], answer:0,
+           explain:"这就是阿美横的背景音。听得懂之后，那条街的热闹才真的进得来。"},
+          {type:"vocab", prompt:"被喊住了但不想买，怎么办最好？",
+           options:["笑一下走开就行，不用买","必须买一点","要道歉"], answer:0,
+           explain:"「呼ばれても、買わなくて大丈夫」。吆喝是招揽不是绑定。日本别的店很少这样，所以第一次会有点慌。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「掛け声」怎么念？", accept:["かけごえ"], hint:"かけ…", kana:"かけごえ",
+           explain:"かけごえ。声浊化成ごえ。祭典抬神轿时喊的也叫掛け声。"},
+          {type:"write", prompt:"「新鮮」怎么念？", accept:["しんせん"], hint:"しん…", kana:"しんせん",
+           explain:"しんせん。除了鱼，也用在感受上：「新鮮な驚き」＝新鲜的惊讶。"},
+          {type:"build", prompt:"想问「这个新鲜吗？」",
+           zhHint:"形容动词直接接ですか。",
+           tiles:["これ","は","新鮮","ですか"], extra:["な","が"],
+           kana:"これは しんせんですか",
+           explain:"「新鮮」是形容动词，接名词才加な（新鮮な魚），直接结句不加。浅草「有名な書き出し」对照着记。"},
+          {type:"build", prompt:"想说「被喊住了也不用买」。",
+           zhHint:"「〜ても」＝即使…也。被动「呼ばれる」。",
+           tiles:["呼ばれても","買わなくて","大丈夫です"], extra:["から","買います"],
+           kana:"よばれても かわなくて だいじょうぶです",
+           explain:"「〜なくて大丈夫」＝不…也没关系。上野駅駅弁那格你用「大丈夫です」拒绝过加热——同一个词，这次带上了完整的句子。"},
+          {type:"shadow", jp:"日本の店ではめずらしい光景です。",
+           kana:"にほんの みせでは めずらしい こうけいです。",
+           zh:"这在日本的店里是很少见的景象。",
+           explain:"「〜ではめずらしい」＝在…是少见的。你走过的地方多，这一句能让你把两边比起来说。"}
+        ]
+      },
+      {
+        id:"kanbutsu", name:"乾物・ナッツ", x:78, y:60,
+        learn:{
+          words:[
+            {jp:"乾物", kana:"かんぶつ", romaji:"kanbutsu", zh:"干货"},
+            {jp:"量り売り", kana:"はかりうり", romaji:"hakariuri", zh:"称重卖"},
+            {jp:"袋", kana:"ふくろ", romaji:"fukuro", zh:"袋子"},
+            {jp:"まとめて", kana:"まとめて", romaji:"matomete", zh:"一起、打包"}
+          ],
+          noteJa:"ナッツや乾物は量り売りです。「これ、百グラムください」と言えば量ってくれます。まとめて買うと安くなる店も多いです。",
+          noteKana:"ナッツや かんぶつは はかりうりです。これ、ひゃくグラム くださいと いえば はかって くれます。まとめて かうと やすく なる みせも おおいです。",
+          noteRomaji:"Nattsu ya kanbutsu wa hakariuri desu. Kore, hyaku guramu kudasai to ieba hakatte kuremasu. Matomete kau to yasuku naru mise mo ōi desu.",
+          noteZh:"坚果和干货是称重卖的。说一句「这个来一百克」就给你称。多买便宜的店也不少。"
+        },
+        questions:[
+          {type:"read", prompt:"「乾物」の読み方は？", options:["かんぶつ","かわきもの","けんぶつ"], answer:0,
+           explain:"かんぶつ。注意「見物（けんぶつ）」是另一个词，只差一个假名。"},
+          {type:"read", prompt:"「量り売り」の読み方は？", options:["はかりうり","りょううり","かずうり"], answer:0,
+           explain:"はかりうり。量（はか）る＝称。跟「量（りょう）」同字不同音。"},
+          {type:"vocab", prompt:"「まとめて買う」是什么意思？",
+           options:["一次多买一些","分开慢慢买","买了以后再挑"], answer:0,
+           explain:"まとめて＝归拢到一起。まとめて買う、まとめて払う、まとめて送る。"},
+          {type:"listen", tts:"百グラムでよろしいですか。",
+           ttsKana:"ひゃくグラムで よろしいですか。",
+           options:["一百克可以吗？","一百克卖完了","一百日元一克"], answer:0,
+           explain:"「よろしいですか」是「いいですか」的敬语。店员对你用敬语，你答「はい、お願いします」就行。"},
+          {type:"scene", prompt:"想说「这个来一百克」，哪句最自然？", jpOptions:true,
+           options:["これ、百グラムください","これを百グラムがほしい","百グラムこれをする"], answer:0,
+           phraseKana:"これ、ひゃくグラム ください",
+           explain:"口语里「を」常常省掉。买东西说「これ、〇〇ください」是最顺的。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「乾物」怎么念？", accept:["かんぶつ"], hint:"かん…", kana:"かんぶつ",
+           explain:"かんぶつ。干货铺子的招牌。和「見物（けんぶつ）」只差一个假名，念错了意思就飞了。"},
+          {type:"write", prompt:"「袋」怎么念？", accept:["ふくろ"], hint:"ふく…", kana:"ふくろ",
+           explain:"ふくろ。「袋いりますか」＝要袋子吗，便利店一天问你几次。"},
+          {type:"build", prompt:"想说「这个来一百克」。",
+           zhHint:"口语里助词可以省掉。",
+           tiles:["これ","百グラム","ください"], extra:["を","が"],
+           kana:"これ、ひゃくグラム ください",
+           explain:"「ください」比「お願いします」直接一点，买东西够用。摊子上人多，短句更好使。"},
+          {type:"build", prompt:"想说「多买一点会便宜吗？」",
+           zhHint:"「〜と」＝一…就。「安くなる」＝变便宜。",
+           tiles:["まとめて","買うと","安く","なりますか"], extra:["から","します"],
+           kana:"まとめて かうと やすく なりますか",
+           explain:"「〜と〜なる」这个组合，这一章第四次出现了（夏になると、慣れないと、あてると）。「安くなる」跟刚才砍价那格的「安くなりませんか」是同一个动词。"},
+          {type:"shadow", hideKana:true, jp:"まとめて買うと安くなる店も多いです。",
+           kana:"まとめて かうと やすく なる みせも おおいです。",
+           zh:"多买便宜的店也不少。",
+           explain:"「安くなる店」——整个短句当定语修饰「店」。日语的定语可以很长，但一律放在名词前面。"}
+        ]
+      },
+      {
+        id:"nekonoko", name:"店先の猫", x:40, y:80, egg:true,
+        eggLines:["にゃー","ごろん","…じっ","にゃおん"],
+        eggFinal:"アメ横の猫は、魚屋の前でだけ愛想がいい",
+        eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"gado", name:"ガード下", short:"ガード下", chapter:2,
+    svg:"u6",
+    hotspots:[
+      {
+        id:"tachinomi", name:"立ち飲み屋", x:26, y:56,
+        learn:{
+          words:[
+            {jp:"立ち飲み", kana:"たちのみ", romaji:"tachinomi", zh:"站着喝（的小酒馆）"},
+            {jp:"常連", kana:"じょうれん", romaji:"jōren", zh:"常客"},
+            {jp:"相席", kana:"あいせき", romaji:"aiseki", zh:"和陌生人拼桌"},
+            {jp:"お会計", kana:"おかいけい", romaji:"okaikei", zh:"结账"}
+          ],
+          noteJa:"ガード下の立ち飲み屋は、椅子がありません。狭いので、知らない人と隣り合わせになります。常連が多いですが、初めての人にもよく話しかけてくれます。",
+          noteKana:"ガードしたの たちのみやは、いすが ありません。せまいので、しらない ひとと となりあわせに なります。じょうれんが おおいですが、はじめての ひとにも よく はなしかけて くれます。",
+          noteRomaji:"Gādo-shita no tachinomiya wa, isu ga arimasen. Semai node, shiranai hito to tonariawase ni narimasu. Jōren ga ōi desu ga, hajimete no hito ni mo yoku hanashikakete kuremasu.",
+          noteZh:"高架桥下的站着喝，没有椅子。地方窄，会跟不认识的人挨着站。常客多，但对生面孔也很爱搭话。"
+        },
+        questions:[
+          {type:"read", prompt:"「常連」の読み方は？", options:["じょうれん","つねれん","じょうつら"], answer:0,
+           explain:"じょうれん。常客。「常連さん」是店主对老主顾的称呼。"},
+          {type:"read", prompt:"「相席」の読み方は？", options:["あいせき","そうせき","あいざ"], answer:0,
+           explain:"あいせき。跟陌生人共用一张桌子。日本店里人满时会问你「相席でもよろしいですか」。注意「夏目漱石」的漱石念そうせき，别混。"},
+          {type:"vocab", prompt:"「立ち飲み」是什么样的店？",
+           options:["站着喝、没有座位","只卖外带","要站着排队"], answer:0,
+           explain:"立つ＋飲む。便宜、快、不久坐——这是它的规矩。"},
+          {type:"listen", tts:"相席でもよろしいですか。",
+           ttsKana:"あいせきでも よろしいですか。",
+           options:["拼桌可以吗？","要预约吗？","要几位？"], answer:0,
+           explain:"「〜でもよろしいですか」＝就算是…也可以吗。店员问你能不能将就一下。"},
+          {type:"vocab", prompt:"「話しかけてくれます」是什么意思？",
+           options:["（对方）主动跟我搭话","我跟对方搭话","请对方别说话"], answer:0,
+           explain:"「〜てくれる」＝对方为我做。浅草包丁屋那格的「彫ってくれます」是同一个。授受动词一变，谁对谁做就全变了。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「常連」怎么念？", accept:["じょうれん"], hint:"じょう…", kana:"じょうれん",
+           explain:"じょうれん。成了常连，店主会记住你喝什么——这是日本小店最动人的地方。"},
+          {type:"write", prompt:"「相席」怎么念？", accept:["あいせき"], hint:"あい…", kana:"あいせき",
+           explain:"あいせき。「相」在这里念あい（训读）：相手（あいて）、相談（そうだん）——同一个字两个音，靠词记。"},
+          {type:"build", prompt:"店员问能不能拼桌，你说「可以」。",
+           zhHint:"最简短自然的答应。",
+           tiles:["はい","大丈夫です"], extra:["いいえ","ください"],
+           kana:"はい、だいじょうぶです",
+           explain:"「大丈夫です」这次是答应。上野駅它是拒绝，这里是接受——同一个词，全靠语境和语气。这正是它难用也最好用的地方。"},
+          {type:"build", prompt:"想说「店里窄，会跟陌生人挨着」。",
+           zhHint:"原因用「〜ので」。",
+           tiles:["狭いので","知らない人と","隣り合わせに","なります"], extra:["から","します"],
+           kana:"せまいので しらない ひとと となりあわせに なります",
+           explain:"「〜になります」这一章第六次出现。緑になる、公園になる、目印になる、隣り合わせになる——日语特别爱用「なる」讲变化，而不说谁把它变成那样。"},
+          {type:"shadow", hideKana:true, jp:"初めての人にもよく話しかけてくれます。",
+           kana:"はじめての ひとにも よく はなしかけて くれます。",
+           zh:"对生面孔也很爱搭话。",
+           explain:"「〜にも」＝连…也。「話しかけてくれる」——对方主动开口，这个くれる里有善意。你听懂了这层，就知道该回一句什么。"}
+        ]
+      },
+      {
+        id:"kutsuya", name:"靴屋", x:58, y:40,
+        learn:{
+          words:[
+            {jp:"靴", kana:"くつ", romaji:"kutsu", zh:"鞋"},
+            {jp:"試着", kana:"しちゃく", romaji:"shichaku", zh:"试穿"},
+            {jp:"合う", kana:"あう", romaji:"au", zh:"合适"},
+            {jp:"きつい", kana:"きつい", romaji:"kitsui", zh:"紧"}
+          ],
+          noteJa:"ガード下には安い靴屋が並んでいます。「履いてみてもいいですか」と聞いてから試します。きつければ、一つ上のサイズを出してくれます。",
+          noteKana:"ガードしたには やすい くつやが ならんで います。はいて みても いいですかと きいてから ためします。きつければ、ひとつ うえの サイズを だして くれます。",
+          noteRomaji:"Gādo-shita ni wa yasui kutsuya ga narande imasu. Haite mite mo ii desu ka to kiite kara tameshimasu. Kitsukereba, hitotsu ue no saizu o dashite kuremasu.",
+          noteZh:"高架下一溜排着便宜鞋店。先问一句「可以试穿吗」再试。要是紧，会给你拿大一码。"
+        },
+        questions:[
+          {type:"read", prompt:"「試着」の読み方は？", options:["しちゃく","しぎ","ためきる"], answer:0,
+           explain:"しちゃく。试穿。试衣间叫「試着室（しちゃくしつ）」。"},
+          {type:"vocab", prompt:"「きつい」在这里是什么意思？",
+           options:["（尺寸）紧","（工作）累","（味道）冲"], answer:0,
+           explain:"きつい三个意思都有：鞋紧、活儿累、味道冲。这里说鞋，所以是紧。"},
+          {type:"vocab", prompt:"想试穿，先说哪句？",
+           options:["履いてみてもいいですか","履きます","靴をください"], answer:0,
+           explain:"「〜てみてもいいですか」＝可以试试看吗。浅草学过「試食してもいいですか」，这里换了个动词。"},
+          {type:"listen", tts:"一つ上のサイズをお持ちしますね。",
+           ttsKana:"ひとつ うえの サイズを おもち しますね。",
+           options:["我给您拿大一码","这是最大的尺码了","上面还有一层"], answer:0,
+           explain:"「お持ちします」是「持っていく」的谦让语——店员把自己放低。你不用跟着用敬语。"},
+          {type:"read", prompt:"「合う」の読み方は？", options:["あう","ごう","あわう"], answer:0,
+           explain:"あう。合适。「サイズが合う」「趣味が合う」——尺寸合、脾气也合。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「試着」怎么念？", accept:["しちゃく"], hint:"し…", kana:"しちゃく",
+           explain:"しちゃく。买衣服鞋子必用。会念了，才敢主动开口问。"},
+          {type:"write", prompt:"「靴」怎么念？", accept:["くつ"], hint:"く…", kana:"くつ",
+           explain:"くつ。两个假名。靴下（くつした）＝袜子，字面是「鞋底下」。"},
+          {type:"build", prompt:"想问「可以试穿吗？」",
+           zhHint:"这个骨架你在浅草用过好几次了。",
+           tiles:["履いて","みても","いいですか"], extra:["から","履きます"],
+           kana:"はいて みても いいですか",
+           explain:"「〜てもいいですか」——浅草试食、拍照，上野这里试穿。**第六次**了。到这一步，它应该不用想就出来了。"},
+          {type:"build", prompt:"想说「有点紧，能给我大一码吗？」",
+           zhHint:"两句连着说：先说情况，再提要求。",
+           tiles:["ちょっと","きついので","一つ上の","サイズを","お願いします"], extra:["から","ください"],
+           kana:"ちょっと きついので ひとつ うえの サイズを おねがいします",
+           explain:"先给理由再提要求，是日语最顺的顺序。「ちょっと」照例当垫子——上野花やしき那格说过，它不是「一点」，是把话说软。"},
+          {type:"shadow", jp:"きつければ、一つ上のサイズを出してくれます。",
+           kana:"きつければ、ひとつ うえの サイズを だして くれます。",
+           zh:"要是紧，会给你拿大一码。",
+           explain:"「きつければ」是形容词的假定形（きつい→きつければ）。上野駅「歩けば」、不忍池「足りなければ」，这是第三种形状。"}
+        ]
+      },
+      {
+        id:"kebab", name:"ケバブの屋台", x:80, y:64,
+        learn:{
+          words:[
+            {jp:"注文", kana:"ちゅうもん", romaji:"chūmon", zh:"点单"},
+            {jp:"辛い", kana:"からい", romaji:"karai", zh:"辣"},
+            {jp:"抜き", kana:"ぬき", romaji:"nuki", zh:"去掉、不要（某样）"},
+            {jp:"持ち帰り", kana:"もちかえり", romaji:"mochikaeri", zh:"外带"}
+          ],
+          noteJa:"ガード下には外国の屋台も増えました。ケバブ、ハラルの店、スパイスの店。「辛さはどうしますか」と聞かれるので、「普通で」か「辛いのは抜きで」と答えます。",
+          noteKana:"ガードしたには がいこくの やたいも ふえました。ケバブ、ハラルの みせ、スパイスの みせ。からさは どう しますかと きかれるので、ふつうでか からいのは ぬきでと こたえます。",
+          noteRomaji:"Gādo-shita ni wa gaikoku no yatai mo fuemashita. Kebabu, harāru no mise, supaisu no mise. Karasa wa dō shimasu ka to kikareru node, futsū de ka karai no wa nuki de to kotaemasu.",
+          noteZh:"高架下的外国摊子也多起来了。土耳其烤肉、清真店、香料店。会被问「辣度怎么办」，回答「普通就行」或者「不要辣」。"
+        },
+        questions:[
+          {type:"read", prompt:"「注文」の読み方は？", options:["ちゅうもん","ちゅうぶん","そそぎもん"], answer:0,
+           explain:"ちゅうもん。点单、订货。「ご注文はお決まりですか」＝您想好点什么了吗，餐厅必问。"},
+          {type:"vocab", prompt:"「辛いのは抜きで」是什么意思？",
+           options:["不要辣的","要特别辣","辣的另外装"], answer:0,
+           explain:"「抜き」＝去掉。ネギ抜き（不要葱）、氷抜き（不加冰）。点单时最实用的一个字。"},
+          {type:"read", prompt:"「辛い」の読み方は？（辣的意思时）",
+           options:["からい","つらい","しんい"], answer:0,
+           explain:"からい＝辣。同一个字念つらい时是「难受、痛苦」。同形不同音不同义，靠上下文分——这是日语里很典型的一对。"},
+          {type:"listen", tts:"辛さはどうしますか。", ttsKana:"からさは どう しますか。",
+           options:["辣度要怎么调？","多少钱？","要几份？"], answer:0,
+           explain:"「辛さ」是形容词变名词（辛い→辛さ）。上野公园学过「高さ」，同一个变法。"},
+          {type:"vocab", prompt:"想说「普通就行」，哪句最自然？",
+           options:["普通でお願いします","普通をください","普通します"], answer:0,
+           explain:"又是那个表条件的「で」。这一章第三次了：三十分で、塩で、普通で。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「注文」怎么念？", accept:["ちゅうもん"], hint:"ちゅう…", kana:"ちゅうもん",
+           explain:"ちゅうもん。日本吃饭第一件事就是这个。听懂「ご注文は？」才接得上。"},
+          {type:"write", prompt:"「辛い」（辣）怎么念？", accept:["からい"], hint:"か…", kana:"からい",
+           explain:"からい。念つらい就是「难受」了。写法一模一样，只能靠句子分——「この料理は辛い」是辣，「毎日が辛い」是苦。"},
+          {type:"build", prompt:"点单：普通辣度就行。",
+           zhHint:"条件用「で」。",
+           tiles:["普通","で","お願いします"], extra:["を","ください"],
+           kana:"ふつうで おねがいします",
+           explain:"三十分で、塩で、現金だと、普通で——这一章里「で」表条件已经出现四次。它和表示地点的「で」、表示材料的「で」是同一个字，靠位置分工。"},
+          {type:"build", prompt:"想说「不要辣的」。",
+           zhHint:"「抜き」＝去掉。",
+           tiles:["辛いのは","抜き","で","お願いします"], extra:["を","ない"],
+           kana:"からいのは ぬきで おねがいします",
+           explain:"「〜抜きで」是点单神器：ネギ抜きで、氷抜きで、わさび抜きで。你不吃的东西，一个词就挡掉了。"},
+          {type:"shadow", hideKana:true, jp:"ガード下には外国の屋台も増えました。",
+           kana:"ガードしたには がいこくの やたいも ふえました。",
+           zh:"高架下的外国摊子也多起来了。",
+           explain:"「増える」是自动词。浅草蔵前那格的「コーヒー屋が増えています」是同一个词——这条街和那条街，都在自己变。"}
+        ]
+      },
+      {
+        id:"densha", name:"頭上の電車", x:48, y:14, egg:true,
+        eggLines:["ゴォー","ガタンゴトン","…しーん","ゴォォー"],
+        eggFinal:"ガード下の常連は、電車の音でもう時間がわかる",
+        eggFinalAt:8
+      }
+    ]
   }
 ];
 
 const NODE_POS = {
-  /* 第一章：站在山下 */
-  uenoeki:{x:72,y:88}, koen:{x:40,y:62},
-  /* 第二章：上到山上 */
-  tohaku:{x:54,y:26}
+  /* 第一章 上野の山：从车站往西北，绕过不忍池上到公园 */
+  uenoeki:{x:76,y:91}, shinobazu:{x:20,y:70}, koen:{x:44,y:52},
+  /* 第二章 アメ横：车站南边，沿着铁道 */
+  ameyoko:{x:48,y:82}, gado:{x:74,y:74},
+  /* 第三章 博物馆：公园最北端 */
+  tohaku:{x:56,y:18}
 };
-const MAX_CHAPTER = 2;
-const CH_KANJI = ["","一","二"];
+const MAX_CHAPTER = 3;
+const CH_KANJI = ["","一","二","三"];
 
 const SVG_ART = {
+u4: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#CBDDE2"/>
+  <path d="M0 118 C 90 100, 300 104, 390 116 L390 320 L0 320 Z" fill="#8FB4C6"/>
+  <path d="M0 122 C 90 104, 300 108, 390 120" fill="none" stroke="#6E97AB" stroke-width="3"/>
+  <!-- 蓮の葉 一面 -->
+  <g fill="#6E8F52" stroke="#4F6B3A" stroke-width="2">
+    <ellipse cx="52" cy="176" rx="30" ry="14"/><ellipse cx="116" cy="200" rx="26" ry="12"/>
+    <ellipse cx="30" cy="226" rx="28" ry="13"/><ellipse cx="94" cy="252" rx="30" ry="14"/>
+    <ellipse cx="160" cy="230" rx="24" ry="11"/><ellipse cx="44" cy="284" rx="26" ry="12"/>
+  </g>
+  <g fill="#F2C4D2" stroke="#B57A96" stroke-width="2">
+    <path d="M72 156 C 68 142, 78 134, 84 142 C 90 134, 100 142, 96 156 Z"/>
+    <path d="M136 186 C 133 176, 141 170, 145 176 C 149 170, 157 176, 154 186 Z"/>
+  </g>
+  <!-- 島と弁天堂 -->
+  <ellipse cx="240" cy="248" rx="76" ry="30" fill="#A9BE8A" stroke="#33302B" stroke-width="2.5"/>
+  <rect x="212" y="196" width="58" height="40" fill="#EDE7D6" stroke="#33302B" stroke-width="3"/>
+  <path d="M200 196 L241 168 L282 196 Z" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <path d="M241 168 V158" stroke="#D9A441" stroke-width="4"/>
+  <rect x="232" y="216" width="18" height="20" fill="#8B6F4E" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M180 250 H300" stroke="#B57A3A" stroke-width="6"/>
+  <path d="M300 250 C 330 252, 350 258, 366 266" fill="none" stroke="#B57A3A" stroke-width="6"/>
+  <!-- 貸しボート -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <path d="M300 176 C 300 190, 314 196, 330 196 C 346 196, 358 190, 358 176 Z" fill="#FBF3E2"/>
+    <circle cx="329" cy="164" r="10" fill="#FBF3E2"/>
+    <path d="M322 158 C 326 152, 336 152, 340 158" fill="#33302B"/>
+    <path d="M336 160 l10 -3 -2 6 z" fill="#D9A441"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2.5" fill="#9EC3D4">
+    <path d="M120 292 C 120 304, 134 310, 150 310 C 166 310, 178 304, 178 292 Z"/>
+    <path d="M132 292 l-14 -12 M166 292 l14 -12"/>
+  </g>
+  <!-- 水鳥 -->
+  <g>
+    <ellipse cx="336" cy="128" rx="13" ry="8" fill="#6E6759" stroke="#33302B" stroke-width="2"/>
+    <path d="M347 120 C 352 116, 356 120, 353 126" fill="#6E6759" stroke="#33302B" stroke-width="2"/>
+    <circle cx="352" cy="120" r="1.2" fill="#33302B"/>
+  </g>
+</svg>`,
+u5: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#E6DCC6"/>
+  <rect y="244" width="390" height="76" fill="#BFB39A"/>
+  <!-- アーケードの屋根 -->
+  <rect y="0" width="390" height="34" fill="#8C8471"/>
+  <g stroke="#6E6759" stroke-width="3">
+    <path d="M40 34 V64 M140 34 V64 M250 34 V64 M350 34 V64"/>
+  </g>
+  <!-- 幟と看板 -->
+  <rect x="14" y="52" width="118" height="30" rx="2" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <text x="73" y="74" text-anchor="middle" font-size="17" fill="#FBF3E2" font-family="sans-serif">安いよ！</text>
+  <rect x="150" y="46" width="26" height="94" fill="#D9A441" stroke="#33302B" stroke-width="2.5"/>
+  <text x="163" y="72" text-anchor="middle" font-size="15" fill="#33302B" font-family="serif">乾</text>
+  <text x="163" y="94" text-anchor="middle" font-size="15" fill="#33302B" font-family="serif">物</text>
+  <!-- 魚屋 -->
+  <rect x="196" y="140" width="150" height="46" fill="#26466D" stroke="#33302B" stroke-width="3"/>
+  <g fill="#DDE8EE" stroke="#33302B" stroke-width="2">
+    <ellipse cx="228" cy="162" rx="20" ry="9"/><ellipse cx="272" cy="164" rx="18" ry="8"/>
+    <ellipse cx="314" cy="161" rx="19" ry="9"/>
+  </g>
+  <g fill="#33302B">
+    <circle cx="216" cy="160" r="1.6"/><circle cx="260" cy="162" r="1.5"/><circle cx="302" cy="159" r="1.5"/>
+  </g>
+  <rect x="196" y="186" width="150" height="58" fill="#8B6F4E" stroke="#33302B" stroke-width="3"/>
+  <circle cx="270" cy="112" r="14" fill="#F0D9BE" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M258 140 C 258 122, 282 122, 282 140 Z" fill="#C73E3A" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M262 106 C 266 98, 276 98, 280 106" fill="#33302B"/>
+  <!-- 乾物の樽 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="26" y="188" width="42" height="56" rx="3" fill="#A9855C"/>
+    <rect x="76" y="200" width="38" height="44" rx="3" fill="#B49A72"/>
+    <ellipse cx="47" cy="188" rx="21" ry="7" fill="#8B6F4E"/>
+    <ellipse cx="95" cy="200" rx="19" ry="6" fill="#8B6F4E"/>
+  </g>
+  <!-- 猫 -->
+  <g stroke="#33302B" stroke-width="2" fill="#E2D6BE">
+    <ellipse cx="150" cy="276" rx="20" ry="11"/>
+    <circle cx="170" cy="266" r="9"/>
+    <path d="M164 259 l-2 -8 6 5 z M176 259 l4 -8 2 8 z"/>
+    <path d="M132 274 C 118 268, 116 282, 128 282" fill="none"/>
+  </g>
+  <circle cx="173" cy="264" r="1.3" fill="#33302B"/>
+</svg>`,
+u6: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#D9D2C2"/>
+  <rect y="252" width="390" height="68" fill="#B0A68F"/>
+  <!-- 高架 -->
+  <rect y="0" width="390" height="46" fill="#7C7361"/>
+  <rect y="46" width="390" height="10" fill="#5E5647"/>
+  <g stroke="#5E5647" stroke-width="4">
+    <path d="M56 56 V104 M334 56 V104"/>
+  </g>
+  <!-- 走る電車 -->
+  <rect x="212" y="8" width="150" height="30" rx="4" fill="#5E7F4E" stroke="#33302B" stroke-width="2.5"/>
+  <g fill="#DDE8EE" stroke="#33302B" stroke-width="2">
+    <rect x="224" y="14" width="26" height="16" rx="2"/><rect x="258" y="14" width="26" height="16" rx="2"/>
+    <rect x="292" y="14" width="26" height="16" rx="2"/><rect x="326" y="14" width="26" height="16" rx="2"/>
+  </g>
+  <!-- 立ち飲み -->
+  <rect x="16" y="118" width="118" height="30" rx="2" fill="#C73E3A" stroke="#33302B" stroke-width="3"/>
+  <text x="75" y="140" text-anchor="middle" font-size="16" fill="#FBF3E2" font-family="sans-serif">立ち飲み</text>
+  <rect x="24" y="196" width="102" height="14" rx="2" fill="#8B6F4E" stroke="#33302B" stroke-width="2.5"/>
+  <rect x="68" y="210" width="10" height="42" fill="#8B6F4E" stroke="#33302B" stroke-width="2.5"/>
+  <g stroke="#33302B" stroke-width="2.5">
+    <circle cx="44" cy="168" r="11" fill="#F0D9BE"/>
+    <path d="M32 196 C 32 178, 56 178, 56 196 Z" fill="#26466D"/>
+    <circle cx="104" cy="170" r="11" fill="#F0D9BE"/>
+    <path d="M92 196 C 92 178, 116 178, 116 196 Z" fill="#6E6759"/>
+  </g>
+  <g fill="#D9A441" stroke="#33302B" stroke-width="2">
+    <rect x="52" y="184" width="9" height="13" rx="1"/><rect x="98" y="184" width="9" height="13" rx="1"/>
+  </g>
+  <!-- 靴屋 -->
+  <rect x="150" y="150" width="104" height="102" fill="#EDE7D6" stroke="#33302B" stroke-width="3"/>
+  <path d="M150 150 H254" stroke="#33302B" stroke-width="3"/>
+  <g stroke="#33302B" stroke-width="2" fill="#8B6F4E">
+    <path d="M162 186 C 162 178, 176 178, 180 184 L192 186 v8 h-30 z"/>
+    <path d="M206 186 C 206 178, 220 178, 224 184 L236 186 v8 h-30 z"/>
+    <path d="M162 218 C 162 210, 176 210, 180 216 L192 218 v8 h-30 z" fill="#26466D"/>
+    <path d="M206 218 C 206 210, 220 210, 224 216 L236 218 v8 h-30 z" fill="#C73E3A"/>
+  </g>
+  <!-- ケバブ屋台 -->
+  <rect x="278" y="164" width="94" height="88" fill="#A32E2C" stroke="#33302B" stroke-width="3"/>
+  <rect x="286" y="176" width="78" height="28" fill="#FBF3E2" stroke="#33302B" stroke-width="2.5"/>
+  <text x="325" y="197" text-anchor="middle" font-size="15" fill="#A32E2C" font-family="sans-serif">KEBAB</text>
+  <path d="M318 212 C 314 224, 316 240, 325 244 C 334 240, 336 224, 332 212 Z"
+        fill="#B57A3A" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M325 206 V248" stroke="#8C8471" stroke-width="3"/>
+</svg>`,
 u2: `
 <svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
   <rect width="390" height="320" fill="#E6E0D2"/>
