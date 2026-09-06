@@ -28,31 +28,48 @@
     </div>
     <div id="map-canvas">
       <svg class="path-bg" viewBox="0 0 390 940" preserveAspectRatio="none" aria-hidden="true">
-        <!-- 不忍池（西南の水） -->
-        <path d="M40 690 C 20 660, 26 606, 62 588 C 104 568, 150 590, 152 626
-                 C 154 664, 96 712, 40 690 Z"
-              fill="#9EC3D4" opacity=".42"/>
-        <path d="M62 640 C 78 630, 96 634, 104 644" fill="none" stroke="#7FA9BD" stroke-width="2.5" opacity=".5"/>
-        <!-- 上野駅 → 公園（山を上がる） -->
-        <path d="M262 800 C 232 760, 196 690, 168 620"
-              fill="none" stroke="#C73E3A" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round" opacity=".55"/>
-        <!-- 公園 → 東博（並木道を北へ） -->
+        <!-- 不忍池 -->
+        <path d="M18 720 C 2 694, 10 650, 44 636 C 84 620, 128 640, 130 672
+                 C 132 706, 76 744, 18 720 Z" fill="#9EC3D4" opacity=".4"/>
+        <!-- 駅 → アメ横 → ガード下（線路沿い） -->
+        <path d="M296 856 C 250 838, 214 826, 190 812" fill="none"
+              stroke="#C73E3A" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round" opacity=".5"/>
+        <path d="M296 862 C 300 820, 302 780, 300 748" fill="none"
+              stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5"/>
+        <!-- 駅 → 山を上がる → 公園 → 東博 → 平成館 -->
         <g fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5">
-          <path d="M170 546 C 182 470, 196 360, 204 288"/>
-          <path d="M140 600 C 108 618, 78 626, 56 630"/>
+          <path d="M300 740 C 302 680, 302 630, 300 588"/>
+          <path d="M300 540 C 300 480, 300 440, 300 412"/>
+          <path d="M300 366 C 300 330, 300 296, 300 262"/>
+          <path d="M284 576 C 240 594, 200 616, 186 632"/>
+          <path d="M170 664 C 120 674, 84 686, 62 694"/>
+          <path d="M262 570 C 200 500, 130 452, 96 400"/>
+          <path d="M62 496 C 60 460, 68 430, 82 400"/>
+          <path d="M86 358 C 82 320, 76 288, 74 244"/>
+          <path d="M104 386 C 148 410, 186 424, 186 424"/>
         </g>
-        <!-- 桜並木（参道の両側） -->
-        <g opacity=".3">
-          <circle cx="140" cy="470" r="17" fill="#E8A8BC"/>
-          <circle cx="244" cy="432" r="14" fill="#E8A8BC"/>
-          <circle cx="128" cy="378" r="13" fill="#E8A8BC"/>
-          <circle cx="252" cy="330" r="16" fill="#E8A8BC"/>
+        <!-- 桜並木（公園の参道） -->
+        <g opacity=".28">
+          <circle cx="272" cy="500" r="15" fill="#E8A8BC"/>
+          <circle cx="330" cy="470" r="12" fill="#E8A8BC"/>
+          <circle cx="268" cy="438" r="13" fill="#E8A8BC"/>
+          <circle cx="336" cy="404" r="11" fill="#E8A8BC"/>
         </g>
-        <!-- 上野の森（東博の背後） -->
-        <g opacity=".26" fill="#7A8450">
-          <ellipse cx="86" cy="200" rx="42" ry="26"/>
-          <ellipse cx="318" cy="176" rx="48" ry="30"/>
-          <ellipse cx="300" cy="256" rx="30" ry="20"/>
+        <!-- 谷中霊園の桜 -->
+        <g opacity=".24">
+          <circle cx="150" cy="430" r="13" fill="#E8A8BC"/>
+          <circle cx="206" cy="416" r="11" fill="#E8A8BC"/>
+        </g>
+        <!-- 上野の森 -->
+        <g opacity=".24" fill="#7A8450">
+          <ellipse cx="240" cy="290" rx="44" ry="26"/>
+          <ellipse cx="336" cy="330" rx="34" ry="22"/>
+          <ellipse cx="150" cy="196" rx="38" ry="24"/>
+        </g>
+        <!-- つつじの斜面（根津） -->
+        <g opacity=".3" fill="#C77A9E">
+          <ellipse cx="40" cy="536" rx="30" ry="14"/>
+          <ellipse cx="76" cy="556" rx="22" ry="10"/>
         </g>
       </svg>
       <!-- nodes injected by JS -->
@@ -1717,23 +1734,805 @@ const SCENES = [
         eggFinalAt:8
       }
     ]
+  },
+{
+    id:"yanaka", name:"谷中銀座", short:"谷中", chapter:5,
+    svg:"u9",
+    hotspots:[
+      {
+        id:"yuyake", name:"夕やけだんだん", x:22, y:34,
+        learn:{
+          words:[
+            {jp:"階段", kana:"かいだん", romaji:"kaidan", zh:"台阶"},
+            {jp:"夕焼け", kana:"ゆうやけ", romaji:"yūyake", zh:"晚霞"},
+            {jp:"見下ろす", kana:"みおろす", romaji:"miorosu", zh:"俯瞰"},
+            {jp:"名付ける", kana:"なづける", romaji:"nazukeru", zh:"命名"}
+          ],
+          noteJa:"商店街の入口にある階段です。上から夕焼けがきれいに見えるので、近所の人が「夕やけだんだん」と名付けました。役所が付けた名前ではありません。",
+          noteKana:"しょうてんがいの いりぐちに ある かいだんです。うえから ゆうやけが きれいに みえるので、きんじょの ひとが ゆうやけだんだんと なづけました。やくしょが つけた なまえでは ありません。",
+          noteRomaji:"Shōtengai no iriguchi ni aru kaidan desu. Ue kara yūyake ga kirei ni mieru node, kinjo no hito ga Yūyake Dandan to nazukemashita. Yakusho ga tsuketa namae de wa arimasen.",
+          noteZh:"商店街入口的台阶。因为从上面看晚霞特别好看，附近的人给它取名「夕烧阶梯」。不是政府起的名字。"
+        },
+        questions:[
+          {type:"read", prompt:"「夕焼け」の読み方は？", options:["ゆうやけ","ゆうしょう","せきやけ"], answer:0,
+           explain:"ゆうやけ。夕（ゆう）＋焼（や）け。早上的叫「朝焼け（あさやけ）」。"},
+          {type:"read", prompt:"「階段」の読み方は？", options:["かいだん","かいたん","こうだん"], answer:0,
+           explain:"かいだん。跟「怪談（かいだん）」同音。谷根千是坡道和台阶的街，这个词你会用很多次。"},
+          {type:"vocab", prompt:"「夕やけだんだん」这个名字是谁起的？",
+           options:["附近的居民","区政府","开发商"], answer:0,
+           explain:"街坊自己叫出来的，后来就成了正式称呼。谷根千很多地名都是这么来的。"},
+          {type:"vocab", prompt:"「見下ろす」是什么意思？",
+           options:["从高处往下看","抬头看","看不起"], answer:0,
+           explain:"見（み）＋下（お）ろす。日语的「見下す（みくだす）」才是看不起——只差一个假名，意思差很远。"},
+          {type:"listen", tts:"上から夕焼けがきれいに見えます。",
+           ttsKana:"うえから ゆうやけが きれいに みえます。",
+           options:["从上面能清楚看到晚霞","晚霞把上面照亮了","上面看不见晚霞"], answer:0,
+           explain:"「見えます」＝（自然而然）看得见。浅草吾妻橋那格学过。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「夕焼け」怎么念？用假名写。", accept:["ゆうやけ"], hint:"ゆう…", kana:"ゆうやけ",
+           explain:"ゆうやけ。这条台阶的名字里就有它。会念了，那块牌子才算真的读懂了。"},
+          {type:"write", prompt:"「階段」怎么念？", accept:["かいだん"], hint:"かい…", kana:"かいだん",
+           explain:"かいだん。谷根千满街是坡和台阶。「階段を上る」＝上台阶，「坂を上る」＝上坡。"},
+          {type:"build", prompt:"想说「从上面能清楚看到晚霞」。",
+           zhHint:"起点用「から」，可见用「見えます」。",
+           tiles:["上から","夕焼けが","きれいに","見えます"], extra:["を","見ます"],
+           kana:"うえから ゆうやけが きれいに みえます",
+           explain:"「きれいに見える」——形容动词修饰动词要变に。きれいな景色（修饰名词）／きれいに見える（修饰动词）。这一条中文母语者常忘。"},
+          {type:"build", prompt:"想说「是附近的人给起的名字」。",
+           zhHint:"「〜が名付けました」。",
+           tiles:["近所の人が","名付け","ました"], extra:["に","名付けます"],
+           kana:"きんじょの ひとが なづけました",
+           explain:"「名付ける」＝命名。名（な）＋付（づ）ける，づ是つ浊化来的。浅草招き猫那格的「手作り（てづくり）」是同一条拼写规则。"},
+          {type:"shadow", hideKana:true, jp:"役所が付けた名前ではありません。",
+           kana:"やくしょが つけた なまえでは ありません。",
+           zh:"不是政府起的名字。",
+           explain:"「〜ではありません」＝不是…。西洋美術館那格的「〜のではなく」是它的书面版。一句话里有否定，语气就变得郑重。"}
+        ]
+      },
+      {
+        id:"menchi", name:"メンチカツの店", x:52, y:52,
+        learn:{
+          words:[
+            {jp:"揚げ物", kana:"あげもの", romaji:"agemono", zh:"炸物"},
+            {jp:"食べ歩き", kana:"たべあるき", romaji:"tabearuki", zh:"边走边吃"},
+            {jp:"熱い", kana:"あつい", romaji:"atsui", zh:"烫"},
+            {jp:"包む", kana:"つつむ", romaji:"tsutsumu", zh:"包起来"}
+          ],
+          noteJa:"揚げたてのメンチカツを紙に包んでくれます。熱いので、少し冷ましてから食べます。商店街では食べ歩きができますが、店の前で立ち止まって食べる人が多いです。",
+          noteKana:"あげたての メンチカツを かみに つつんで くれます。あついので、すこし さましてから たべます。しょうてんがいでは たべあるきが できますが、みせの まえで たちどまって たべる ひとが おおいです。",
+          noteRomaji:"Agetate no menchikatsu o kami ni tsutsunde kuremasu. Atsui node, sukoshi samashite kara tabemasu. Shōtengai de wa tabearuki ga dekimasu ga, mise no mae de tachidomatte taberu hito ga ōi desu.",
+          noteZh:"刚炸好的炸肉饼，用纸给你包上。很烫，放凉一点再吃。商店街可以边走边吃，不过多数人就站在店门口吃完。"
+        },
+        questions:[
+          {type:"read", prompt:"「揚げ物」の読み方は？", options:["あげもの","ようぶつ","あがりもの"], answer:0,
+           explain:"あげもの。揚（あ）げる＝油炸。浅草天ぷら那格的「揚げたて」是同一个字。"},
+          {type:"vocab", prompt:"「揚げたて」是什么意思？",
+           options:["刚炸好的","炸过头的","可以复炸的"], answer:0,
+           explain:"「〜たて」＝刚做好。浅草学过揚げたて・焼きたて，上野学过できたて。这是第四次。"},
+          {type:"read", prompt:"「包む」の読み方は？", options:["つつむ","ほうむ","くるむ"], answer:0,
+           explain:"つつむ。组词念ほう：包装（ほうそう）、包丁（ほうちょう）——浅草合羽橋那格学过包丁。"},
+          {type:"listen", tts:"熱いので、気をつけてくださいね。",
+           ttsKana:"あついので、きを つけて くださいね。",
+           options:["很烫，请小心","很热，请开窗","不烫，放心吃"], answer:0,
+           explain:"「気をつける」＝小心、注意。日本人一天说很多次：足元に気をつけて、体に気をつけて。"},
+          {type:"vocab", prompt:"「食べ歩き」是什么意思？",
+           options:["边走边吃","到处找好吃的店","站着吃"], answer:0,
+           explain:"两个意思都有，但在商店街的告示上说的是「边走边吃」。有些街道会写「食べ歩きはご遠慮ください」＝请不要边走边吃。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「揚げ物」怎么念？", accept:["あげもの"], hint:"あげ…", kana:"あげもの",
+           explain:"あげもの。超市熟食柜台上就写着这三个字。"},
+          {type:"write", prompt:"「包む」怎么念？", accept:["つつむ"], hint:"つ…", kana:"つつむ",
+           explain:"つつむ。「包んでください」＝请帮我包起来，买礼物时常用。"},
+          {type:"build", prompt:"想说「很烫，放凉一点再吃」。",
+           zhHint:"「〜てから」＝…之后再…。",
+           tiles:["熱いので","少し","冷まして","から食べます"], extra:["まで","冷まします"],
+           kana:"あついので すこし さましてから たべます",
+           explain:"「〜てから」前面用て形，表示先后。上野駅「聞いてから試します」是同一个。注意跟「〜前に」正好相反：前に用辞书形，てから用て形。"},
+          {type:"build", prompt:"想请店员帮忙包起来。",
+           zhHint:"拜托别人用「〜てもらえますか」。",
+           tiles:["包んで","もらえますか"], extra:["ください","あげます"],
+           kana:"つつんで もらえますか",
+           explain:"浅草包丁屋那格的「彫ってもらえますか」是第一次，这是第二次。「〜てもらえますか」比「〜てください」客气得多，值得当成一个词记住。"},
+          {type:"shadow", jp:"熱いので、気をつけてくださいね。",
+           kana:"あついので、きを つけて くださいね。", zh:"很烫，请小心。",
+           explain:"店家对你说的话。听懂了，你也就会对别人说了——「気をつけて」是日本人道别时最常用的一句关心。"}
+        ]
+      },
+      {
+        id:"yanakaneko", name:"谷中の猫", x:78, y:38,
+        learn:{
+          words:[
+            {jp:"住みつく", kana:"すみつく", romaji:"sumitsuku", zh:"住下来、定居"},
+            {jp:"人懐っこい", kana:"ひとなつっこい", romaji:"hitonatsukkoi", zh:"亲人的"},
+            {jp:"尻尾", kana:"しっぽ", romaji:"shippo", zh:"尾巴"},
+            {jp:"日向", kana:"ひなた", romaji:"hinata", zh:"向阳处"}
+          ],
+          noteJa:"谷中は猫の街と言われています。人懐っこい猫が日向で寝ていて、逃げません。商店街には木彫りの猫の尻尾が七つ隠れていて、探しながら歩く人もいます。",
+          noteKana:"やなかは ねこの まちと いわれて います。ひとなつっこい ねこが ひなたで ねて いて、にげません。しょうてんがいには きぼりの ねこの しっぽが ななつ かくれて いて、さがしながら あるく ひとも います。",
+          noteRomaji:"Yanaka wa neko no machi to iwarete imasu. Hitonatsukkoi neko ga hinata de nete ite, nigemasen. Shōtengai ni wa kibori no neko no shippo ga nanatsu kakurete ite, sagashinagara aruku hito mo imasu.",
+          noteZh:"谷中被叫做猫街。亲人的猫在向阳处睡着，也不跑。商店街里藏着七条木雕猫尾巴，有人一边找一边走。"
+        },
+        questions:[
+          {type:"read", prompt:"「尻尾」の読み方は？", options:["しっぽ","しりお","こうび"], answer:0,
+           explain:"しっぽ。熟字训，两个字合起来读。浅草的「老舗（しにせ）」「海老（えび）」是同一类。"},
+          {type:"read", prompt:"「日向」の読み方は？", options:["ひなた","にっこう","ひむかい"], answer:0,
+           explain:"ひなた。也是熟字训。反义是「日陰（ひかげ）」＝背阴处。「日向ぼっこ」＝晒太阳。"},
+          {type:"vocab", prompt:"「人懐っこい」是什么意思？",
+           options:["亲人、不怕生","怕人","爱叫"], answer:0,
+           explain:"懐（なつ）く＝亲近人。说猫说狗说小孩都用它。"},
+          {type:"listen", tts:"猫が日向で寝ていて、逃げません。",
+           ttsKana:"ねこが ひなたで ねて いて、にげません。",
+           options:["猫在向阳处睡着，也不跑","猫怕光所以躲着","猫看到人就跑"], answer:0,
+           explain:"「寝ていて」——ている的て形，接下一句。这一章的ている已经第九次了。"},
+          {type:"vocab", prompt:"商店街里藏着几条木雕猫尾巴？",
+           options:["七条","三条","十条"], answer:0,
+           explain:"七つ（ななつ）。找齐了据说会有好事——这是店家们自己搞出来的玩法。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「尻尾」怎么念？", accept:["しっぽ"], hint:"しっ…", kana:"しっぽ",
+           explain:"しっぽ。促音。浅草「切符（きっぷ）」、上野「設計（せっけい）」——促音吃掉了日本人就听不懂，这一格再练一次。"},
+          {type:"write", prompt:"「日向」怎么念？", accept:["ひなた"], hint:"ひ…", kana:"ひなた",
+           explain:"ひなた。日＋向，可念法跟两个字都对不上。这就是熟字训——只能整个记。"},
+          {type:"build", prompt:"想说「猫在向阳处睡着，也不跑」。",
+           zhHint:"两句用て形连起来。",
+           tiles:["猫が","日向で","寝ていて","逃げません"], extra:["から","寝ます"],
+           kana:"ねこが ひなたで ねて いて にげません",
+           explain:"「寝ていて」是状态的て形。上野公园「犬を連れて、浴衣を着ています」是同一个连法。第二次。"},
+          {type:"build", prompt:"想说「有人一边找一边走」。",
+           zhHint:"用浅草池波那块碑上的「〜ながら」。",
+           tiles:["探し","ながら","歩く人も","います"], extra:["から","探します"],
+           kana:"さがしながら あるく ひとも います",
+           explain:"「〜ながら」第四次了：池波的碑、走着吃、樋口一葉一边开店一边写小说，现在是一边找猫尾巴一边走。同一个语法，从一句格言走到了一条小街。"},
+          {type:"shadow", hideKana:true, jp:"谷中は猫の街と言われています。",
+           kana:"やなかは ねこの まちと いわれて います。",
+           zh:"谷中被叫做猫街。",
+           explain:"「〜と言われています」——这已经是第六次了。你现在应该能自己起头讲任何一个传说。"}
+        ]
+      },
+      {
+        id:"senbei", name:"せんべいの匂い", x:40, y:80, egg:true,
+        eggLines:["じゅっ","こうばしい…","パリッ","ぱたぱた"],
+        eggFinal:"焼きたてのせんべいの匂いは、坂の下まで届く",
+        eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"reien", name:"谷中霊園・朝倉彫塑館", short:"霊園", chapter:5,
+    svg:"u10",
+    hotspots:[
+      {
+        id:"sakuradori", name:"霊園の桜通り", x:26, y:44,
+        learn:{
+          words:[
+            {jp:"霊園", kana:"れいえん", romaji:"reien", zh:"墓园"},
+            {jp:"通り抜ける", kana:"とおりぬける", romaji:"tōrinukeru", zh:"穿过去"},
+            {jp:"静か", kana:"しずか", romaji:"shizuka", zh:"安静"},
+            {jp:"眠る", kana:"ねむる", romaji:"nemuru", zh:"长眠／睡"}
+          ],
+          noteJa:"谷中霊園の真ん中には桜並木の道があります。近所の人は毎日ここを通り抜けて駅へ行きます。怖い場所ではなく、静かな公園のように使われています。",
+          noteKana:"やなかれいえんの まんなかには さくらなみきの みちが あります。きんじょの ひとは まいにち ここを とおりぬけて えきへ いきます。こわい ばしょでは なく、しずかな こうえんの ように つかわれて います。",
+          noteRomaji:"Yanaka Reien no mannaka ni wa sakura namiki no michi ga arimasu. Kinjo no hito wa mainichi koko o tōrinukete eki e ikimasu. Kowai basho de wa naku, shizuka na kōen no yō ni tsukawarete imasu.",
+          noteZh:"谷中墓园正中有一条樱花道。附近的人每天穿过这里去车站。这不是可怕的地方，更像一座安静的公园。"
+        },
+        questions:[
+          {type:"read", prompt:"「霊園」の読み方は？", options:["れいえん","りょうえん","たまぞの"], answer:0,
+           explain:"れいえん。公营的墓园叫霊園，寺庙里的叫墓地（ぼち）。"},
+          {type:"read", prompt:"「眠る」の読み方は？", options:["ねむる","みんる","ねる"], answer:0,
+           explain:"ねむる。说人去世也用它：「ここに眠る」＝长眠于此。跟「寝る（ねる）」不同——寝る是躺下，眠る是睡着。"},
+          {type:"vocab", prompt:"「通り抜ける」是什么意思？",
+           options:["从一头穿到另一头","绕过去","停在中间"], answer:0,
+           explain:"通る＋抜ける。日本很多地方写着「通り抜けできません」＝此路不通。"},
+          {type:"listen", tts:"怖い場所ではなく、静かな公園のようです。",
+           ttsKana:"こわい ばしょでは なく、しずかな こうえんの ようです。",
+           options:["不是可怕的地方，像座安静的公园","是可怕的地方，不像公园","公园里有可怕的地方"], answer:0,
+           explain:"「〜ではなく」＝不是…而是。西洋美術館那格学过，这是第三次。"},
+          {type:"vocab", prompt:"附近的人怎么使用这里？",
+           options:["当成每天去车站的近路","只在扫墓时来","完全不进去"], answer:0,
+           explain:"生和死在这条街上挨得很近，但没有人觉得别扭。这是谷中最特别的地方。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「霊園」怎么念？", accept:["れいえん"], hint:"れい…", kana:"れいえん",
+           explain:"れいえん。写在入口的石碑上。念得出来，就不会误闯了。"},
+          {type:"write", prompt:"「眠る」怎么念？", accept:["ねむる"], hint:"ね…", kana:"ねむる",
+           explain:"ねむる。墓碑上常写「〇〇ここに眠る」。日语说死亡，很少用「死ぬ」，多用眠る、亡くなる——浅草樋口一葉那格学过「亡くなりました」。"},
+          {type:"build", prompt:"想说「每天穿过这里去车站」。",
+           zhHint:"穿过一段空间用「を」。",
+           tiles:["毎日","ここを","通り抜けて","駅へ行きます"], extra:["で","に"],
+           kana:"まいにち ここを とおりぬけて えきへ いきます",
+           explain:"「ここを通り抜ける」用を——浅草「橋を渡る」「川を下る」是同一个用法。这是第三次。方向用「へ」。"},
+          {type:"build", prompt:"想说「不是可怕的地方，是安静的地方」。",
+           zhHint:"「〜ではなく」＝不是…而是。",
+           tiles:["怖い場所では","なく","静かな場所です"], extra:["から","です"],
+           kana:"こわい ばしょでは なく しずかな ばしょです",
+           explain:"第三次用这个句型了。松方コレクション、モネ，现在是这里。它专门用来纠正一个常见的误解——而这一格要纠正的，是你对墓园的想象。"},
+          {type:"shadow", hideKana:true, jp:"静かな公園のように使われています。",
+           kana:"しずかな こうえんの ように つかわれて います。",
+           zh:"像一座安静的公园那样被使用着。",
+           explain:"「〜のように」＝像…那样。加上被动「使われている」——不是谁规定的，是大家自然而然这么用的。这一句的分寸感很日本。"}
+        ]
+      },
+      {
+        id:"asakura", name:"朝倉彫塑館", x:66, y:60,
+        learn:{
+          words:[
+            {jp:"彫塑", kana:"ちょうそ", romaji:"chōso", zh:"雕塑"},
+            {jp:"住まい", kana:"すまい", romaji:"sumai", zh:"住所"},
+            {jp:"屋上", kana:"おくじょう", romaji:"okujō", zh:"屋顶（平台）"},
+            {jp:"靴を脱ぐ", kana:"くつをぬぐ", romaji:"kutsu o nugu", zh:"脱鞋"}
+          ],
+          noteJa:"彫刻家・朝倉文夫のアトリエと住まいがそのまま美術館になっています。中は靴を脱いで上がります。屋上には庭があって、彼はそこで野菜を作っていました。",
+          noteKana:"ちょうこくか・あさくら ふみおの アトリエと すまいが そのまま びじゅつかんに なって います。なかは くつを ぬいで あがります。おくじょうには にわが あって、かれは そこで やさいを つくって いました。",
+          noteRomaji:"Chōkokuka Asakura Fumio no atorie to sumai ga sono mama bijutsukan ni natte imasu. Naka wa kutsu o nuide agarimasu. Okujō ni wa niwa ga atte, kare wa soko de yasai o tsukutte imashita.",
+          noteZh:"雕塑家朝仓文夫的工作室和住所原样变成了美术馆。里面要脱鞋进。屋顶有个花园，他在那儿种菜。"
+        },
+        questions:[
+          {type:"read", prompt:"「彫塑」の読み方は？", options:["ちょうそ","ちょうそう","ほりそ"], answer:0,
+           explain:"ちょうそ。西洋美術館那格学过「彫刻（ちょうこく）」——同一个彫，两个词。"},
+          {type:"read", prompt:"「屋上」の読み方は？", options:["おくじょう","やじょう","おくうえ"], answer:0,
+           explain:"おくじょう。「屋」念おく。上野西洋美術館那格的「屋外（おくがい）」是同一个字。"},
+          {type:"vocab", prompt:"进这个美术馆要注意什么？",
+           options:["要脱鞋","不能说话","要预约"], answer:0,
+           explain:"因为它本来就是人家的住宅。日本人进别人家一定脱鞋，这个规矩在这里被保留了下来。"},
+          {type:"listen", tts:"中は靴を脱いで上がってください。",
+           ttsKana:"なかは くつを ぬいで あがって ください。",
+           options:["里面请脱鞋进","里面不能上楼","里面请穿好鞋"], answer:0,
+           explain:"「上がる」在这里是「进屋」的意思，不是「上升」。日本人说进家门用「上がる」，因为传统住宅要抬脚上一级。"},
+          {type:"vocab", prompt:"朝仓在屋顶上做什么？",
+           options:["种菜","晒雕塑","养猫"], answer:0,
+           explain:"一个雕塑家在自己屋顶种菜。他说观察生长的东西对做雕塑有用。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「彫塑」怎么念？", accept:["ちょうそ"], hint:"ちょう…", kana:"ちょうそ",
+           explain:"ちょうそ。跟彫刻（ちょうこく）只差一个字。彫塑包括塑（捏），彫刻是刻——一个加材料，一个减材料。"},
+          {type:"write", prompt:"「屋上」怎么念？", accept:["おくじょう"], hint:"おく…", kana:"おくじょう",
+           explain:"おくじょう。百货店的天台也叫这个。日本的百货屋上常有小游乐场，是一代人的记忆。"},
+          {type:"build", prompt:"想说「里面要脱鞋进」。",
+           zhHint:"两个动作用て形串起来。「上がる」＝进屋。",
+           tiles:["中は","靴を","脱いで","上がります"], extra:["から","脱ぎます"],
+           kana:"なかは くつを ぬいで あがります",
+           explain:"「脱いで上がる」——两个动词连用。上野公园「着て歩く」、ガード下「割って飲む」是同一个结构。这是第四次。"},
+          {type:"build", prompt:"想说「他在屋顶上种菜」。",
+           zhHint:"地点用「で」，过去持续用「〜ていました」。",
+           tiles:["屋上で","野菜を","作って","いました"], extra:["に","作ります"],
+           kana:"おくじょうで やさいを つくって いました",
+           explain:"「〜ていました」＝当时一直在做。西洋美術館「座っていた人」是同一个。ている的过去形，说的是一段持续的日子，不是一次动作。"},
+          {type:"shadow", hideKana:true, jp:"アトリエと住まいが、そのまま美術館になっています。",
+           kana:"アトリエと すまいが、そのまま びじゅつかんに なって います。",
+           zh:"工作室和住所原样变成了美术馆。",
+           explain:"「そのまま〜になる」——埴輪那格的「そのまま置いたようです」用过そのまま，「〜になる」这一章第九次。一个人住过的房子，原样留下来给人看，这句话本身就是这个美术馆的意思。"}
+        ]
+      },
+      {
+        id:"ishidan", name:"坂と石段", x:44, y:80, egg:true,
+        eggLines:["こつ、こつ","ひゅう","からん","…"],
+        eggFinal:"谷中には名前の付いた坂が十以上ある",
+        eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"nezu", name:"根津神社", short:"根津", chapter:6,
+    svg:"u11",
+    hotspots:[
+      {
+        id:"torii", name:"千本鳥居", x:24, y:56,
+        learn:{
+          words:[
+            {jp:"鳥居", kana:"とりい", romaji:"torii", zh:"鸟居"},
+            {jp:"くぐる", kana:"くぐる", romaji:"kuguru", zh:"从下面钻过"},
+            {jp:"朱色", kana:"しゅいろ", romaji:"shuiro", zh:"朱红色"},
+            {jp:"奉納", kana:"ほうのう", romaji:"hōnō", zh:"奉纳（捐献给神社）"}
+          ],
+          noteJa:"小さな鳥居が並んだ細い道です。一つ一つが誰かの奉納で、柱に名前が書いてあります。屈んでくぐりながら進みます。",
+          noteKana:"ちいさな とりいが ならんだ ほそい みちです。ひとつひとつが だれかの ほうのうで、はしらに なまえが かいて あります。かがんで くぐりながら すすみます。",
+          noteRomaji:"Chiisa na torii ga naranda hosoi michi desu. Hitotsu hitotsu ga dareka no hōnō de, hashira ni namae ga kaite arimasu. Kagande kugurinagara susumimasu.",
+          noteZh:"小鸟居排成的一条窄道。每一座都是某个人奉纳的，柱子上写着名字。要弯着腰一座座钻过去。"
+        },
+        questions:[
+          {type:"read", prompt:"「鳥居」の読み方は？", options:["とりい","ちょうきょ","とりきょ"], answer:0,
+           explain:"とりい。鳥（とり）＋居（い）。全训读。神社的门，站在这里就是神域的入口。"},
+          {type:"read", prompt:"「朱色」の読み方は？", options:["しゅいろ","あかいろ","しゅしょく"], answer:0,
+           explain:"しゅいろ。朱在这里念しゅ。浅草的「朱印（しゅいん）」是同一个字——你集了三个月的印，就是这个朱。"},
+          {type:"vocab", prompt:"「奉納」是什么意思？",
+           options:["捐献给神社","参拜时的鞠躬","抽签"], answer:0,
+           explain:"每座小鸟居都是有人出钱立的，柱子上刻着名字和年份。走一遍等于读了一遍名单。"},
+          {type:"vocab", prompt:"「くぐる」是什么意思？",
+           options:["从下面钻过去","绕着走","跳过去"], answer:0,
+           explain:"鳥居をくぐる、暖簾をくぐる——浅草居酒屋那格的暖簾也用这个动词。"},
+          {type:"listen", tts:"柱に名前が書いてあります。",
+           ttsKana:"はしらに なまえが かいて あります。",
+           options:["柱子上写着名字","请在柱子上写名字","柱子上的名字看不清"], answer:0,
+           explain:"「〜てあります」＝（有人做好后）留着的状态。跟「〜ています」不同：てある强调有人特意这么做了。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「鳥居」怎么念？", accept:["とりい"], hint:"とり…", kana:"とりい",
+           explain:"とりい。三个假名，两个い要念足。日本的神社你进过很多次，今天给这道门配上音。"},
+          {type:"write", prompt:"「朱色」怎么念？", accept:["しゅいろ"], hint:"しゅ…", kana:"しゅいろ",
+           explain:"しゅいろ。「朱印（しゅいん）」的朱。你在浅草集了三个月的东西，名字里就有这个字。"},
+          {type:"build", prompt:"想说「柱子上写着名字」。",
+           zhHint:"「〜てあります」＝有人写好留在那里。",
+           tiles:["柱に","名前が","書いて","あります"], extra:["を","います"],
+           kana:"はしらに なまえが かいて あります",
+           explain:"「〜てある」和「〜ている」的区别：书いてある＝有人写好的（留着人的意图），書いている＝正在写。日语靠这一个字区分「自然如此」和「有人做过」。"},
+          {type:"build", prompt:"想说「弯着腰一边钻一边往前走」。",
+           zhHint:"又是「〜ながら」。",
+           tiles:["屈んで","くぐり","ながら","進みます"], extra:["から","くぐります"],
+           kana:"かがんで くぐりながら すすみます",
+           explain:"「〜ながら」第五次。一句话里既有て形（屈んで）又有ながら——两个动作套着第三个。日语可以这样一层层叠，念顺了长句就不怕了。"},
+          {type:"shadow", hideKana:true, jp:"一つ一つが誰かの奉納です。",
+           kana:"ひとつひとつが だれかの ほうのうです。", zh:"每一座都是某个人奉纳的。",
+           explain:"「一つ一つ」＝一个一个。叠词在日语里很多：少しずつ、だんだん、ひとつひとつ。它们让句子有了节奏。"}
+        ]
+      },
+      {
+        id:"tsutsuji", name:"つつじ苑", x:58, y:34,
+        learn:{
+          words:[
+            {jp:"つつじ", kana:"つつじ", romaji:"tsutsuji", zh:"杜鹃"},
+            {jp:"斜面", kana:"しゃめん", romaji:"shamen", zh:"斜坡"},
+            {jp:"種類", kana:"しゅるい", romaji:"shurui", zh:"种类"},
+            {jp:"咲きそろう", kana:"さきそろう", romaji:"sakisorou", zh:"一齐开"}
+          ],
+          noteJa:"四月の終わりから五月にかけて、斜面いっぱいにつつじが咲きます。百種類ぐらいあって、早いものと遅いものがあるので、全部が一度に咲きそろうことはありません。",
+          noteKana:"しがつの おわりから ごがつに かけて、しゃめん いっぱいに つつじが さきます。ひゃくしゅるい ぐらい あって、はやい ものと おそい ものが あるので、ぜんぶが いちどに さきそろう ことは ありません。",
+          noteRomaji:"Shigatsu no owari kara gogatsu ni kakete, shamen ippai ni tsutsuji ga sakimasu. Hyaku shurui gurai atte, hayai mono to osoi mono ga aru node, zenbu ga ichido ni sakisorou koto wa arimasen.",
+          noteZh:"四月底到五月，杜鹃开满整片斜坡。大约一百个品种，有早有晚，所以从来不会全部同时开齐。"
+        },
+        questions:[
+          {type:"read", prompt:"「種類」の読み方は？", options:["しゅるい","たねるい","しゅたぐい"], answer:0,
+           explain:"しゅるい。「種」音读しゅ，训读たね。種類是音读。"},
+          {type:"read", prompt:"「斜面」の読み方は？", options:["しゃめん","ななめめん","しゃおもて"], answer:0,
+           explain:"しゃめん。根津神社的杜鹃就种在一整片斜坡上，站在下面看是一堵花墙。"},
+          {type:"vocab", prompt:"「四月の終わりから五月にかけて」是什么意思？",
+           options:["从四月底到五月这段时间","四月底或者五月","四月底挂到五月"], answer:0,
+           explain:"「AからBにかけて」＝从A到B（一段时间或范围）。比「から〜まで」更含糊，适合说不确定的时段。"},
+          {type:"vocab", prompt:"为什么杜鹃不会全部一起开？",
+           options:["品种多，花期有早有晚","坡太陡","有人分批种"], answer:0,
+           explain:"一百来个品种，早的开完晚的才开。所以整个花期能拖一个月——但也永远看不到「全开」。"},
+          {type:"listen", tts:"斜面いっぱいにつつじが咲きます。",
+           ttsKana:"しゃめん いっぱいに つつじが さきます。",
+           options:["杜鹃开满整片斜坡","斜坡上只有一株杜鹃","杜鹃被搬到坡上"], answer:0,
+           explain:"「いっぱい」在这里是「满满地」，不是「一杯」。不忍池那格的「一面（いちめん）」是它的近义。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「種類」怎么念？", accept:["しゅるい"], hint:"しゅ…", kana:"しゅるい",
+           explain:"しゅるい。「何種類ありますか」＝有几种？买东西、看展、点菜都能用。"},
+          {type:"write", prompt:"「斜面」怎么念？", accept:["しゃめん"], hint:"しゃ…", kana:"しゃめん",
+           explain:"しゃめん。谷根千满是坡，这个词在这一带很实用。"},
+          {type:"build", prompt:"想说「从四月底到五月都开」。",
+           zhHint:"「AからBにかけて」＝从A到B这一段。",
+           tiles:["四月の終わりから","五月に","かけて","咲きます"], extra:["まで","から"],
+           kana:"しがつの おわりから ごがつに かけて さきます",
+           explain:"「〜にかけて」比「〜まで」松，说的是一个模糊的时段。日本的天气预报天天说：今夜から明日にかけて雨。"},
+          {type:"build", prompt:"想说「不会全部一起开」。",
+           zhHint:"「〜ことはありません」＝不会…。",
+           tiles:["全部が","一度に","咲きそろう","ことはありません"], extra:["から","ません"],
+           kana:"ぜんぶが いちどに さきそろう ことは ありません",
+           explain:"「〜ことはありません」＝不会有…这种事。比单纯的否定更强调「从来不」。这一句也可以用来安慰人：心配することはありません。"},
+          {type:"shadow", hideKana:true, jp:"早いものと遅いものがあります。",
+           kana:"はやい ものと おそい ものが あります。",
+           zh:"有开得早的，也有开得晚的。",
+           explain:"「早いもの」——形容词直接接もの当名词。这是日语最省事的一招：把形容词后面加个もの，就成了「…的东西」。"}
+        ]
+      },
+      {
+        id:"romon", name:"楼門", x:78, y:64,
+        learn:{
+          words:[
+            {jp:"楼門", kana:"ろうもん", romaji:"rōmon", zh:"楼门"},
+            {jp:"焼ける", kana:"やける", romaji:"yakeru", zh:"被烧毁"},
+            {jp:"残る", kana:"のこる", romaji:"nokoru", zh:"留存"},
+            {jp:"三百年", kana:"さんびゃくねん", romaji:"sanbyaku-nen", zh:"三百年"}
+          ],
+          noteJa:"この社殿と楼門は三百年前のものです。東京の建物はほとんど震災と空襲で焼けましたが、ここは焼けずに残りました。",
+          noteKana:"この しゃでんと ろうもんは さんびゃくねん まえの ものです。とうきょうの たてものは ほとんど しんさいと くうしゅうで やけましたが、ここは やけずに のこりました。",
+          noteRomaji:"Kono shaden to rōmon wa sanbyaku-nen mae no mono desu. Tōkyō no tatemono wa hotondo shinsai to kūshū de yakemashita ga, koko wa yakezu ni nokorimashita.",
+          noteZh:"这座社殿和楼门是三百年前的东西。东京的建筑几乎都毁于震灾和空袭，只有这里没烧，留了下来。"
+        },
+        questions:[
+          {type:"read", prompt:"「三百年」の読み方は？", options:["さんびゃくねん","さんひゃくねん","みひゃくねん"], answer:0,
+           explain:"さんびゃくねん。百在三后面浊化成びゃく。一百ひゃく、三百さんびゃく、六百ろっぴゃく、八百はっぴゃく——又是数词变音。"},
+          {type:"read", prompt:"「楼門」の読み方は？", options:["ろうもん","たかもん","るもん"], answer:0,
+           explain:"ろうもん。两层的门。浅草的「宝蔵門（ほうぞうもん）」也是門念もん。"},
+          {type:"vocab", prompt:"这里为什么特别？",
+           options:["躲过了震灾和空袭，是三百年前的原物","是最近重建的","是从京都搬来的"], answer:0,
+           explain:"东京几乎没有江户时代的木造建筑留下来。这一座是例外。"},
+          {type:"read", prompt:"「残る」の読み方は？", options:["のこる","ざんる","のこす"], answer:0,
+           explain:"のこる是自动词（自己留下），のこす是他动词（人留下）。浅草地下街、吉原大門那两格都练过这一对。"},
+          {type:"listen", tts:"ここは焼けずに残りました。",
+           ttsKana:"ここは やけずに のこりました。",
+           options:["这里没被烧，留下来了","这里烧掉又重建了","这里正在修"], answer:0,
+           explain:"「〜ずに」＝没有…就（书面语），等于「〜ないで」。焼けずに＝没被烧就。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「楼門」怎么念？", accept:["ろうもん"], hint:"ろう…", kana:"ろうもん",
+           explain:"ろうもん。浅草的宝蔵門、雷門，这里的楼門——「門」一律念もん。规律出来了。"},
+          {type:"write", prompt:"「三百年」怎么念？", accept:["さんびゃくねん"], hint:"さん…", kana:"さんびゃくねん",
+           explain:"さんびゃくねん。百浊化成びゃく。数词变音这一章第三次了（三十分さんじゅっぷん、一枚いちまい、三百さんびゃく）。"},
+          {type:"build", prompt:"想说「这是三百年前的东西」。",
+           zhHint:"浅草仏像那格用过同一个骨架。",
+           tiles:["三百年前","の","もの","です"], extra:["に","から"],
+           kana:"さんびゃくねん まえの ものです",
+           explain:"「〜のもの」——浅草「平安時代のものです」是第一次，这是第二次。看展、看建筑，报个年代就成立了。"},
+          {type:"build", prompt:"想说「这里没被烧，留了下来」。",
+           zhHint:"「〜ずに」＝没有…就。",
+           tiles:["ここは","焼けずに","残りました"], extra:["から","残しました"],
+           kana:"ここは やけずに のこりました",
+           explain:"「焼けずに残る」两个自动词——没有人保护它，是它自己留下来的。日语用自动词说这件事，比说「大家保住了它」更接近事实。"},
+          {type:"shadow", hideKana:true, jp:"東京の建物はほとんど焼けましたが、ここは残りました。",
+           kana:"とうきょうの たてものは ほとんど やけましたが、ここは のこりました。",
+           zh:"东京的建筑几乎都烧掉了，只有这里留了下来。",
+           explain:"「〜が、〜」的转折。前半句说的是整个城市，后半句只说这一处——日语靠一个が把三百年的运气装了进去。"}
+        ]
+      },
+      {
+        id:"koi", name:"池の鯉", x:40, y:82, egg:true,
+        eggLines:["ぱしゃ","…ぱく","すいっ","ぱしゃん"],
+        eggFinal:"根津の池の鯉は、人影を見ると寄ってくる",
+        eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"dangozaka", name:"団子坂・へび道", short:"団子坂", chapter:6,
+    svg:"u12",
+    hotspots:[
+      {
+        id:"hebimichi", name:"へび道", x:20, y:44,
+        learn:{
+          words:[
+            {jp:"蛇", kana:"へび", romaji:"hebi", zh:"蛇"},
+            {jp:"曲がる", kana:"まがる", romaji:"magaru", zh:"拐弯"},
+            {jp:"跡", kana:"あと", romaji:"ato", zh:"遗迹／痕迹"},
+            {jp:"細い", kana:"ほそい", romaji:"hosoi", zh:"细、窄"}
+          ],
+          noteJa:"くねくね曲がった細い道です。昔ここに藍染川という小さな川が流れていて、それを埋めた跡がそのまま道になりました。だから真っ直ぐではありません。",
+          noteKana:"くねくね まがった ほそい みちです。むかし ここに あいぞめがわと いう ちいさな かわが ながれて いて、それを うめた あとが そのまま みちに なりました。だから まっすぐでは ありません。",
+          noteRomaji:"Kunekune magatta hosoi michi desu. Mukashi koko ni Aizomegawa to iu chiisa na kawa ga nagarete ite, sore o umeta ato ga sono mama michi ni narimashita. Dakara massugu de wa arimasen.",
+          noteZh:"一条弯弯曲曲的窄路。从前这里流着一条叫蓝染川的小河，把它填了之后，那道痕迹原样成了路。所以它不是直的。"
+        },
+        questions:[
+          {type:"read", prompt:"「蛇」の読み方は？", options:["へび","じゃ","だ"], answer:0,
+           explain:"へび。训读。组词念じゃ：蛇口（じゃぐち）＝水龙头。字面是「蛇的嘴」。"},
+          {type:"vocab", prompt:"这条路为什么弯？",
+           options:["它是填了一条小河形成的","为了避开房子","故意设计成迷宫"], answer:0,
+           explain:"河没了，河道留下来变成路。东京很多弯路都是这么来的——浅草的山谷堀公园也是同一回事。"},
+          {type:"read", prompt:"「曲がる」の読み方は？", options:["まがる","きょくがる","まげる"], answer:0,
+           explain:"まがる是自动词（自己弯），まげる是他动词（人弄弯）。又一对自他动词。"},
+          {type:"listen", tts:"昔ここに小さな川が流れていました。",
+           ttsKana:"むかし ここに ちいさな かわが ながれて いました。",
+           options:["从前这里流着一条小河","这里以前要建一条河","小河现在还在流"], answer:0,
+           explain:"「流れていました」——ている的过去形。说的是那段年月里一直如此。"},
+          {type:"vocab", prompt:"「跡」在这里是什么意思？",
+           options:["留下来的痕迹","之后","脚印"], answer:0,
+           explain:"あと。浅草ひさご通り那格学过：瓢箪池の跡。同音的「後（あと）」是时间上的之后，这里是空间上的痕迹。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「蛇」怎么念？", accept:["へび"], hint:"へ…", kana:"へび",
+           explain:"へび。两个假名。「蛇口（じゃぐち）」是水龙头——同一个字，组词念じゃ。"},
+          {type:"write", prompt:"「細い」怎么念？", accept:["ほそい"], hint:"ほ…", kana:"ほそい",
+           explain:"ほそい。谷根千的路大多是这样的。跟「狭い（せまい）」不同：細い说宽度，狭い说面积。"},
+          {type:"build", prompt:"想说「从前这里流着一条小河」。",
+           zhHint:"过去持续用「〜ていました」。",
+           tiles:["昔","ここに","小さな川が","流れていました"], extra:["で","流れます"],
+           kana:"むかし ここに ちいさな かわが ながれて いました",
+           explain:"「昔ここに〜がありました／いました」这个骨架，浅草ひさご通り、蔵前用过两次，这是第三次。你讲一个地方的从前，会一直用它。"},
+          {type:"build", prompt:"想说「填了之后原样成了路」。",
+           zhHint:"「そのまま〜になりました」。",
+           tiles:["埋めた跡が","そのまま","道に","なりました"], extra:["から","します"],
+           kana:"うめた あとが そのまま みちに なりました",
+           explain:"「〜になりました」——这一章第十次了。从「夏になると緑になる」到这里的「道になりました」，同一个なる，讲的都是没有人主导的变化。"},
+          {type:"shadow", hideKana:true, jp:"だから、真っ直ぐではありません。",
+           kana:"だから、まっすぐでは ありません。", zh:"所以它不是直的。",
+           explain:"「だから」＝所以。口语里放在句首连接因果，比「〜ので」更直白。一条路弯成这样是有理由的——这一句就是那个理由的落点。"}
+        ]
+      },
+      {
+        id:"bunjin_soseki", name:"夏目漱石「猫の家」の碑", x:52, y:24,
+        bunjin:{
+          life:"1867–1916",
+          tag:"『吾輩は猫である』『こころ』",
+          story:"漱石はロンドンから帰って、この坂の上に住んだ。飼っていたわけでもない野良猫が上がり込んできて、その猫を書いたら小説家になってしまった。三十八歳のときのことで、それまでは英語の先生だった。同じ年の同じ町に、森鷗外が住んでいた。二人の家は歩いて数分の距離にある。",
+          quote:{
+            jp:"吾輩は猫である。名前はまだ無い。",
+            kana:"わがはいは ねこである。なまえは まだ ない。",
+            romaji:"Wagahai wa neko de aru. Namae wa mada nai.",
+            zh:"我是猫。名字还没有。",
+            src:"夏目漱石『吾輩は猫である』冒頭"
+          }
+        },
+        learn:{
+          words:[
+            {jp:"吾輩", kana:"わがはい", romaji:"wagahai", zh:"吾辈（古风的「我」）"},
+            {jp:"野良猫", kana:"のらねこ", romaji:"noraneko", zh:"野猫"},
+            {jp:"上がり込む", kana:"あがりこむ", romaji:"agarikomu", zh:"擅自进屋"},
+            {jp:"引っ越す", kana:"ひっこす", romaji:"hikkosu", zh:"搬家"}
+          ],
+          noteJa:"漱石が住んでいた家は、今は愛知県の博物館に移されました。ここに残っているのは碑と猫の像だけです。この家には、漱石の前に森鷗外も住んでいました。",
+          noteKana:"そうせきが すんで いた いえは、いまは あいちけんの はくぶつかんに うつされました。ここに のこって いるのは ひと ねこの ぞうだけです。この いえには、そうせきの まえに もり おうがいも すんで いました。",
+          noteRomaji:"Sōseki ga sunde ita ie wa, ima wa Aichi-ken no hakubutsukan ni utsusaremashita. Koko ni nokotte iru no wa hi to neko no zō dake desu. Kono ie ni wa, Sōseki no mae ni Mori Ōgai mo sunde imashita.",
+          noteZh:"漱石住过的房子，如今被移到了爱知县的博物馆。留在这里的只有碑和一只猫的像。而这栋房子，在漱石之前，森鸥外也住过。"
+        },
+        questions:[
+          {type:"read", prompt:"「吾輩」の読み方は？", options:["わがはい","ごはい","われはい"], answer:0,
+           explain:"わがはい。明治时期带点架子的「我」。一只猫用这个词自称，笑点就在这里。"},
+          {type:"read", prompt:"「野良猫」の読み方は？", options:["のらねこ","やろうねこ","のよしねこ"], answer:0,
+           explain:"のらねこ。野良（のら）＝没有主人的。野良犬も同じ。"},
+          {type:"vocab", prompt:"漱石住过的那栋房子现在在哪？",
+           options:["被移到了爱知县的博物馆","还在原地","已经拆掉了"], answer:0,
+           explain:"整栋搬走了。留在团子坂的只有一块碑和一只猫的像——房子走了，猫留下了。"},
+          {type:"vocab", prompt:"这栋房子还住过谁？",
+           options:["森鸥外","正冈子规","樋口一叶"], answer:0,
+           explain:"鸥外先住，漱石后住。同一栋房子，两个人。这条坡上住过的人，密度高得不像话。"},
+          {type:"listen", tts:"吾輩は猫である。名前はまだ無い。",
+           ttsKana:"わがはいは ねこである。なまえは まだ ない。",
+           options:["我是猫。名字还没有。","我家的猫没有名字。","这只猫叫吾辈。"], answer:0,
+           explain:"日本文学最有名的开头，没有之一。两句话，十四个字。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「吾輩」怎么念？", accept:["わがはい"], hint:"わが…", kana:"わがはい",
+           explain:"わがはい。四个假名。这个词今天没人用了，可这四个音每个日本人都会念——因为那本书。"},
+          {type:"write", prompt:"「野良猫」怎么念？", accept:["のらねこ"], hint:"のら…", kana:"のらねこ",
+           explain:"のらねこ。谷中满街都是。漱石那只也是自己走进来的，没人请它。"},
+          {type:"shadow", hideKana:true, prompt:"碑上的原句。先自己念一遍。",
+           jp:"吾輩は猫である。名前はまだ無い。",
+           kana:"わがはいは ねこである。なまえは まだ ない。",
+           zh:"我是猫。名字还没有。",
+           explain:"「である」——浅草川端那块碑上也是它。书面的断言体。一只猫用最端着的语气自我介绍，然后立刻承认自己连名字都没有。这两句的落差，就是整本书的调子。"},
+          {type:"build", prompt:"把碑上那句改成平常说法。",
+           zhHint:"「である」→「です」，「無い」→「ありません」。",
+           tiles:["私は","猫です","名前は","まだ","ありません"], extra:["である","無い"],
+           kana:"わたしは ねこです。なまえは まだ ありません",
+           explain:"第四次做这件事了：川端、荷風、一葉，现在是漱石。碑上的话和嘴上的话，你两边都拿得起来。顺带一提，改成です之后，那句话就一点也不好笑了——语体本身就是内容。"},
+          {type:"build", prompt:"想说「鸥外也住过这栋房子」。",
+           zhHint:"「〜も住んでいました」。",
+           tiles:["この家には","鷗外も","住んで","いました"], extra:["で","住みます"],
+           kana:"この いえには おうがいも すんで いました",
+           explain:"「〜には」＝在这里（带对比：别处没有）。「住んでいました」是过去的持续。下一格就是鸥外——他的家在这条坡的上头，走过去几分钟。"}
+        ]
+      },
+      {
+        id:"bunjin_ogai", name:"森鷗外「観潮楼」の跡", x:76, y:52,
+        bunjin:{
+          life:"1862–1922",
+          tag:"『舞姫』『高瀬舟』・陸軍軍医総監",
+          story:"鷗外はこの坂の上に家を建て、二階から品川の海が見えたので「観潮楼」と名付けた。今はビルに囲まれて、海はもう見えない。彼は軍医として最高位まで上がりながら、小説を書き、翻訳をし、子どもたちに西洋風の名前を付けた。医者としての一生と、書く人としての一生を、同じ体で同時に生きた人だった。",
+          quote:{
+            jp:"石炭をば早や積み果てつ。",
+            kana:"せきたんをば はや つみはてつ。",
+            romaji:"Sekitan o ba haya tsumihatetsu.",
+            zh:"煤，已经装完了。",
+            src:"森鷗外『舞姫』冒頭"
+          }
+        },
+        learn:{
+          words:[
+            {jp:"観潮楼", kana:"かんちょうろう", romaji:"Kanchōrō", zh:"观潮楼"},
+            {jp:"軍医", kana:"ぐんい", romaji:"gun'i", zh:"军医"},
+            {jp:"翻訳", kana:"ほんやく", romaji:"hon'yaku", zh:"翻译"},
+            {jp:"囲む", kana:"かこむ", romaji:"kakomu", zh:"围绕"}
+          ],
+          noteJa:"二階から海が見えたので「観潮楼」。今はビルに囲まれて、海はもう見えません。鷗外は軍医として一番上まで行きながら、同時に小説を書き、翻訳もしました。",
+          noteKana:"にかいから うみが みえたので かんちょうろう。いまは ビルに かこまれて、うみは もう みえません。おうがいは ぐんいとして いちばん うえまで いきながら、どうじに しょうせつを かき、ほんやくも しました。",
+          noteRomaji:"Nikai kara umi ga mieta node Kanchōrō. Ima wa biru ni kakomarete, umi wa mō miemasen. Ōgai wa gun'i to shite ichiban ue made ikinagara, dōji ni shōsetsu o kaki, hon'yaku mo shimashita.",
+          noteZh:"从二楼能看见海，所以叫「观潮楼」。如今被楼房围住，海已经看不见了。鸥外做军医做到最高位，同时还写小说、做翻译。"
+        },
+        questions:[
+          {type:"read", prompt:"「翻訳」の読み方は？", options:["ほんやく","はんやく","ほんえき"], answer:0,
+           explain:"ほんやく。鸥外翻译了歌德、安徒生。他的翻译在当时就是文学本身。"},
+          {type:"vocab", prompt:"「観潮楼」这个名字是怎么来的？",
+           options:["从二楼能看见海","楼里挂着潮汐图","建在海边"], answer:0,
+           explain:"观潮＝看海潮。那时候从团子坂上真的能望到品川的海。"},
+          {type:"vocab", prompt:"现在还能从那里看见海吗？",
+           options:["不能，被楼房围住了","能，视野更好了","能，但要爬到屋顶"], answer:0,
+           explain:"名字留下来了，风景没有了。这条坡上很多东西都是这样。"},
+          {type:"read", prompt:"「囲む」の読み方は？", options:["かこむ","いむ","かくむ"], answer:0,
+           explain:"かこむ。被动是「囲まれる」＝被围住。"},
+          {type:"listen", tts:"今はビルに囲まれて、海はもう見えません。",
+           ttsKana:"いまは ビルに かこまれて、うみは もう みえません。",
+           options:["现在被楼围住，看不见海了","现在楼里能看见海","海把楼围住了"], answer:0,
+           explain:"「もう〜ません」＝已经不…了。跟「もう〜ました」（已经…了）是一对。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「翻訳」怎么念？", accept:["ほんやく"], hint:"ほん…", kana:"ほんやく",
+           explain:"ほんやく。你每天都在脑子里做这件事——把中文换成日语。鸥外做的是把德语换成日语，而且他认为那不是副业。"},
+          {type:"write", prompt:"「軍医」怎么念？", accept:["ぐんい"], hint:"ぐん…", kana:"ぐんい",
+           explain:"ぐんい。鸥外一生的正式身份是这个，写小说是「余技」。他自己这么说，但没人真的相信。"},
+          {type:"shadow", hideKana:true, prompt:"碑上的原句。是文语，先自己念。",
+           jp:"石炭をば早や積み果てつ。", kana:"せきたんをば はや つみはてつ。",
+           zh:"煤，已经装完了。",
+           explain:"「をば」是「を」的强调，古语用法；「果てつ」的「つ」是文语的完了助动词，现代日语说「積み終わった」。《舞姫》的第一句写的是船要开了——他把一场逃走写成了一句装货的记录。浅草樋口一葉那块碑也是文语，这是第二次。"},
+          {type:"build", prompt:"把碑上那句改成现在的说法。",
+           zhHint:"「をば」→「を」，「積み果てつ」→「積み終わりました」。",
+           tiles:["石炭を","もう","積み終わり","ました"], extra:["をば","果てつ"],
+           kana:"せきたんを もう つみおわりました",
+           explain:"第五次改写碑文了。文语一换成现代语，那种紧绷就松掉了——这也是你该知道的：语体本身在说话。"},
+          {type:"build", prompt:"想说「现在被楼围住，看不见海了」。",
+           zhHint:"被动「囲まれて」，「もう〜ません」。",
+           tiles:["ビルに","囲まれて","海は","もう見えません"], extra:["を","囲みます"],
+           kana:"ビルに かこまれて うみは もう みえません",
+           explain:"「〜に囲まれる」＝被…围住。被动的动作方用「に」。「もう〜ません」跟不忍池那格的「もう閉じてしまいます」正好一对：一个已经发生，一个已经不再。"}
+        ]
+      },
+      {
+        id:"kikuningyo", name:"菊の残り香", x:38, y:78, egg:true,
+        eggLines:["ふわり","…きく","かさ、かさ","ひやり"],
+        eggFinal:"団子坂は明治のころ、菊人形の街だった。漱石も鷗外も、それを書いた",
+        eggFinalAt:8
+      }
+    ]
   }
 ];
 
 const NODE_POS = {
-  /* 第一章 上野の山：从车站往西北，绕过不忍池上到公园 */
-  uenoeki:{x:76,y:91}, shinobazu:{x:20,y:70}, koen:{x:44,y:52},
-  /* 第二章 アメ横：车站南边，沿着铁道 */
-  ameyoko:{x:48,y:82}, gado:{x:74,y:74},
-  /* 第三章 東博：公园最北端 */
-  tohaku:{x:60,y:20}, heiseikan:{x:38,y:14},
-  /* 第四章 西洋美術館：公园入口一侧 */
-  matsukata:{x:24,y:36}
+  /* 上野絵図：下が南（駅）、上が北（博物館と谷根千）。西側が谷中・根津 */
+  /* 第一章 上野の山 */
+  uenoeki:{x:78,y:93}, shinobazu:{x:16,y:73}, koen:{x:78,y:60},
+  /* 第二章 アメ横 */
+  ameyoko:{x:46,y:86}, gado:{x:78,y:79},
+  /* 第三章 東京国立博物館 */
+  tohaku:{x:78,y:42}, heiseikan:{x:78,y:26},
+  /* 第四章 国立西洋美術館 */
+  matsukata:{x:46,y:66},
+  /* 第五章 谷中 */
+  yanaka:{x:20,y:40}, reien:{x:46,y:44},
+  /* 第六章 根津・千駄木 */
+  nezu:{x:14,y:55}, dangozaka:{x:18,y:24}
 };
-const MAX_CHAPTER = 4;
-const CH_KANJI = ["","一","二","三","四"];
+const MAX_CHAPTER = 6;
+const CH_KANJI = ["","一","二","三","四","五","六"];
 
 const SVG_ART = {
+u9: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#F3D9C2"/>
+  <path d="M0 0 H390 V120 C 300 96, 120 96, 0 128 Z" fill="#E8A87C"/>
+  <circle cx="196" cy="60" r="34" fill="#F0C36A" opacity=".85"/>
+  <rect y="250" width="390" height="70" fill="#C0B49B"/>
+  <!-- 夕やけだんだん -->
+  <g fill="#CFC3A6" stroke="#33302B" stroke-width="2.5">
+    <rect x="0" y="150" width="120" height="16"/><rect x="0" y="166" width="112" height="16"/>
+    <rect x="0" y="182" width="104" height="16"/><rect x="0" y="198" width="96" height="16"/>
+    <rect x="0" y="214" width="88" height="16"/><rect x="0" y="230" width="80" height="16"/>
+  </g>
+  <!-- 商店街 -->
+  <g stroke="#33302B" stroke-width="3">
+    <rect x="130" y="168" width="112" height="82" fill="#EDE7D6"/>
+    <rect x="252" y="180" width="116" height="70" fill="#E2D6BE"/>
+  </g>
+  <rect x="136" y="176" width="100" height="26" fill="#C73E3A" stroke="#33302B" stroke-width="2.5"/>
+  <text x="186" y="196" text-anchor="middle" font-size="15" fill="#FBF3E2" font-family="sans-serif">メンチ</text>
+  <rect x="258" y="188" width="104" height="24" fill="#5E7F4E" stroke="#33302B" stroke-width="2.5"/>
+  <g fill="#B57A3A" stroke="#33302B" stroke-width="2">
+    <circle cx="160" cy="222" r="11"/><circle cx="188" cy="222" r="11"/><circle cx="216" cy="222" r="11"/>
+  </g>
+  <g fill="#D9A441" stroke="#33302B" stroke-width="2">
+    <rect x="272" y="220" width="22" height="16" rx="2"/><rect x="302" y="220" width="22" height="16" rx="2"/>
+    <rect x="332" y="220" width="22" height="16" rx="2"/>
+  </g>
+  <!-- 猫 -->
+  <g stroke="#33302B" stroke-width="2" fill="#E2D6BE">
+    <ellipse cx="300" cy="278" rx="24" ry="12"/>
+    <circle cx="324" cy="266" r="11"/>
+    <path d="M316 258 l-2 -10 8 6 z M330 258 l6 -9 2 9 z"/>
+    <path d="M276 274 C 258 266, 254 286, 270 286" fill="none"/>
+  </g>
+  <circle cx="328" cy="264" r="1.4" fill="#33302B"/>
+  <g stroke="#33302B" stroke-width="2" fill="none"><path d="M334 268 h10 M334 272 h9"/></g>
+</svg>`,
+u10: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#DCE4E0"/>
+  <rect y="230" width="390" height="90" fill="#A9B69E"/>
+  <rect y="226" width="390" height="5" fill="#8C9B82"/>
+  <!-- 桜通り -->
+  <path d="M120 320 L164 130 L226 130 L270 320 Z" fill="#C7C0AC" opacity=".7"/>
+  <g>
+    <path d="M108 230 V150" stroke="#6E5B45" stroke-width="7"/>
+    <ellipse cx="108" cy="134" rx="46" ry="28" fill="#F2C4D2" stroke="#33302B" stroke-width="2.5"/>
+    <path d="M286 230 V148" stroke="#6E5B45" stroke-width="7"/>
+    <ellipse cx="286" cy="132" rx="44" ry="26" fill="#F2C4D2" stroke="#33302B" stroke-width="2.5"/>
+  </g>
+  <!-- 墓石（静かに、控えめに） -->
+  <g fill="#B4AC9C" stroke="#33302B" stroke-width="2">
+    <rect x="40" y="196" width="20" height="34" rx="2"/><rect x="72" y="204" width="16" height="26" rx="2"/>
+    <rect x="316" y="198" width="20" height="32" rx="2"/><rect x="346" y="206" width="16" height="24" rx="2"/>
+  </g>
+  <!-- 朝倉彫塑館 -->
+  <rect x="150" y="148" width="112" height="82" fill="#3B3A34" stroke="#33302B" stroke-width="3"/>
+  <g fill="#9EC3D4" opacity=".8" stroke="#33302B" stroke-width="2">
+    <rect x="162" y="162" width="26" height="30"/><rect x="196" y="162" width="26" height="30"/>
+    <rect x="230" y="162" width="20" height="30"/>
+  </g>
+  <rect x="150" y="138" width="112" height="12" fill="#5E7F4E" stroke="#33302B" stroke-width="2.5"/>
+  <g fill="#7A8450" stroke="#33302B" stroke-width="2">
+    <ellipse cx="176" cy="132" rx="12" ry="7"/><ellipse cx="214" cy="130" rx="10" ry="6"/>
+    <ellipse cx="244" cy="133" rx="9" ry="5"/>
+  </g>
+  <rect x="192" y="200" width="26" height="30" fill="#8B6F4E" stroke="#33302B" stroke-width="2.5"/>
+  <!-- 石段 -->
+  <g fill="#C7C0AC" stroke="#8C8578" stroke-width="1.5">
+    <rect x="150" y="258" width="112" height="10"/><rect x="158" y="268" width="96" height="10"/>
+    <rect x="166" y="278" width="80" height="10"/>
+  </g>
+</svg>`,
+u11: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#DCE7DA"/>
+  <rect y="238" width="390" height="82" fill="#9DAE8C"/>
+  <!-- つつじの斜面 -->
+  <path d="M0 238 C 60 190, 150 176, 232 186 L232 238 Z" fill="#C77A9E" stroke="#33302B" stroke-width="2.5"/>
+  <g fill="#E29CBC" opacity=".9">
+    <circle cx="40" cy="220" r="13"/><circle cx="80" cy="206" r="15"/><circle cx="124" cy="198" r="13"/>
+    <circle cx="166" cy="194" r="14"/><circle cx="206" cy="200" r="12"/>
+    <circle cx="60" cy="232" r="11"/><circle cx="146" cy="222" r="12"/>
+  </g>
+  <!-- 千本鳥居 -->
+  <g stroke="#33302B" stroke-width="2.5" fill="#C73E3A">
+    <rect x="256" y="120" width="9" height="118"/><rect x="356" y="120" width="9" height="118"/>
+    <rect x="248" y="112" width="126" height="11" rx="2"/>
+    <rect x="252" y="132" width="118" height="8"/>
+    <rect x="268" y="140" width="8" height="98"/><rect x="346" y="140" width="8" height="98"/>
+    <rect x="262" y="134" width="98" height="9" rx="2"/>
+    <rect x="280" y="158" width="7" height="80"/><rect x="336" y="158" width="7" height="80"/>
+    <rect x="274" y="152" width="76" height="8" rx="2"/>
+  </g>
+  <!-- 楼門 -->
+  <rect x="70" y="76" width="118" height="16" rx="2" fill="#A32E2C" stroke="#33302B" stroke-width="3"/>
+  <path d="M56 76 L129 40 L202 76 Z" fill="#3B4A45" stroke="#33302B" stroke-width="3"/>
+  <g stroke="#33302B" stroke-width="3" fill="#C73E3A">
+    <rect x="80" y="92" width="18" height="72"/><rect x="160" y="92" width="18" height="72"/>
+    <rect x="72" y="160" width="114" height="10" rx="2"/>
+  </g>
+  <rect x="104" y="104" width="50" height="60" fill="#33302B" opacity=".7"/>
+  <!-- 池と鯉 -->
+  <ellipse cx="120" cy="278" rx="72" ry="26" fill="#7FA9BD" stroke="#33302B" stroke-width="2.5"/>
+  <g fill="#E27C4F" stroke="#33302B" stroke-width="1.6">
+    <ellipse cx="102" cy="276" rx="13" ry="6"/><path d="M89 276 l-8 -5 v10 z"/>
+    <ellipse cx="146" cy="284" rx="11" ry="5"/><path d="M135 284 l-7 -4 v8 z"/>
+  </g>
+</svg>`,
+u12: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#E4E0D2"/>
+  <rect y="246" width="390" height="74" fill="#BEB5A0"/>
+  <!-- へび道 -->
+  <path d="M-10 300 C 70 282, 40 246, 120 232 C 200 218, 168 184, 250 172
+           C 320 162, 310 132, 400 124"
+        fill="none" stroke="#CFC7B2" stroke-width="30" stroke-linecap="round"/>
+  <path d="M-10 300 C 70 282, 40 246, 120 232 C 200 218, 168 184, 250 172
+           C 320 162, 310 132, 400 124"
+        fill="none" stroke="#A99F88" stroke-width="2" stroke-dasharray="6 10"/>
+  <!-- 坂の上の家（観潮楼跡） -->
+  <g stroke="#33302B" stroke-width="3">
+    <rect x="270" y="46" width="96" height="60" fill="#EDE7D6"/>
+    <path d="M258 46 L318 14 L378 46 Z" fill="#6E6759"/>
+    <rect x="286" y="66" width="24" height="24" fill="#9EC3D4"/>
+    <rect x="326" y="66" width="24" height="24" fill="#9EC3D4"/>
+  </g>
+  <!-- 猫の家の碑と猫 -->
+  <g stroke="#33302B" stroke-width="3">
+    <rect x="42" y="126" width="46" height="66" rx="3" fill="#EDE7D6"/>
+    <path d="M52 144 H78 M52 156 H74 M52 168 H78" stroke="#8a8272" stroke-width="2.5"/>
+    <rect x="56" y="192" width="18" height="12" fill="#8C8471"/>
+  </g>
+  <g stroke="#33302B" stroke-width="2" fill="#F0EAD8">
+    <ellipse cx="118" cy="186" rx="20" ry="12"/>
+    <circle cx="138" cy="174" r="11"/>
+    <path d="M130 166 l-2 -10 8 6 z M144 166 l6 -9 2 9 z"/>
+    <path d="M100 178 C 84 168, 78 190, 96 190" fill="none"/>
+  </g>
+  <circle cx="142" cy="172" r="1.4" fill="#33302B"/>
+  <!-- 菊 -->
+  <g opacity=".7">
+    <circle cx="206" cy="252" r="9" fill="#EDD66E" stroke="#33302B" stroke-width="1.8"/>
+    <circle cx="232" cy="262" r="7" fill="#F0E2A0" stroke="#33302B" stroke-width="1.8"/>
+    <circle cx="184" cy="266" r="6" fill="#EDD66E" stroke="#33302B" stroke-width="1.8"/>
+  </g>
+</svg>`,
 u7: `
 <svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
   <rect width="390" height="320" fill="#2E2B26"/>
