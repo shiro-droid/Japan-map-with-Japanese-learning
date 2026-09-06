@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>上野めぐり · 妈妈的日语散步</title>
+<link rel="stylesheet" href="jm.css">
+</head>
+<body>
+
+<header id="topbar">
+  <button id="btn-back"><span class="arr">‹</span> 地图</button>
+  <div id="topbar-title">
+    <div class="title">上野めぐり</div>
+    <div class="sub">ことばで巡る上野・谷根千</div>
+  </div>
+  <button id="btn-help" aria-label="怎么玩">？</button>
+  <button id="btn-stamps"><span class="seal-mini">印</span><span id="stamp-count">0</span></button>
+</header>
+
+<!-- ============ MAP ============ -->
+<main id="view-map" class="view active">
+  <div class="map-frame">
+    <div class="map-head">
+      <p class="chap" id="map-chap">第 一 章</p>
+      <h1>上野絵図</h1>
+      <p>点亮灯笼，走进去看看 · 这一章要开口</p>
+    </div>
+    <div id="map-canvas">
+      <svg class="path-bg" viewBox="0 0 390 940" preserveAspectRatio="none" aria-hidden="true">
+        <!-- 参道：雷門→仲見世→本堂 -->
+        <path d="M172 862 C 172 800, 172 720, 172 640"
+              fill="none" stroke="#C73E3A" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round" opacity=".55"/>
+        <!-- 本堂から西へ：伝法院・ホッピー・六区・合羽橋 -->
+        <g fill="none" stroke="#B9B0A0" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round" opacity=".5">
+          <path d="M156 626 C 124 646, 96 660, 74 670"/>
+          <path d="M60 648 C 56 616, 56 588, 58 562"/>
+          <path d="M58 508 C 60 480, 64 452, 68 438"/>
+          <path d="M68 386 C 66 352, 66 322, 70 300"/>
+          <!-- 本堂から東へ：隅田川・神谷バー・浅草駅 -->
+          <path d="M190 622 C 238 630, 280 642, 308 652"/>
+          <path d="M320 692 C 322 720, 322 740, 320 748"/>
+          <path d="M320 804 C 322 832, 322 850, 320 860"/>
+          <!-- 北へ：六区→千束→吉原、本堂→待乳山 -->
+          <path d="M92 400 C 132 372, 172 302, 196 276"/>
+          <path d="M190 230 C 168 200, 142 152, 124 132"/>
+          <path d="M198 598 C 240 548, 284 472, 302 440"/>
+        </g>
+        <!-- 隅田川（東の帯） -->
+        <path d="M372 620 C 358 700, 362 800, 350 900" fill="none" stroke="#9EC3D4" stroke-width="9" stroke-linecap="round" opacity=".45"/>
+        <!-- スカイツリー（飾り） -->
+        <g opacity=".28" stroke="#7A8450" fill="none" stroke-width="2.5" stroke-linecap="round">
+          <path d="M330 210 L336 118 L342 210"/>
+          <path d="M336 118 L336 86"/>
+          <path d="M327 168 L345 168 M330 196 L342 196"/>
+        </g>
+      </svg>
+      <!-- nodes injected by JS -->
+    </div>
+    <div class="map-foot">样板版本：先做一个场面。汉字你都认得，这次练怎么念、怎么说</div>
+  </div>
+</main>
+
+<!-- ============ SCENE ============ -->
+<main id="view-scene" class="view">
+  <div class="scene-head">
+    <h2 id="scene-title"></h2>
+    <span class="prog" id="scene-prog"></span>
+  </div>
+  <div class="scene-stage" id="scene-stage">
+    <!-- svg + spots injected -->
+    <div id="egg-bubble"></div>
+  </div>
+  <p class="scene-tip">红点＝新内容 · 蓝点＝点它做题（每次3题都不同）· 金印＝题库全部答完<br>碑形的标记是「文人碑」，先读故事再做题</p>
+</main>
+
+<!-- ============ STAMP BOOK ============ -->
+<main id="view-stamps" class="view">
+  <div class="book-frame">
+    <h2>御朱印帳</h2>
+    <p class="b-sub" id="book-sub"></p>
+    <div class="stamp-grid" id="stamp-grid"></div>
+    <div class="transfer">
+      <div class="t-title">换手机 · 进度码</div>
+      <p class="t-hint">要换到新手机上接着做？在<b>旧手机</b>上「生成进度码」，把那串字发过去，<br>在<b>新手机</b>上「输入进度码」粘贴进去就行。</p>
+      <button class="btn-ghost" id="btn-code-out">生成进度码</button>
+      <button class="btn-ghost" id="btn-code-in">输入进度码</button>
+    </div>
+  </div>
+</main>
+
+<!-- ============ BOTTOM SHEET ============ -->
+<div id="sheet-mask"></div>
+<div id="sheet" role="dialog" aria-modal="true">
+  <div class="sheet-grip"></div>
+  <div id="sheet-content"></div>
+</div>
+
+<script>
+/* =====================================================
+   上野・谷根千 —— 本章数据
+   -----------------------------------------------------
+   设计前提（和浅草那章不同）：
+   她对内容的掌握是中文的，看到汉字直接取意思，从不经过日语的音。
+   所以这一章的题目不再问「这是什么意思」——她全知道。
+   问的是「这个字，日语怎么念」「这句话，你自己说一遍」。
+===================================================== */
+const SAVE_KEY = "ueno-meguri-save";
+
+const CH_TEXT = {
+  area: "上野",
+  guideBunjin:
+    '<div class="g-step"><span class="g-ico">✍️</span><span>这一章多了<b>会打字的题</b>：给你汉字，你用假名写出读音。写错了也没关系，差一两个字就算过。</span></div>' +
+    '<div class="g-step"><span class="g-ico">🧩</span><span>还有<b>点词造句</b>：把词块按顺序点出来，凑成一句话。不用打字。</span></div>',
+  finale:
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:8px">' +
+    '这一章的每个字，你本来就都认得。<br>' +
+    '现在你也会念了。<br><b>よく歩きました。</b></p>'
+};
+
+const SCENES = [
+  {
+    id:"tohaku", name:"東京国立博物館 本館", short:"東博", chapter:1,
+    svg:"u1",
+    hotspots:[
+      {
+        id:"uketsuke", name:"受付", x:14, y:68,
+        learn:{
+          words:[
+            {jp:"受付", kana:"うけつけ", romaji:"uketsuke", zh:"服务台／售票处"},
+            {jp:"常設展", kana:"じょうせつてん", romaji:"jōsetsuten", zh:"常设展（东博正式叫「総合文化展」）"},
+            {jp:"音声ガイド", kana:"おんせいガイド", romaji:"onsei gaido", zh:"语音导览"},
+            {jp:"貸出", kana:"かしだし", romaji:"kashidashi", zh:"出借"}
+          ],
+          noteJa:"「音声ガイドを借りたいんですが。」——受付でこう言えば、すぐ貸してくれます。中国語版もあります。",
+          noteKana:"おんせいガイドを かりたいんですが。うけつけで こう いえば、すぐ かしてくれます。ちゅうごくごばんも あります。",
+          noteRomaji:"Onsei gaido o karitai n desu ga. Uketsuke de kō ieba, sugu kashite kuremasu. Chūgokugo-ban mo arimasu.",
+          noteZh:"「我想借语音导览。」——在服务台这么说，马上就借给你。也有中文版。"
+        },
+        questions:[
+          {type:"write", prompt:"「常設展」——这三个字你都认得，那日语怎么念？用假名写出来。",
+           accept:["じょうせつてん"], hint:"じょう…", kana:"じょうせつてん", placeholder:"じょう…",
+           explain:"じょうせつてん。三个字你一看就懂意思，可是中文的 chángshè zhǎn 在这里一点忙也帮不上——读音是另外一套，得单独装进嘴里。顺带一提，东博的常设展正式名字叫「総合文化展（そうごうぶんかてん）」，票面上写的是这个。"},
+
+          {type:"build", prompt:"想借语音导览，跟服务台怎么说？",
+           zhHint:"提示：日语里提要求，常常说到一半留个「が」，把决定权让给对方。",
+           tiles:["音声ガイド","を","借りたい","んですが"], extra:["が","貸します"],
+           kana:"おんせいガイドを かりたいんですが",
+           explain:"「〜たいんですが」是日语里最好用的开口方式：说出愿望，后面拖一个「が」不说完。比「借りたいです」软，比「貸してください」客气。这个句型这一章还会回来三次——在美术馆、在谷中银座、在根津神社，每次换个东西借。"},
+
+          {type:"particle", prompt:"音声ガイド＿借りたいんですが。",
+           options:["を","が","に"], answer:0, sayKana:"おんせいガイドを かりたいんですが",
+           explain:"「借りる」的对象用「を」。中文说「借语音导览」，中间什么都不用加，所以这个位置正是中文母语者最常空着的地方。"},
+
+          {type:"shadow", hideKana:true, prompt:"先别看读音，自己念一遍，念完再对答案。",
+           jp:"常設展だけでいいです。", kana:"じょうせつてんだけで いいです。", zh:"只要常设展就行。",
+           explain:"「〜だけでいいです」＝只要…就够了。买票时最常用的一句。"},
+
+          {type:"listen", tts:"本館は二階から回るのがおすすめですよ。",
+           ttsKana:"ほんかんは にかいから まわるのが おすすめですよ。",
+           options:["本馆建议从二楼开始逛","本馆二楼今天不开放","本馆只有二楼能参观"], answer:0,
+           explain:"「〜から回る」＝从…开始逛。东博本馆二楼是日本美术按时代排下来的，工作人员真的会这么建议你。"}
+        ]
+      },
+      {
+        id:"butsuzo", name:"仏像", x:36, y:46,
+        learn:{
+          words:[
+            {jp:"仏像", kana:"ぶつぞう", romaji:"butsuzō", zh:"佛像"},
+            {jp:"菩薩", kana:"ぼさつ", romaji:"bosatsu", zh:"菩萨"},
+            {jp:"木造", kana:"もくぞう", romaji:"mokuzō", zh:"木制"},
+            {jp:"平安時代", kana:"へいあんじだい", romaji:"Heian jidai", zh:"平安时代"}
+          ],
+          noteJa:"木でできた菩薩像です。平安時代のもので、千年以上前に彫られました。",
+          noteKana:"きで できた ぼさつぞうです。へいあんじだいの もので、せんねんいじょう まえに ほられました。",
+          noteRomaji:"Ki de dekita bosatsu-zō desu. Heian jidai no mono de, sennen ijō mae ni horaremashita.",
+          noteZh:"木头做的菩萨像。平安时代的东西，一千多年前雕成的。"
+        },
+        questions:[
+          {type:"write", prompt:"「菩薩」怎么念？用假名写。",
+           accept:["ぼさつ"], hint:"ぼ…", kana:"ぼさつ", placeholder:"ぼ…",
+           explain:"ぼさつ。这个词你比谁都清楚是什么，可你从来没有用日语念过它。这一章大半的词都是这种——意思早就在你脑子里，缺的只是一层音。"},
+
+          {type:"write", prompt:"「木造」怎么念？",
+           accept:["もくぞう"], hint:"もく…", kana:"もくぞう", placeholder:"もく…",
+           explain:"もくぞう。「木」在这里念もく（音读）。可是下一题里的「木でできている」，同一个字要念き（训读）。同字两读，正是中文母语者翻车最多的地方——因为中文里一个字通常只有一个音，你会本能地以为日语也是。"},
+
+          {type:"build", prompt:"想说「这个是木头做的」。",
+           zhHint:"材料用「で」。注意这里的「木」念き，不是刚才的もく。",
+           tiles:["これは","木で","できて","います"], extra:["作って","から"],
+           kana:"これは きで できています",
+           explain:"「〜でできている」＝由…做成。这一句在美术馆里能用一整天：石でできている、紙でできている、絹でできている、金でできている。展签上你认得的每一种材料，都能塞进这个框里。"},
+
+          {type:"particle", prompt:"平安時代＿ものです。",
+           options:["の","が","に"], answer:0, sayKana:"へいあんじだいの ものです",
+           explain:"「〜のもの」＝…的东西。这是看展时最省力的一句：作者不知道、名字记不住都没关系，先说「江戸時代のものです」就已经成立了。"},
+
+          {type:"shadow", hideKana:true, prompt:"三个词连起来，自己先念一遍。",
+           jp:"平安時代の木造の菩薩像です。", kana:"へいあんじだいの もくぞうの ぼさつぞうです。",
+           zh:"平安时代的木制菩萨像。",
+           explain:"念顺了之后，下次你站在展签前，能直接把它读出来，而不是在心里默默念中文。"}
+        ]
+      },
+      {
+        id:"ukiyoe", name:"浮世絵", x:70, y:38,
+        learn:{
+          words:[
+            {jp:"浮世絵", kana:"うきよえ", romaji:"ukiyoe", zh:"浮世绘"},
+            {jp:"版画", kana:"はんが", romaji:"hanga", zh:"版画"},
+            {jp:"摺る", kana:"する", romaji:"suru", zh:"刷印（一色一次）"},
+            {jp:"北斎", kana:"ほくさい", romaji:"Hokusai", zh:"北斋"}
+          ],
+          noteJa:"浮世絵は版画です。絵師が描いて、彫師が版木を彫り、摺師が色を重ねます。三人の仕事です。",
+          noteKana:"うきよえは はんがです。えしが えがいて、ほりしが はんぎを ほり、すりしが いろを かさねます。さんにんの しごとです。",
+          noteRomaji:"Ukiyoe wa hanga desu. Eshi ga egaite, horishi ga hangi o hori, surishi ga iro o kasanemasu. Sannin no shigoto desu.",
+          noteZh:"浮世绘是版画。画师起稿、雕师刻版、摺师一层层上色——三个人的活儿。"
+        },
+        questions:[
+          {type:"write", prompt:"「浮世絵」怎么念？",
+           accept:["うきよえ"], hint:"う…", kana:"うきよえ", placeholder:"う…",
+           explain:"うきよえ。三个字全是训读。中文的 fúshìhuì 在这里不但帮不上忙，还会挡路——你越熟悉这个词的中文，越容易跳过它的日语音。"},
+
+          {type:"write", prompt:"「版画」怎么念？",
+           accept:["はんが"], hint:"は…", kana:"はんが", placeholder:"は…",
+           explain:"はんが。不是「ばんが」也不是「はんかく」。"},
+
+          {type:"build", prompt:"想说「比起北斋，我更喜欢广重」。",
+           zhHint:"先说被比下去的那个，再说你选的那个。",
+           tiles:["北斎","より","広重","の","ほうが","好きです"], extra:["は","から"],
+           kana:"ほくさいより ひろしげの ほうが すきです",
+           explain:"「AよりBのほうが〜」是比较句的骨架。你在美术馆里想说的话，十句里有三句是比较句——这幅比那幅大、这个时代比那个时代细。把这个框架焊死，能省你很多张口的力气。"},
+
+          {type:"vocab", prompt:"「摺る」在浮世绘里指的是哪一步？",
+           options:["把颜色一层层印上去","把纸裁成合适的尺寸","把画装进框里"], answer:0,
+           explain:"摺る（する）＝刷印。一幅浮世绘要摺十几次，一次上一个颜色。展签上写的「〜度摺」说的就是刷了几次。"},
+
+          {type:"shadow", jp:"これ、版画なんですね。", kana:"これ、はんがなんですね。",
+           zh:"这个啊，原来是版画呢。",
+           explain:"「〜なんですね」＝原来是…啊。发现新事实的时候说的，比「そうですか」自然得多，也比「知りませんでした」轻松。跟人一起看展时，这一句能让对话接着往下走。"}
+        ]
+      },
+      {
+        id:"bench", name:"ベンチ", x:52, y:84,
+        learn:{
+          words:[
+            {jp:"迫力", kana:"はくりょく", romaji:"hakuryoku", zh:"震撼力"},
+            {jp:"細かい", kana:"こまかい", romaji:"komakai", zh:"精细"},
+            {jp:"思ったより", kana:"おもったより", romaji:"omotta yori", zh:"比想象中…"},
+            {jp:"なんというか", kana:"なんというか", romaji:"nan to iu ka", zh:"怎么说呢…"}
+          ],
+          noteJa:"「うまく言えないけど、なんか好きです。」——感想は、うまく言えなくていいんです。言えないことをそのまま言えば、それも立派な日本語です。",
+          noteKana:"うまく いえないけど、なんか すきです。かんそうは、うまく いえなくて いいんです。いえない ことを そのまま いえば、それも りっぱな にほんごです。",
+          noteRomaji:"Umaku ienai kedo, nanka suki desu. Kansō wa, umaku ienakute ii n desu. Ienai koto o sono mama ieba, sore mo rippa na Nihongo desu.",
+          noteZh:"「说不太好，但我就是喜欢。」——感想说不利索没关系。把「说不出来」这件事本身说出来，那也是地道的日语。"
+        },
+        questions:[
+          {type:"build", prompt:"看到真迹，想说「比想象中小呢」。",
+           zhHint:"实物几乎总是和图片里不一样，这句话你会用很多次。",
+           tiles:["思ったより","小さい","です","ね"], extra:["から","大きい"],
+           kana:"おもったより ちいさいですね",
+           explain:"「思ったより」＝比想的…。站在真迹前第一句冒出来的往往就是这个。反过来「思ったより大きい」也一样好用。"},
+
+          {type:"build", prompt:"想说「怎么说呢，有点吓人」。",
+           zhHint:"日语里有专门用来「还没想好怎么说」的词。",
+           tiles:["なんというか","ちょっと","怖い","です","ね"], extra:["とても","です"],
+           kana:"なんというか、ちょっと こわいですね",
+           explain:"「なんというか」是替自己争取那几秒的垫词，也是大方承认「我还没组织好」。日本人自己天天用。你从来不缺想法，缺的是把想法从脑子里拖出来的那几秒——这个词就是那几秒。"},
+
+          {type:"write", prompt:"「迫力」怎么念？",
+           accept:["はくりょく"], hint:"はく…", kana:"はくりょく", placeholder:"はく…",
+           explain:"はくりょく。「迫力がある」＝有震撼力。站在大佛像、大屏风、盔甲前面，这是最贴切的一个词。"},
+
+          {type:"vocab", prompt:"想夸一件工艺品「细得吓人」，用哪个词？", jpOptions:true,
+           options:["細かい","小さい","狭い"], answer:0,
+           phraseKana:"こまかい",
+           explain:"細かい（こまかい）＝细致、精细。小さい是体积小，狭い是空间窄。中文一个「细」字盖住了三种意思，日语必须分开挑——这类地方，你的中文底子越厚，越容易顺手拿错。"},
+
+          {type:"shadow", hideKana:true, prompt:"这一句请念到能脱口而出。",
+           jp:"うまく言えないけど、なんか好きです。", kana:"うまく いえないけど、なんか すきです。",
+           zh:"说不太好，但我就是喜欢。",
+           explain:"记住这一句。它的作用不是表达得多准确，而是让你在任何一件作品面前都能开口，而不是站在那里沉默。"}
+        ]
+      },
+      {
+        id:"yurinoki", name:"ゆりの木", x:90, y:24, egg:true,
+        eggLines:["さわさわ","はらり","ざわ…ざわ","かさっ"],
+        eggFinal:"ゆりの木は、東博の庭のぬし。明治のはじめに植えられました",
+        eggFinalAt:8
+      }
+    ]
+  }
+];
+
+const NODE_POS = {
+  tohaku:{x:50,y:60}
+};
+const MAX_CHAPTER = 1;
+const CH_KANJI = ["","一"];
+
+const SVG_ART = {
+u1: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#E8DFCB"/>
+  <rect y="228" width="390" height="92" fill="#CFC3A6"/>
+  <rect y="224" width="390" height="6" fill="#B4A98D"/>
+  <!-- 天井のライン -->
+  <path d="M0 34 H390" stroke="#D6CAB2" stroke-width="6"/>
+  <path d="M0 44 H390" stroke="#DED3BC" stroke-width="2"/>
+
+  <!-- 窓とゆりの木 -->
+  <rect x="326" y="44" width="56" height="76" rx="3" fill="#CBDDE2" stroke="#33302B" stroke-width="3"/>
+  <path d="M354 44 V120 M326 82 H382" stroke="#33302B" stroke-width="2" opacity=".55"/>
+  <path d="M340 118 C 340 96, 336 88, 342 78 C 350 66, 366 68, 370 80 C 374 92, 366 100, 366 118 Z"
+        fill="#7A8450" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M353 118 V92" stroke="#5E5B45" stroke-width="2.5"/>
+
+  <!-- 屏風（金地） -->
+  <g>
+    <rect x="212" y="92" width="98" height="76" fill="#D9A441" stroke="#33302B" stroke-width="3"/>
+    <path d="M244 92 V168 M278 92 V168" stroke="#B7862F" stroke-width="2.5"/>
+    <path d="M222 150 C 238 132, 250 140, 262 124 C 274 108, 290 116, 302 104"
+          fill="none" stroke="#3B4A45" stroke-width="2.5" stroke-linecap="round"/>
+    <circle cx="232" cy="112" r="7" fill="#FBF3E2" opacity=".85"/>
+    <path d="M286 156 C 292 146, 300 148, 304 140" fill="none" stroke="#8E2624" stroke-width="2.5" stroke-linecap="round"/>
+  </g>
+  <!-- 浮世絵の額 二枚 -->
+  <g stroke="#33302B" stroke-width="2.5">
+    <rect x="252" y="100" width="0" height="0" fill="none"/>
+  </g>
+  <g>
+    <rect x="252" y="176" width="46" height="34" fill="#FBF3E2" stroke="#33302B" stroke-width="2.5"/>
+    <path d="M256 202 C 264 190, 272 196, 280 186 C 286 179, 292 182, 294 180" fill="none" stroke="#26466D" stroke-width="2"/>
+    <path d="M256 208 H294" stroke="#9EC3D4" stroke-width="3"/>
+    <rect x="304" y="176" width="46" height="34" fill="#FBF3E2" stroke="#33302B" stroke-width="2.5"/>
+    <path d="M312 200 C 318 186, 330 190, 336 180" fill="none" stroke="#8E2624" stroke-width="2"/>
+    <circle cx="342" cy="186" r="5" fill="#C73E3A" opacity=".8"/>
+  </g>
+
+  <!-- ガラスケースと仏像 -->
+  <rect x="104" y="196" width="76" height="34" fill="#8C8471" stroke="#33302B" stroke-width="3"/>
+  <rect x="110" y="96" width="64" height="102" fill="#EAF1F3" opacity=".55" stroke="#33302B" stroke-width="3"/>
+  <path d="M142 100 V196" stroke="#fff" stroke-width="6" opacity=".35"/>
+  <g stroke="#33302B" stroke-width="2.5" fill="#B08D57">
+    <ellipse cx="142" cy="186" rx="22" ry="7"/>
+    <path d="M130 186 C 128 160, 134 148, 142 148 C 150 148, 156 160, 154 186 Z"/>
+    <circle cx="142" cy="136" r="12"/>
+    <path d="M142 124 C 138 116, 140 110, 142 108 C 144 110, 146 116, 142 124 Z" fill="#C9A56B"/>
+    <path d="M130 162 C 122 158, 118 164, 122 170" fill="none"/>
+    <path d="M154 162 C 162 158, 166 164, 162 170" fill="none"/>
+  </g>
+  <circle cx="138" cy="134" r="1.4" fill="#33302B"/>
+  <circle cx="146" cy="134" r="1.4" fill="#33302B"/>
+
+  <!-- 受付 -->
+  <rect x="16" y="196" width="80" height="44" rx="3" fill="#8B6F4E" stroke="#33302B" stroke-width="3"/>
+  <rect x="16" y="192" width="80" height="8" rx="2" fill="#A98A63" stroke="#33302B" stroke-width="2.5"/>
+  <circle cx="56" cy="170" r="13" fill="#F0D9BE" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M43 196 C 43 180, 69 180, 69 196 Z" fill="#26466D" stroke="#33302B" stroke-width="2.5"/>
+  <path d="M46 164 C 50 156, 62 156, 66 164" fill="#3B3A34" stroke="#33302B" stroke-width="2"/>
+  <rect x="24" y="204" width="26" height="18" rx="2" fill="#FBF3E2" stroke="#33302B" stroke-width="2"/>
+  <path d="M28 210 H46 M28 215 H40" stroke="#8a8272" stroke-width="1.6"/>
+
+  <!-- ベンチ -->
+  <g stroke="#33302B" stroke-width="3" fill="#A9855C">
+    <rect x="160" y="256" width="90" height="10" rx="3"/>
+    <rect x="168" y="266" width="8" height="22"/>
+    <rect x="234" y="266" width="8" height="22"/>
+  </g>
+
+  <!-- 床の目地 -->
+  <g stroke="#BCB098" stroke-width="1.5" opacity=".6">
+    <path d="M0 250 H390 M0 276 H390 M0 302 H390"/>
+  </g>
+</svg>`
+};
+</script>
+<script src="jm.js"></script>
+</body>
+</html>

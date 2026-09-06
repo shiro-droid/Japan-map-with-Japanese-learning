@@ -103,6 +103,29 @@
 ===================================================== */
 const SAVE_KEY = "asakusa-meguri-save";   /* 妈妈的存档就在这个键上，别改 */
 
+/* 本章文案（原样搬过来，她看到的一个字都没变） */
+const CH_TEXT = {
+  area: "浅草",
+  guideBunjin:
+    '<div class="g-step"><span class="g-ico" style="font-family:var(--serif);color:#6E6759">碑</span><span><b>碑形</b>的标记是「文人碑」：先讲这个人在浅草的故事，再读他写的一句原文，然后才做题。</span></div>',
+  finale:
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:8px">' +
+    '从雷门一路走到吉原，<br>浅草的每一盏灯笼都被你点亮了。<br>' +
+    '245道题、191个单词、49枚朱印，<br>还有六位文人的碑。<br><b>本当にすごいです！</b></p>' +
+    '<p style="text-align:center;font-size:14px;color:#C73E3A;font-weight:600;line-height:1.8;margin-bottom:4px">' +
+    '下次来浅草的时候<br>还有什么能考到你！<br>赶紧探索新地图吧！ 🎨</p>',
+  newChapters:
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:10px">' +
+    '妈妈，新地图画好了。<br>浅草寺你已经走完了，这次往外走。</p>' +
+    '<p style="text-align:center;font-size:13px;color:#7c7566;line-height:1.8;margin-bottom:10px">' +
+    '<b>第四章</b> 六区・神谷バー<br>' +
+    '<b>第五章</b> 待乳山・今戸・千束<br>' +
+    '<b>第六章</b> 合羽橋・蔵前・吉原</p>' +
+    '<p style="text-align:center;font-size:13px;color:#26466D;line-height:1.8;margin-bottom:4px">' +
+    '路上立了六块<b>文人碑</b>——<br>渥美清、川端康成、太宰治、<br>池波正太郎、永井荷風、樋口一葉。<br>' +
+    '<span style="color:#8a8272">他们都在浅草待过，点开碑能听原句。</span></p>'
+};
+
 const SCENES = [
   {
     id:"kaminarimon", name:"雷門前広場", short:"雷門", chapter:1,

@@ -222,6 +222,41 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   font-size:13px;line-height:1.7;display:none;
 }
 .q-explain .tr{color:var(--kon);font-family:var(--serif);display:block;margin-bottom:4px;font-size:14px}
+/* ---------- 産出型の出題 ---------- */
+.b-zh{font-size:12.5px;color:#7c7566;line-height:1.7;margin:-2px 0 10px}
+.build-slot{min-height:52px;border:2px dashed var(--grey);border-radius:10px;
+  padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  background:var(--paper);margin-bottom:12px}
+.b-ph{font-size:12px;color:#a49b8a;padding:0 4px}
+.build-bank{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;min-height:40px}
+.tile{font-family:var(--serif);font-size:17px;line-height:1;padding:11px 13px;
+  border:1.5px solid var(--ink);border-radius:9px;background:var(--white);
+  color:var(--ink);box-shadow:0 2px 0 var(--ink)}
+.tile:active{transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
+.tile.in{border-color:var(--kon);box-shadow:0 2px 0 var(--kon);background:#F2F6FA}
+.tile.ok{border-color:var(--ok);box-shadow:0 2px 0 var(--ok);background:#EFF5EA;color:var(--ok)}
+.tile.bad{border-color:var(--ng);box-shadow:0 2px 0 var(--ng);background:#FAEDEA;color:var(--ng)}
+.b-row{display:flex;gap:10px;align-items:center}
+.b-row .btn-ghost{flex:none;margin:0}
+.b-row .btn-main{flex:1;margin:0}
+.b-answer{font-family:var(--serif);font-size:18px;color:var(--ok);
+  margin:2px 0 2px;letter-spacing:1px}
+.b-kana{font-size:12.5px;color:var(--kon);margin-bottom:6px}
+.w-input{width:100%;box-sizing:border-box;font-family:var(--serif);font-size:19px;
+  padding:12px 13px;border:1.5px solid var(--grey);border-radius:10px;
+  background:var(--paper);color:var(--ink);margin-bottom:8px;-webkit-appearance:none}
+.w-input:focus{outline:none;border-color:var(--kon)}
+.w-input.bad{border-color:var(--ng);background:#FAEDEA}
+.w-hint{font-size:12px;color:#7c7566;margin-bottom:12px}
+.w-near{font-size:12.5px;color:var(--moss);margin-bottom:4px}
+.sh-card{background:var(--white);border:1.5px solid #E7DFCC;border-radius:12px;
+  padding:14px 14px 10px;margin-bottom:14px;text-align:center}
+.sh-jp{font-family:var(--serif);font-size:20px;line-height:1.65;letter-spacing:1px;margin-bottom:6px}
+.sh-kana{font-size:13px;color:var(--kon);line-height:1.7;margin-bottom:5px}
+.sh-zh{font-size:12.5px;color:#7c7566;line-height:1.7;margin-bottom:8px}
+.sh-reveal{display:block;margin:0 auto 8px;font-size:12px}
+.sh-play{display:flex;gap:10px;justify-content:center}
+.sh-play .slow{font-size:15px}
 
 /* result & stamp */
 .result-wrap{text-align:center;padding:8px 0 4px}

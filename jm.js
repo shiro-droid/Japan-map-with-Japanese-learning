@@ -125,6 +125,7 @@ function todayStr(){
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
 }
 function shuffledOptions(q){
+  if (!q.options) return [];   /* 产出型题目没有选项 */
   const idx = q.options.map((_,i)=>i);
   for (let i=idx.length-1;i>0;i--){
     const j = Math.floor(Math.random()*(i+1));
@@ -323,7 +324,7 @@ function bindTts(){
   document.querySelectorAll(".btn-tts").forEach(b=>{
     if (b.dataset.bound) return;
     b.dataset.bound = "1";
-    b.addEventListener("click", ()=>speak(b.dataset.say));
+    b.addEventListener("click", ()=>speak(b.dataset.say, b.dataset.rate ? Number(b.dataset.rate) : undefined));
   });
 }
 function refreshSpots(){
@@ -350,78 +351,284 @@ function openQuiz(h){
   const run = { qi:picks, i:0, wrong:0, order:picks.map(pi=>shuffledOptions(pool[pi])) };
   renderQuestion(h, run);
 }
-function renderQuestion(h, run){
+/* =====================================================
+   出題
+   -----------------------------------------------------
+   識別型（既存）  read / listen / vocab / scene / particle
+       四択。読める・聞き分けられるを見る。
+   産出型（新）    build / rewrite / write / shadow
+       自分で文を作らせる。浅草の回は識別だけだったので、
+       二十年ぶんの「わかるけど言えない」がそのまま残った。
+       上野からは産出を主軸にする。
+
+   run = { qi:[出題する問題の添字], i:今何問目, wrong:間違えた回数,
+           order:[各問の選択肢の並び] }
+===================================================== */
+
+/* 共通の枠：見出し＋進捗ドット */
+function qHead(h, run){
+  return '<div class="sheet-eyebrow">' + h.name + '</div>' +
+    '<div class="quiz-prog">' + run.qi.map((_, k) =>
+      '<i class="' + (k < run.i ? "done" : k === run.i ? "on" : "") + '"></i>').join("") + '</div>';
+}
+/* 共通の裾：解説欄＋次へ＋学習カードに戻る */
+function qTail(){
+  return '<div class="q-explain" id="q-explain"></div>' +
+    '<button class="btn-main" id="btn-next" style="display:none"></button>' +
+    '<button class="link-plain" id="btn-review" style="margin-top:8px">复习学习卡</button>';
+}
+/* 共通の後始末：正解なら記録して次へ、間違いなら解き直し */
+async function qResolve(h, run, correct, extraHtml, sayAfter, retryable){
   const q = h.questions[run.qi[run.i]];
-  const ord = run.order[run.i];
-  let html = '<div class="sheet-eyebrow">'+h.name+'</div>';
-  html += '<div class="quiz-prog">'+run.qi.map((_,k)=>
-    '<i class="'+(k<run.i?"done":k===run.i?"on":"")+'"></i>').join("")+'</div>';
-
-  if (q.type==="listen"){
-    html += '<div class="q-text">听一遍，选出正确的意思：</div>'+
-      '<div class="q-listen"><button class="btn-tts" data-say="'+(q.ttsKana||q.tts)+'">🔊</button>'+
-      '<span class="hint">可以反复播放 · 真实语速</span></div>';
+  const nextBtn = $("#btn-next");
+  if (correct){
+    if (!state.qdone[h.id]) state.qdone[h.id] = {};
+    state.qdone[h.id][run.qi[run.i]] = true;
+    await saveState();
+    nextBtn.dataset.retry = "";
+    nextBtn.textContent = (run.i < run.qi.length - 1 ? "下一题" : "看结果");
   } else {
-    html += '<div class="q-text">'+
-      (q.type==="read" ? '<span class="jp">'+q.prompt+'</span>' : q.prompt)+'</div>';
+    run.wrong++;
+    nextBtn.dataset.retry = retryable === false ? "" : "1";
+    nextBtn.textContent = retryable === false ? "下一题" : "再答一次（答对才能过）";
   }
-  html += '<div class="opts">'+ord.map(oi=>
-    '<button class="opt'+((q.jpOptions||q.type==="read")?' jp':'')+'" data-oi="'+oi+'">'+q.options[oi]+'</button>').join("")+'</div>';
-  html += '<div class="q-explain" id="q-explain"></div>';
-  html += '<button class="btn-main" id="btn-next" style="display:none"></button>';
-  html += '<button class="link-plain" id="btn-review" style="margin-top:8px">复习学习卡</button>';
-
-  openSheet(html);
+  const ex = $("#q-explain");
+  ex.innerHTML = (extraHtml || "") + q.explain +
+    (sayAfter ? '<div style="margin-top:8px"><button class="btn-tts" data-say="' + sayAfter +
+      '" style="width:34px;height:34px;font-size:14px">🔊</button> ' +
+      '<span style="font-size:11px;color:#8a8272">听正确说法</span></div>' : '');
+  ex.style.display = "block";
   bindTts();
-  if (q.type==="listen") speak(q.ttsKana||q.tts);
-
-  document.querySelectorAll(".opt").forEach(btn=>{
-    btn.addEventListener("click", async ()=>{
-      const chosen = Number(btn.dataset.oi);
-      const nextBtn = $("#btn-next");
-      document.querySelectorAll(".opt").forEach(b=>{
-        b.disabled = true;
-        if (Number(b.dataset.oi)===q.answer) b.classList.add("correct");
-      });
-      if (chosen!==q.answer){
-        btn.classList.add("wrong");
-        run.wrong++;
-        nextBtn.dataset.retry = "1";
-        nextBtn.textContent = "再答一次（答对才能过）";
-      } else {
-        if (!state.qdone[h.id]) state.qdone[h.id] = {};
-        state.qdone[h.id][run.qi[run.i]] = true;
-        await saveState();
-        nextBtn.dataset.retry = "";
-        nextBtn.textContent = (run.i<run.qi.length-1?"下一题":"看结果");
-      }
-      const ex = $("#q-explain");
-      let extra = "";
-      if (q.type==="listen"){
-        extra = '<span class="tr">「'+q.tts+'」</span>'+
-          '<span style="display:block;color:#26466D;font-size:12px;margin-bottom:6px">'+(q.ttsKana||"")+'</span>';
-      }
-      let sayAfter = null;
-      if (q.type==="read") sayAfter = q.options[q.answer];
-      if (q.phraseKana) sayAfter = q.phraseKana;
-      ex.innerHTML = extra + q.explain +
-        (sayAfter ? '<div style="margin-top:8px"><button class="btn-tts" data-say="'+sayAfter+'" style="width:34px;height:34px;font-size:14px">🔊</button> <span style="font-size:11px;color:#8a8272">听正确答案</span></div>' : '');
-      ex.style.display = "block";
-      bindTts();
-      nextBtn.style.display = "block";
-    });
-  });
+  nextBtn.style.display = "block";
+}
+function qBindNav(h, run){
   $("#btn-next").addEventListener("click", ()=>{
     if ($("#btn-next").dataset.retry){
-      run.order[run.i] = shuffledOptions(q);
+      const q = h.questions[run.qi[run.i]];
+      if (q.options) run.order[run.i] = shuffledOptions(q);
       renderQuestion(h, run);
       return;
     }
-    if (run.i < run.qi.length-1){ run.i++; renderQuestion(h, run); }
+    if (run.i < run.qi.length - 1){ run.i++; renderQuestion(h, run); }
     else finishQuiz(h, run);
   });
   $("#btn-review").addEventListener("click", ()=>openLearn(h, true));
 }
+
+function renderQuestion(h, run){
+  const q = h.questions[run.qi[run.i]];
+  if (q.type === "build" || q.type === "rewrite") return renderBuild(h, run);
+  if (q.type === "write")  return renderWrite(h, run);
+  if (q.type === "shadow") return renderShadow(h, run);
+  return renderChoice(h, run);
+}
+
+/* ---------- 四択（従来どおり） ---------- */
+function renderChoice(h, run){
+  const q = h.questions[run.qi[run.i]];
+  const ord = run.order[run.i];
+  const jp = !!(q.jpOptions || q.type === "read" || q.type === "particle");
+  let html = qHead(h, run);
+
+  if (q.type === "listen"){
+    html += '<div class="q-text">听一遍，选出正确的意思：</div>' +
+      '<div class="q-listen"><button class="btn-tts" data-say="' + (q.ttsKana || q.tts) + '">🔊</button>' +
+      '<span class="hint">可以反复播放 · 真实语速</span></div>';
+  } else {
+    html += '<div class="q-text">' +
+      ((q.type === "read" || q.type === "particle") ? '<span class="jp">' + q.prompt + '</span>' : q.prompt) +
+      '</div>';
+  }
+  html += '<div class="opts">' + ord.map(oi =>
+    '<button class="opt' + (jp ? ' jp' : '') + '" data-oi="' + oi + '">' + q.options[oi] + '</button>').join("") + '</div>';
+  html += qTail();
+
+  openSheet(html);
+  bindTts();
+  if (q.type === "listen") speak(q.ttsKana || q.tts);
+
+  document.querySelectorAll(".opt").forEach(btn=>{
+    btn.addEventListener("click", async ()=>{
+      const chosen = Number(btn.dataset.oi);
+      document.querySelectorAll(".opt").forEach(b=>{
+        b.disabled = true;
+        if (Number(b.dataset.oi) === q.answer) b.classList.add("correct");
+      });
+      if (chosen !== q.answer) btn.classList.add("wrong");
+      let extra = "";
+      if (q.type === "listen"){
+        extra = '<span class="tr">「' + q.tts + '」</span>' +
+          '<span style="display:block;color:#26466D;font-size:12px;margin-bottom:6px">' + (q.ttsKana || "") + '</span>';
+      }
+      let sayAfter = null;
+      if (q.type === "read") sayAfter = q.options[q.answer];
+      if (q.type === "particle") sayAfter = q.sayKana || null;
+      if (q.phraseKana) sayAfter = q.phraseKana;
+      await qResolve(h, run, chosen === q.answer, extra, sayAfter);
+    });
+  });
+  qBindNav(h, run);
+}
+
+/* ---------- 組み立て：語順と助詞を自分で組む ---------- */
+function renderBuild(h, run){
+  const q = h.questions[run.qi[run.i]];
+  const bank = shuffleArr(q.tiles.concat(q.extra || []).map((t, i)=>({t:t, i:i})));
+  const picked = [];
+
+  let html = qHead(h, run);
+  html += '<div class="q-text">' + q.prompt + '</div>';
+  if (q.zhHint) html += '<div class="b-zh">' + q.zhHint + '</div>';
+  html += '<div class="build-slot" id="b-slot"></div>';
+  html += '<div class="build-bank" id="b-bank"></div>';
+  html += '<div class="b-row"><button class="btn-ghost" id="b-clear">全部退回</button>' +
+          '<button class="btn-main" id="b-check">这样说</button></div>';
+  html += qTail();
+  openSheet(html);
+
+  const slotEl = $("#b-slot"), bankEl = $("#b-bank");
+  function draw(){
+    slotEl.innerHTML = picked.length
+      ? picked.map((p, k)=>'<button class="tile in" data-k="' + k + '">' + p.t + '</button>').join("")
+      : '<span class="b-ph">点下面的词，按顺序排出这句话</span>';
+    bankEl.innerHTML = bank.map((b, k)=>
+      picked.indexOf(b) >= 0 ? '' : '<button class="tile" data-b="' + k + '">' + b.t + '</button>').join("");
+    slotEl.querySelectorAll(".tile").forEach(el=>{
+      el.addEventListener("click", ()=>{ picked.splice(Number(el.dataset.k), 1); draw(); });
+    });
+    bankEl.querySelectorAll(".tile").forEach(el=>{
+      el.addEventListener("click", ()=>{ picked.push(bank[Number(el.dataset.b)]); draw(); });
+    });
+  }
+  draw();
+
+  $("#b-clear").addEventListener("click", ()=>{ picked.length = 0; draw(); });
+  $("#b-check").addEventListener("click", async ()=>{
+    const got = picked.map(p=>p.t);
+    const want = q.tiles;
+    let bad = -1;
+    for (let k = 0; k < Math.max(got.length, want.length); k++){
+      if (got[k] !== want[k]){ bad = k; break; }
+    }
+    if (bad < 0){
+      slotEl.querySelectorAll(".tile").forEach(el=>el.classList.add("ok"));
+      $("#b-check").disabled = true;
+      $("#b-clear").disabled = true;
+      bankEl.innerHTML = "";
+      speak(q.kana || want.join(""));
+      await qResolve(h, run, true,
+        '<div class="b-answer">' + want.join("") + '</div>' +
+        (q.kana ? '<div class="b-kana">' + q.kana + '</div>' : ''),
+        q.kana || want.join(""));
+    } else {
+      const tiles = slotEl.querySelectorAll(".tile");
+      if (tiles[bad]) tiles[bad].classList.add("bad");
+      run.wrong++;
+      toast(bad === 0 ? "开头就不对——先想想这句话从哪个词起头"
+                      : "前 " + bad + " 个词是对的，第 " + (bad + 1) + " 个开始要改");
+    }
+  });
+  qBindNav(h, run);
+}
+
+/* ---------- 書く：短く打たせる ---------- */
+function renderWrite(h, run){
+  const q = h.questions[run.qi[run.i]];
+  let tries = 0;
+
+  let html = qHead(h, run);
+  html += '<div class="q-text">' + q.prompt + '</div>';
+  html += '<input class="w-input" id="w-in" type="text" autocomplete="off" autocapitalize="off" ' +
+          'spellcheck="false" placeholder="' + (q.placeholder || "ここに日本語で") + '">';
+  if (q.hint) html += '<div class="w-hint">提示：' + q.hint + '</div>';
+  html += '<div class="b-row"><button class="btn-ghost" id="w-give" style="visibility:hidden">看答案</button>' +
+          '<button class="btn-main" id="w-check">这样写</button></div>';
+  html += qTail();
+  openSheet(html);
+  $("#w-in").focus();
+
+  const norm = s => String(s).replace(/[\s　]/g, "")
+    .replace(/[。．.、，,！!？?~〜ー]/g, "")
+    .replace(/[Ａ-Ｚａ-ｚ０-９]/g, c=>String.fromCharCode(c.charCodeAt(0) - 0xFEE0))
+    /* 片仮名→平仮名。彼女には「ロダン」も「ろだん」も同じ勝ちにする */
+    .replace(/[ァ-ヶ]/g, c=>String.fromCharCode(c.charCodeAt(0) - 0x60))
+    .toLowerCase();
+  function dist(a, b){
+    const m = a.length, n = b.length;
+    let prev = Array.from({length:n + 1}, (_, j)=>j);
+    for (let i = 1; i <= m; i++){
+      const cur = [i];
+      for (let j = 1; j <= n; j++){
+        cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i-1] === b[j-1] ? 0 : 1));
+      }
+      prev = cur;
+    }
+    return prev[n];
+  }
+  const best = s => q.accept.reduce((m, a)=>Math.min(m, dist(norm(s), norm(a))), 99);
+
+  async function pass(near){
+    $("#w-in").disabled = true;
+    $("#w-check").disabled = true;
+    $("#w-give").style.visibility = "hidden";
+    speak(q.kana || q.accept[0]);
+    await qResolve(h, run, true,
+      (near ? '<div class="w-near">差一点点，就当对了。标准说法是：</div>' : '') +
+      '<div class="b-answer">' + q.accept[0] + '</div>' +
+      (q.kana ? '<div class="b-kana">' + q.kana + '</div>' : ''),
+      q.kana || q.accept[0]);
+  }
+  $("#w-check").addEventListener("click", async ()=>{
+    const v = $("#w-in").value.trim();
+    if (!v){ toast("先写点什么，写错也没关系"); return; }
+    const d = best(v);
+    if (d === 0) return pass(false);
+    if (d <= 2) return pass(true);
+    tries++;
+    run.wrong++;
+    const inp = $("#w-in");                     /* 先抓住元素：600ms 后可能已经换题了 */
+    inp.classList.add("bad");
+    setTimeout(()=>inp.classList.remove("bad"), 600);
+    toast(tries === 1 ? "还不对，再想想。想不出来就再按一次" : "再试一次，或者点「看答案」");
+    if (tries >= 2) $("#w-give").style.visibility = "visible";
+  });
+  $("#w-give").addEventListener("click", ()=>pass(true));
+  qBindNav(h, run);
+}
+
+/* ---------- 音読：耳だけ二十年ぶんある人に、口を動かさせる ---------- */
+function renderShadow(h, run){
+  const q = h.questions[run.qi[run.i]];
+  let html = qHead(h, run);
+  html += '<div class="q-text">' + (q.prompt || "听一遍，然后自己出声念一遍") + '</div>';
+  const hide = !!q.hideKana;   /* 漢字を見て自力で読ませる。中国語で読む癖への直撃 */
+  html += '<div class="sh-card">' +
+    '<div class="sh-jp">' + q.jp + '</div>' +
+    (hide ? '<button class="link-plain sh-reveal" id="sh-rv">先自己念，念完点这里对答案</button>' +
+            '<div class="sh-kana" id="sh-kana" style="display:none">' + q.kana + '</div>'
+          : '<div class="sh-kana">' + q.kana + '</div>') +
+    '<div class="sh-zh">' + q.zh + '</div>' +
+    '<div class="sh-play"><button class="btn-tts" data-say="' + q.kana + '">🔊</button>' +
+    '<button class="btn-tts slow" data-say="' + q.kana + '" data-rate="0.6">🐢</button></div>' +
+    '</div>';
+  html += '<button class="btn-main" id="sh-ok">念出来了</button>';
+  html += qTail();
+  openSheet(html);
+  bindTts();
+  if (!hide) speak(q.kana);      /* 隠す回は、先に音を聞かせない */
+  const rv = $("#sh-rv");
+  if (rv) rv.addEventListener("click", ()=>{
+    $("#sh-kana").style.display = "block";
+    rv.style.display = "none";
+    speak(q.kana);
+  });
+  $("#sh-ok").addEventListener("click", async ()=>{
+    $("#sh-ok").disabled = true;
+    await qResolve(h, run, true, "", q.kana);
+  });
+  qBindNav(h, run);
+}
+
 async function finishQuiz(h, run){
   const pool = h.questions;
   const doneSet = state.qdone[h.id] || {};
@@ -485,12 +692,8 @@ function showCongrats(ch){
 function showFinale(){
   const g = overlayCard(
     '<div style="text-align:center;font-size:40px;margin-bottom:6px">🗺️</div>'+
-    '<h3>六章 全制覇！</h3>'+
-    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:8px">'+
-    '从雷门一路走到吉原，<br>浅草的每一盏灯笼都被你点亮了。<br>'+
-    '245道题、191个单词、49枚朱印，<br>还有六位文人的碑。<br><b>本当にすごいです！</b></p>'+
-    '<p style="text-align:center;font-size:14px;color:#C73E3A;font-weight:600;line-height:1.8;margin-bottom:4px">'+
-    '下次来浅草的时候<br>还有什么能考到你！<br>赶紧探索新地图吧！ 🎨</p>'+
+    '<h3>' + (CHT.finaleTitle || (CH_KANJI[MAX_CHAPTER] + '章 全制覇！')) + '</h3>'+
+    (CHT.finale || '')+
     '<button class="btn-main" id="btn-finale-close">まだまだ歩ける</button>');
   document.getElementById("btn-finale-close").addEventListener("click", ()=>{
     g.style.display = "none";
@@ -502,15 +705,7 @@ function showNewChapters(){
   const g = overlayCard(
     '<div style="text-align:center;font-size:40px;margin-bottom:6px">🏮</div>'+
     '<h3>新しい地図</h3>'+
-    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:10px">'+
-    '妈妈，新地图画好了。<br>浅草寺你已经走完了，这次往外走。</p>'+
-    '<p style="text-align:center;font-size:13px;color:#7c7566;line-height:1.8;margin-bottom:10px">'+
-    '<b>第四章</b> 六区・神谷バー<br>'+
-    '<b>第五章</b> 待乳山・今戸・千束<br>'+
-    '<b>第六章</b> 合羽橋・蔵前・吉原</p>'+
-    '<p style="text-align:center;font-size:13px;color:#26466D;line-height:1.8;margin-bottom:4px">'+
-    '路上立了六块<b>文人碑</b>——<br>渥美清、川端康成、太宰治、<br>池波正太郎、永井荷風、樋口一葉。<br>'+
-    '<span style="color:#8a8272">他们都在浅草待过，点开碑能听原句。</span></p>'+
+    (CHT.newChapters || '')+
     '<button class="btn-main" id="btn-nc-go">出発</button>');
   document.getElementById("btn-nc-go").addEventListener("click", async ()=>{
     g.style.display = "none";
@@ -608,6 +803,9 @@ function renderStamps(){
    以后新增场面或地点【必须追加在末尾】；插在中间会让所有旧码错位。
    旧码比新版短时会自动按短的读完，不报错。
 ===================================================== */
+/* 各章自己的文案。章节 HTML 里定义 CH_TEXT，没定义就退回空对象 */
+const CHT = (typeof CH_TEXT !== "undefined") ? CH_TEXT : {};
+
 const CODE_VER = 1;
 const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   /* Crockford：不含 I L O U */
 
@@ -1104,9 +1302,9 @@ function showGuide(firstTime){
     '<div class="g-step"><span class="g-ico">🔴</span><span><b>红点</b>是新内容：先看学习卡，点 🔊 听发音，看完按「记住了」。</span></div>'+
     '<div class="g-step"><span class="g-ico">🔵</span><span>变<b>蓝</b>之后再点它，开始做题：每次随机3题，答错当场重答。</span></div>'+
     '<div class="g-step"><span class="g-ico">✨</span><span>每个地点藏着5道题，<b>全部答完</b>朱印就变金印。<b>一章集齐全部金印</b>，下一章的灯笼自动点亮。</span></div>'+
-    '<div class="g-step"><span class="g-ico" style="font-family:var(--serif);color:#6E6759">碑</span><span><b>碑形</b>的标记是「文人碑」：先讲这个人在浅草的故事，再读他写的一句原文，然后才做题。</span></div>'+
+    (CHT.guideBunjin || '')+
     '<div class="g-step"><span class="g-ico">🎋</span><span><b>おみくじ</b>每天能抽一支新签；集到的朱印在右上角「印」里随时翻看。</span></div>'+
-    '<button class="btn-main" id="btn-guide-go">开始逛浅草</button></div>';
+    '<button class="btn-main" id="btn-guide-go">开始逛' + (CHT.area || '') + '</button></div>';
   g.style.display = "flex";
   document.getElementById("btn-guide-go").addEventListener("click", async ()=>{
     g.style.display = "none";
@@ -1117,6 +1315,6 @@ function showGuide(firstTime){
   await loadState();
   renderMap();
   if (!state.seenGuide) { showGuide(true); state.seenV2 = true; await saveState(); }
-  else if (!state.seenV2 && chapterAllGold(3)) showNewChapters();
+  else if (!state.seenV2 && CHT.newChapters && chapterAllGold(3)) showNewChapters();
   else if (!state.seenV2) { state.seenV2 = true; await saveState(); }
 })();
