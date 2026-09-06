@@ -1,32 +1,223 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="zh">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>浅草めぐり</title>
-<link rel="canonical" href="./chapter1-asakusa.html">
-<meta http-equiv="refresh" content="0; url=./chapter1-asakusa.html">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ことばで巡る · 妈妈的日语散步</title>
+<link rel="stylesheet" href="jm.css">
 <style>
-  html { color-scheme: light dark; }
-  body {
-    margin: 0; min-height: 100vh;
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center; gap: 1.25rem;
-    font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic",
-                 "Noto Sans JP", "Microsoft YaHei", system-ui, sans-serif;
-    text-align: center; padding: 2rem 1.5rem;
-  }
-  p { margin: 0; opacity: .7; font-size: .95rem; }
-  a {
-    display: inline-block; padding: .85rem 1.75rem;
-    border: 1px solid currentColor; border-radius: 999px;
-    text-decoration: none; color: inherit; font-size: 1.05rem;
-  }
+  body{background:var(--paper);color:var(--ink);font-family:var(--sans);
+    margin:0 auto;max-width:480px;padding:0 0 40px;-webkit-text-size-adjust:100%}
+  header{background:var(--shu);color:var(--paper);padding:18px 18px 16px}
+  header h1{font-family:var(--serif);font-size:22px;letter-spacing:5px;margin:0}
+  header p{font-size:11.5px;letter-spacing:2px;margin:5px 0 0;opacity:.85}
+  main{padding:16px 16px 0}
+
+  .next{background:var(--white);border:2px solid var(--shu);border-radius:14px;
+    padding:14px 15px;margin-bottom:20px;box-shadow:4px 4px 0 rgba(199,62,58,.18)}
+  .next .lab{font-size:10.5px;letter-spacing:3px;color:var(--shu);font-weight:700;margin-bottom:6px}
+  .next .ttl{font-family:var(--serif);font-size:19px;letter-spacing:2px;margin-bottom:5px}
+  .next .why{font-size:12.5px;line-height:1.75;color:#6d675c;margin-bottom:12px}
+  .next a{display:block;text-align:center;text-decoration:none;background:var(--shu);
+    color:#fff;border-radius:10px;padding:12px;font-size:15px;letter-spacing:2px;
+    box-shadow:0 3px 0 var(--shu-deep)}
+  .next a:active{transform:translateY(2px);box-shadow:0 1px 0 var(--shu-deep)}
+
+  .card{background:var(--white);border:1.5px solid #E2D9C4;border-radius:12px;
+    padding:13px 14px;margin-bottom:12px}
+  .card.locked{opacity:.62}
+  .card .hd{display:flex;align-items:baseline;gap:8px;margin-bottom:3px}
+  .card .no{font-family:var(--serif);font-size:12px;color:var(--shu);letter-spacing:2px;flex:none}
+  .card h2{font-family:var(--serif);font-size:17px;letter-spacing:2px;margin:0;flex:1}
+  .card .sub{font-size:11px;color:#8a8272;margin-bottom:10px}
+  .tier{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11.5px}
+  .tier .nm{flex:none;width:52px;color:#6d675c}
+  .bar{flex:1;height:9px;border-radius:5px;background:#EDE5D2;overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:5px;background:var(--gold)}
+  .tier.adv .bar i{background:var(--murasaki)}
+  .tier .num{flex:none;width:52px;text-align:right;color:#6d675c;font-variant-numeric:tabular-nums}
+  .tier .st{flex:none;font-size:10px;padding:1px 7px;border-radius:9px;white-space:nowrap}
+  .st.done{background:#EAF1E5;color:var(--ok)}
+  .st.wait{background:#EFE8D6;color:#8a8272}
+  .st.now{background:var(--shu);color:#fff}
+
+  .tools{margin-top:26px;padding-top:18px;border-top:1px dashed var(--grey);text-align:center}
+  .tools h3{font-family:var(--serif);font-size:14px;letter-spacing:3px;margin:0 0 6px}
+  .tools p{font-size:11.5px;line-height:1.75;color:#6d675c;margin:0 0 12px}
+  .tools button{background:var(--white);border:1.5px solid var(--ink);border-radius:9px;
+    padding:10px 16px;font-size:13px;color:var(--ink);margin:0 4px 8px;
+    box-shadow:0 2px 0 var(--ink)}
+  .tools button:active{transform:translateY(2px);box-shadow:0 0 0 var(--ink)}
+  #bk{width:100%;box-sizing:border-box;font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:11px;line-height:1.6;word-break:break-all;border:1px solid var(--grey);
+    border-radius:8px;padding:9px;background:var(--paper);color:var(--ink);
+    margin-top:10px;display:none;height:110px;resize:none}
+  footer{text-align:center;font-size:10.5px;color:#a49b8a;margin-top:22px;letter-spacing:1px}
 </style>
 </head>
 <body>
-  <p>浅草めぐりを開いています…</p>
-  <a href="./chapter1-asakusa.html">開かない場合はこちら</a>
-  <script>location.replace("./chapter1-asakusa.html");</script>
+
+<header>
+  <h1>ことばで巡る</h1>
+  <p>妈妈的日语散步 · 一步一步走</p>
+</header>
+
+<main>
+  <div id="next"></div>
+  <div id="cards"></div>
+
+  <div class="tools">
+    <h3>把进度存下来</h3>
+    <p>三章的进度都存在这台手机里。清一次浏览器数据就没了。<br>
+       换手机之前，按一下「复制全部进度」，把那串字发给自己存着。</p>
+    <button id="b-out">复制全部进度</button>
+    <button id="b-in">粘贴恢复</button>
+    <textarea id="bk" spellcheck="false"></textarea>
+  </div>
+
+  <footer>ことばで巡る · 浅草／上野／隅田川</footer>
+</main>
+
+<script>
+/* 各章的存档键与解锁前提。要和各章 HTML 里的 REQUIRE 保持一致 */
+const CHAPTERS = [
+  { id:"asakusa", n:"一", key:"asakusa-meguri-save", file:"chapter1-asakusa.html",
+    title:"浅草・奥浅草", sub:"雷門から吉原まで · 13 場面",
+    basicGate:null,
+    advGate:{ key:"ueno-meguri-save", flag:"doneBasic", label:"上野の一周目" } },
+  { id:"ueno", n:"二", key:"ueno-meguri-save", file:"chapter2-ueno.html",
+    title:"上野・谷根千", sub:"博物館から谷中の坂まで",
+    basicGate:{ key:"asakusa-meguri-save", flag:"doneBasic", label:"浅草の一周目" },
+    advGate:{ key:"asakusa-meguri-save", flag:"doneAdv", label:"浅草の二周目" } },
+  { id:"sumida", n:"三", key:"sumida-meguri-save", file:null,
+    title:"隅田川", sub:"まだ描いていません",
+    basicGate:{ key:"asakusa-meguri-save", flag:"doneAdv", label:"浅草の二周目" },
+    advGate:null }
+];
+/* 阶梯次序：1基 → 2基 → 1高 → 3基 → 2高 → … */
+const LADDER = [
+  ["asakusa","basic"], ["ueno","basic"], ["asakusa","adv"],
+  ["sumida","basic"],  ["ueno","adv"]
+];
+const WHY = {
+  "asakusa|adv": "隔了一整章再回来，那些词已经开始忘了。这时候能自己说出来的，才是真记住的。",
+  "ueno|adv":    "同样，隔一章再回上野。",
+  "sumida|basic":"新地方。先走一遍，认得、听得懂就行。"
+};
+
+function load(key){
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : null; }
+  catch(e){ return null; }
+}
+function gateOk(g){
+  if (!g) return true;
+  const s = load(g.key);
+  return !!(s && s[g.flag]);
+}
+function progress(save, tier){
+  if (!save) return { got:0, total:0, done:false };
+  const box = tier === "adv" ? (save.adv || {}) : save;
+  const meta = save.meta || {};
+  return {
+    got: Object.keys(box.cleared || {}).length,
+    total: meta[tier] || 0,
+    done: tier === "adv" ? !!save.doneAdv : !!save.doneBasic
+  };
+}
+function tierState(ch, tier){
+  const save = load(ch.key);
+  const p = progress(save, tier);
+  const gate = tier === "adv" ? ch.advGate : ch.basicGate;
+  if (p.done) return { ...p, st:"done" };
+  if (!ch.file) return { ...p, st:"soon" };
+  if (!gateOk(gate)) return { ...p, st:"wait", waitFor:gate && gate.label };
+  return { ...p, st:"open" };
+}
+
+/* 接下来该做哪一格 */
+function nextStep(){
+  for (const [id, tier] of LADDER){
+    const ch = CHAPTERS.find(c=>c.id === id);
+    const s = tierState(ch, tier);
+    if (s.st === "open") return { ch, tier, s };
+    if (s.st === "wait" || s.st === "soon") continue;
+  }
+  return null;
+}
+
+function render(){
+  const ns = nextStep();
+  const nx = document.getElementById("next");
+  if (ns){
+    const isAdv = ns.tier === "adv";
+    nx.className = "next";
+    nx.innerHTML =
+      '<div class="lab">接 下 来</div>' +
+      '<div class="ttl">' + ns.ch.title + (isAdv ? '　二周目' : '　一周目') + '</div>' +
+      '<div class="why">' + (WHY[ns.ch.id + "|" + ns.tier] ||
+        "第一次走这里。看学习卡、听发音、做题，集朱印。") + '</div>' +
+      '<a href="' + ns.ch.file + '">走这一段</a>';
+  } else {
+    nx.className = "next";
+    nx.innerHTML = '<div class="lab">今 の と こ ろ</div>' +
+      '<div class="ttl">全部走完了</div>' +
+      '<div class="why">下一段还在画。歇一歇，或者回去把喜欢的地方再走一遍。</div>';
+  }
+
+  const box = document.getElementById("cards");
+  box.innerHTML = CHAPTERS.map(ch=>{
+    const b = tierState(ch, "basic"), a = tierState(ch, "adv");
+    const locked = !ch.file;
+    const row = (nm, t, cls)=>{
+      const pct = t.total ? Math.round(100 * t.got / t.total) : 0;
+      const tag = t.st === "done" ? '<span class="st done">通关</span>'
+        : t.st === "open" ? '<span class="st now">开着</span>'
+        : t.st === "soon" ? '<span class="st wait">还没做</span>'
+        : '<span class="st wait">等' + (t.waitFor || "上一段") + '</span>';
+      return '<div class="tier ' + cls + '"><span class="nm">' + nm + '</span>' +
+        '<span class="bar"><i style="width:' + pct + '%"></i></span>' +
+        '<span class="num">' + (t.total ? t.got + "/" + t.total : "—") + '</span>' +
+        tag + '</div>';
+    };
+    return '<div class="card' + (locked ? ' locked' : '') + '">' +
+      '<div class="hd"><span class="no">第' + ch.n + '章</span>' +
+      '<h2>' + (ch.file ? '<a style="color:inherit;text-decoration:none" href="' + ch.file + '">' + ch.title + '</a>' : ch.title) + '</h2></div>' +
+      '<div class="sub">' + ch.sub + '</div>' +
+      row("一周目", b, "") + row("二周目", a, "adv") +
+      '</div>';
+  }).join("");
+}
+render();
+
+/* ---------- 备份：三章一起 ---------- */
+const bk = document.getElementById("bk");
+document.getElementById("b-out").addEventListener("click", async ()=>{
+  const saves = {};
+  CHAPTERS.forEach(c=>{ const v = localStorage.getItem(c.key); if (v) saves[c.key] = v; });
+  const blob = JSON.stringify({ v:1, at:new Date().toISOString().slice(0,10), saves:saves });
+  bk.value = blob; bk.style.display = "block"; bk.select();
+  let ok = false;
+  try { await navigator.clipboard.writeText(blob); ok = true; } catch(e){
+    try { ok = document.execCommand("copy"); } catch(e2){}
+  }
+  alert(ok ? "已复制（" + blob.length + " 字）。发给自己存着就行。"
+           : "复制没成功：请长按下面的框，手动全选复制。");
+});
+document.getElementById("b-in").addEventListener("click", ()=>{
+  if (bk.style.display !== "block"){
+    bk.value = ""; bk.style.display = "block"; bk.placeholder = "把之前复制的那串字粘贴到这里，再按一次「粘贴恢复」";
+    bk.focus(); return;
+  }
+  let data;
+  try { data = JSON.parse(bk.value.trim()); } catch(e){ alert("这串字看着不对，请整段重新复制。"); return; }
+  if (!data || !data.saves){ alert("这串字里没有进度。"); return; }
+  const names = Object.keys(data.saves);
+  if (!confirm("要用这串字覆盖本机的进度吗？\n涉及：" + names.join("、") + "\n\n本机现有的进度会被替换。")) return;
+  names.forEach(k=>{ localStorage.setItem(k, data.saves[k]); });
+  bk.style.display = "none";
+  render();
+  alert("恢复好了。");
+});
+</script>
 </body>
 </html>

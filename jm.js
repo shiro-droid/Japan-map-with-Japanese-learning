@@ -77,6 +77,12 @@ function afterLoad(){
 }
 async function saveState(){
   if (REVIEW) return;   /* 评审模式绝不落盘，试玩不会污染已有进度 */
+  /* 目录页要靠这几个数算进度条，但它不加载各章的 SCENES，所以存档里带着走 */
+  state.meta = {
+    name: (CHT.area || ""),
+    basic: tierTotal("basic"),
+    adv: tierTotal("adv")
+  };
   const v = JSON.stringify(state);
   if (window.storage) {
     try { await window.storage.set(SAVE_KEY, v); return; } catch(e){}
@@ -855,6 +861,18 @@ function tierComplete(tier){
   TIER = keep;
   return ok;
 }
+function tierTotal(tier){
+  const keep = TIER; TIER = tier;
+  const n = SCENES.reduce((a,sc)=>a+quizHotspots(sc).length, 0);
+  TIER = keep;
+  return n;
+}
+function tierCount(tier){
+  const keep = TIER; TIER = tier;
+  const n = Object.keys(P().cleared).length;
+  TIER = keep;
+  return n;
+}
 function refreshDone(){
   if (tierComplete("basic")) state.doneBasic = true;
   if (advExists() && tierComplete("adv")) state.doneAdv = true;
@@ -870,6 +888,7 @@ function gateMet(cond){
 }
 function basicUnlocked(){ return gateMet(GATE && GATE.basic); }
 function advUnlocked(){
+  if (REVIEW) return advExists();   /* 评审模式直接放行，否则你没法预览二周目 */
   return advExists() && (state.doneBasic || tierComplete("basic")) && gateMet(GATE && GATE.adv);
 }
 
