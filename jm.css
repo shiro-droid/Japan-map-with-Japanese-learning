@@ -66,10 +66,14 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   position:absolute;transform:translate(-50%,-50%);text-align:center;width:108px;
 }
 .lantern-node .lamp{
-  width:74px;height:88px;margin:0 auto;border-radius:42% 42% 46% 46%/38% 38% 52% 52%;
-  background:radial-gradient(circle at 50% 30%, #E2554F, var(--shu) 55%, var(--shu-deep));
+  width:74px;height:88px;margin:0 auto;
   border:2px solid var(--ink);position:relative;
   display:flex;align-items:center;justify-content:center;
+}
+/* 浅草＝提灯 */
+.lantern-node .lamp.ic-lantern{
+  border-radius:42% 42% 46% 46%/38% 38% 52% 52%;
+  background:radial-gradient(circle at 50% 30%, #E2554F, var(--shu) 55%, var(--shu-deep));
   box-shadow:0 4px 10px rgba(163,46,44,.35);
 }
 .lantern-node .lamp::before{content:"";position:absolute;top:-7px;left:50%;transform:translateX(-50%);
@@ -83,11 +87,45 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .lantern-node .cnt{margin-top:9px;font-size:11px;color:#6d675c;background:var(--white);
   display:inline-block;padding:2px 9px;border-radius:999px;border:1px solid #d8cdb6}
 .lantern-node.done .cnt{background:var(--gold);color:var(--white);border-color:var(--gold)}
-.lantern-node:not(.locked) .lamp{animation:glow 2.6s ease-in-out infinite}
+.lantern-node:not(.locked) .lamp.ic-lantern{animation:glow 2.6s ease-in-out infinite}
 @keyframes glow{0%,100%{box-shadow:0 4px 10px rgba(163,46,44,.35)}50%{box-shadow:0 4px 20px rgba(226,120,80,.6)}}
-.lantern-node.locked .lamp{
+.lantern-node.locked .lamp.ic-lantern{
   background:radial-gradient(circle at 50% 30%, #cfc8ba, var(--grey) 60%, #948c7c);
   box-shadow:none;animation:none;
+}
+
+/* 上野＝額縁。这一带是博物馆・美术馆区，金印集满时框子变金 */
+.lantern-node .lamp.ic-frame{
+  border-radius:3px;border-width:3px;
+  background:linear-gradient(160deg,#F6EEDB,#E4D8B8);
+  box-shadow:0 4px 10px rgba(51,48,43,.28),
+             inset 0 0 0 4px #B99B5E, inset 0 0 0 7px var(--white);
+}
+.lantern-node .lamp.ic-frame .nm{color:var(--ink);text-shadow:none;font-size:14px}
+.lantern-node .lamp.ic-frame::before,
+.lantern-node .lamp.ic-frame::after{display:none}
+.lantern-node:not(.locked) .lamp.ic-frame{animation:framelight 3.4s ease-in-out infinite}
+.lantern-node.locked .lamp.ic-frame{
+  background:linear-gradient(160deg,#DAD4C6,#BDB6A6);
+  box-shadow:none;animation:none;
+  border-color:#8C8578;
+}
+.lantern-node.locked .lamp.ic-frame .nm{color:#6E6759}
+.lantern-node.done .lamp.ic-frame{
+  box-shadow:0 4px 12px rgba(217,164,65,.45),
+             inset 0 0 0 4px var(--gold), inset 0 0 0 7px var(--white);
+}
+@keyframes framelight{
+  0%,100%{box-shadow:0 4px 10px rgba(51,48,43,.28),
+          inset 0 0 0 4px #B99B5E, inset 0 0 0 7px var(--white)}
+  50%{box-shadow:0 4px 16px rgba(185,155,94,.5),
+      inset 0 0 0 4px #D3B579, inset 0 0 0 7px var(--white)}
+}
+body.adv-on .lantern-node:not(.locked) .lamp.ic-frame{
+  background:linear-gradient(160deg,#EFE9F5,#DCD2E8);
+  box-shadow:0 4px 10px rgba(107,78,142,.3),
+             inset 0 0 0 4px var(--murasaki), inset 0 0 0 7px var(--white);
+  animation:none;
 }
 .lantern-node.locked .lamp .nm{color:#f2eee4;text-shadow:none}
 .lantern-node.locked .ribbon{
@@ -237,7 +275,7 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 #tier-bar.t-adv{background:var(--murasaki);color:var(--paper)}
 #tier-bar.t-adv button{background:rgba(255,255,255,.2);color:var(--paper)}
 
-body.adv-on .lantern-node:not(.locked) .lamp{
+body.adv-on .lantern-node:not(.locked) .lamp.ic-lantern{
   background:radial-gradient(circle at 50% 30%, #8A6BAF, var(--murasaki) 55%, #4A3566);
   box-shadow:0 4px 10px rgba(107,78,142,.35);
 }

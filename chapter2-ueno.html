@@ -24,7 +24,7 @@
     <div class="map-head">
       <p class="chap" id="map-chap">第 一 章</p>
       <h1>上野絵図</h1>
-      <p>点亮灯笼，走进去看看 · 这一章要开口</p>
+      <p>点开画框，走进去看看 · 这一章要开口</p>
     </div>
     <div id="map-canvas">
       <svg class="path-bg" viewBox="0 0 390 940" preserveAspectRatio="none" aria-hidden="true">
@@ -57,7 +57,7 @@
       </svg>
       <!-- nodes injected by JS -->
     </div>
-    <div class="map-foot">灰灯笼＝集齐上一章全部金印后点亮 · 碑形标记＝文人碑</div>
+    <div class="map-foot">灰框＝集齐上一章全部金印后点亮 · 碑形标记＝文人碑</div>
   </div>
 </main>
 
@@ -120,8 +120,12 @@ const NEXT_STEP = {
   cta: "去浅草・二周目"
 };
 
+const MAP_ICON = "frame";   /* 上野是博物馆・美术馆区，记号用額縁 */
+
 const CH_TEXT = {
   area: "上野",
+  guideMap:
+    '<div class="g-step"><span class="g-ico">🖼</span><span>点地图上的<b>金框</b>，走进一个区域。灰框还锁着，集齐上一章的金印就会亮。</span></div>',
   finale:
     '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:8px">' +
     '上野の一周目、歩き切りました。<br><b>よく歩きました。</b></p>'
@@ -1286,6 +1290,433 @@ const SCENES = [
         eggFinalAt:8
       }
     ]
+  },
+{
+    id:"heiseikan", name:"平成館 考古展示室", short:"考古", chapter:3,
+    svg:"u7",
+    hotspots:[
+      {
+        id:"jomon", name:"縄文土器", x:20, y:44,
+        learn:{
+          words:[
+            {jp:"縄文", kana:"じょうもん", romaji:"Jōmon", zh:"绳文（时代）"},
+            {jp:"土器", kana:"どき", romaji:"doki", zh:"陶器"},
+            {jp:"模様", kana:"もよう", romaji:"moyō", zh:"纹样"},
+            {jp:"炎", kana:"ほのお", romaji:"honō", zh:"火焰"}
+          ],
+          noteJa:"縄文土器の模様は、縄を押しつけて付けました。「縄文」という名前はそこから来ています。火焔型土器は、炎が立ち上がるような形をしています。",
+          noteKana:"じょうもんどきの もようは、なわを おしつけて つけました。じょうもんという なまえは そこから きて います。かえんがた どきは、ほのおが たちあがるような かたちを して います。",
+          noteRomaji:"Jōmon doki no moyō wa, nawa o oshitsukete tsukemashita. Jōmon to iu namae wa soko kara kite imasu. Kaengata doki wa, honō ga tachiagaru yō na katachi o shite imasu.",
+          noteZh:"绳文陶器的纹样，是把绳子压上去印出来的。「绳文」这个名字就是这么来的。火焰型陶器，做成火苗蹿起来的样子。"
+        },
+        questions:[
+          {type:"read", prompt:"「縄文」の読み方は？", options:["じょうもん","なわもん","じょうぶん"], answer:0,
+           explain:"じょうもん。「縄」音读じょう，训读なわ。名字里用音读，说绳子本身用なわ。"},
+          {type:"read", prompt:"「土器」の読み方は？", options:["どき","つちうつわ","とき"], answer:0,
+           explain:"どき。清音と／浊音ど的差别：土器（どき）不是とき。「時（とき）」是另一个词。"},
+          {type:"vocab", prompt:"「縄文」这个名字是怎么来的？",
+           options:["纹样是用绳子压出来的","出土在绳文村","形状像绳子"], answer:0,
+           explain:"绳（なわ）＋文（もん）。一个考古学名词，字面就把做法说完了。"},
+          {type:"read", prompt:"「炎」の読み方は？", options:["ほのお","えん","ひのお"], answer:0,
+           explain:"ほのお。训读。组词念えん：火炎（かえん）。火焔型土器就念かえんがた。"},
+          {type:"listen", tts:"縄を押しつけて模様を付けました。",
+           ttsKana:"なわを おしつけて もようを つけました。",
+           options:["把绳子压上去印出纹样","用绳子把它捆起来","在绳子上画了纹样"], answer:0,
+           explain:"「押しつける」＝压上去。两个动词粘成一个：押す＋つける。日语这样造词特别多。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「縄文」怎么念？用假名写。", accept:["じょうもん"], hint:"じょう…", kana:"じょうもん",
+           explain:"じょうもん。这个词你从中文书里读过无数次，今天给它配上日语的音。接下来四个词都是这种情况。"},
+          {type:"write", prompt:"「土器」怎么念？", accept:["どき"], hint:"ど…", kana:"どき",
+           explain:"どき。两个假名，浊音开头。展签上「縄文土器」四个字连起来念じょうもんどき。"},
+          {type:"build", prompt:"想说「纹样是用绳子压出来的」。",
+           zhHint:"手段用「で」，被动「付けられました」。",
+           tiles:["模様は","縄で","付けられ","ました"], extra:["から","付けます"],
+           kana:"もようは なわで つけられました",
+           explain:"手段的「で」——浅草「蝋で作りました」「木でできている」是同一个。被动因为做的人不重要。看展签时你会一直用这两样。"},
+          {type:"build", prompt:"想说「做成火苗蹿起来的样子」。",
+           zhHint:"「〜ような形をしています」＝呈…的样子。",
+           tiles:["炎が","立ち上がるような","形を","しています"], extra:["から","します"],
+           kana:"ほのおが たちあがるような かたちを しています",
+           explain:"「〜形をしている」——上野今戸神社那格的「絵馬も丸い形をしています」是同一句型。加上「〜ような」＝像…似的，你就能描述任何一件没见过的东西了。"},
+          {type:"shadow", hideKana:true, jp:"火焔型土器は、炎のような形をしています。",
+           kana:"かえんがた どきは、ほのおの ような かたちを して います。",
+           zh:"火焰型陶器，形状像火苗。",
+           explain:"注意「火焔」在这里念かえん（音读），可单独的「炎」念ほのお（训读）。同一个字，组词和单用两个音——这一章你已经撞见很多次了。"}
+        ]
+      },
+      {
+        id:"dogu", name:"土偶", x:46, y:32,
+        learn:{
+          words:[
+            {jp:"土偶", kana:"どぐう", romaji:"dogū", zh:"土偶"},
+            {jp:"祈り", kana:"いのり", romaji:"inori", zh:"祈祷"},
+            {jp:"壊す", kana:"こわす", romaji:"kowasu", zh:"弄坏"},
+            {jp:"目", kana:"め", romaji:"me", zh:"眼睛"}
+          ],
+          noteJa:"土偶はほとんどが壊れた状態で見つかります。わざと壊したのではないかと言われています。遮光器土偶の大きな目は、雪の眩しさを防ぐ道具に似ているのでその名前が付きました。",
+          noteKana:"どぐうは ほとんどが こわれた じょうたいで みつかります。わざと こわしたのでは ないかと いわれて います。しゃこうき どぐうの おおきな めは、ゆきの まぶしさを ふせぐ どうぐに にて いるので その なまえが つきました。",
+          noteRomaji:"Dogū wa hotondo ga kowareta jōtai de mitsukarimasu. Waza to kowashita no de wa nai ka to iwarete imasu. Shakōki dogū no ōkina me wa, yuki no mabushisa o fusegu dōgu ni nite iru node sono namae ga tsukimashita.",
+          noteZh:"土偶出土时几乎都是破的。有人说是故意打碎的。遮光器土偶那双大眼睛，像因纽特人挡雪光的护目具，名字就是这么来的。"
+        },
+        questions:[
+          {type:"read", prompt:"「土偶」の読み方は？", options:["どぐう","どぐ","つちぐう"], answer:0,
+           explain:"どぐう。跟「道具（どうぐ）」只差一点，念错就成工具了。"},
+          {type:"read", prompt:"「祈り」の読み方は？", options:["いのり","きり","ねがり"], answer:0,
+           explain:"いのり。祈（いの）る＝祈祷。名词形又是动词去ます。这一章你见过一大把了。"},
+          {type:"vocab", prompt:"土偶出土时通常是什么状态？",
+           options:["几乎都是破的","几乎都是完整的","大多只剩底座"], answer:0,
+           explain:"所以有一种说法：本来就是为了打碎而做的，替人受灾。这是考古学至今没定论的事。"},
+          {type:"vocab", prompt:"「遮光器」这个名字是怎么来的？",
+           options:["大眼睛像挡雪光的护目具","出土在遮光的洞里","眼睛能开合"], answer:0,
+           explain:"明治时期的学者觉得它像因纽特人的雪镜，就这么叫下来了。名字是后人给的，不是绳文人自己的叫法。"},
+          {type:"listen", tts:"わざと壊したのではないかと言われています。",
+           ttsKana:"わざと こわしたのでは ないかと いわれて います。",
+           options:["有说法认为是故意打碎的","是不小心弄坏的","禁止触碰以免损坏"], answer:0,
+           explain:"「わざと」＝故意。「〜のではないか」＝会不会是…呢，学术上不把话说死的说法。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「土偶」怎么念？", accept:["どぐう"], hint:"ど…", kana:"どぐう",
+           explain:"どぐう。注意长音——どぐ是「道具」的一半，どぐう才对。一个长音之差。"},
+          {type:"write", prompt:"「祈り」怎么念？", accept:["いのり"], hint:"い…", kana:"いのり",
+           explain:"いのり。「祈り」这个词在日本很重。神社、寺庙、灾后的默祷，用的都是它。"},
+          {type:"build", prompt:"想说「几乎都是破的状态被发现」。",
+           zhHint:"状态用「〜た状態で」。被动「見つかります」。",
+           tiles:["ほとんどが","壊れた","状態で","見つかります"], extra:["から","壊します"],
+           kana:"ほとんどが こわれた じょうたいで みつかります",
+           explain:"「壊れる」自动词（自己坏），「壊す」他动词（人弄坏）。这一格的谜就在这两个词之间：是坏了，还是被弄坏的。"},
+          {type:"build", prompt:"想说「据说是故意打碎的」。",
+           zhHint:"这一章第五次用这个传闻句型。",
+           tiles:["わざと","壊した","と","言われています"], extra:["から","そうです"],
+           kana:"わざと こわしたと いわれて います",
+           explain:"浅草四次，这里第五次。讲传说、讲学说、讲没定论的事，日语都靠它把责任推给「大家」。你现在应该能自己起头了。"},
+          {type:"shadow", hideKana:true, jp:"大きな目は、雪の眩しさを防ぐ道具に似ています。",
+           kana:"おおきな めは、ゆきの まぶしさを ふせぐ どうぐに にて います。",
+           zh:"那双大眼睛，像挡雪光的护目具。",
+           explain:"「〜に似ている」＝像…。用「に」不是「と」。「眩しさ」是形容词变名词（眩しい→眩しさ），跟高さ、辛さ同一个变法。"}
+        ]
+      },
+      {
+        id:"haniwa", name:"埴輪", x:72, y:46,
+        learn:{
+          words:[
+            {jp:"埴輪", kana:"はにわ", romaji:"haniwa", zh:"埴轮"},
+            {jp:"古墳", kana:"こふん", romaji:"kofun", zh:"古坟"},
+            {jp:"並べる", kana:"ならべる", romaji:"naraberu", zh:"排列"},
+            {jp:"武人", kana:"ぶじん", romaji:"bujin", zh:"武人"}
+          ],
+          noteJa:"埴輪は古墳の上に並べられました。人、馬、家、船——生きている世界をそのまま置いたようです。挂甲の武人は国宝で、この部屋の主役です。",
+          noteKana:"はにわは こふんの うえに ならべられました。ひと、うま、いえ、ふね——いきて いる せかいを そのまま おいたようです。けいこうの ぶじんは こくほうで、この へやの しゅやくです。",
+          noteRomaji:"Haniwa wa kofun no ue ni naraberaremashita. Hito, uma, ie, fune — ikite iru sekai o sono mama oita yō desu. Keikō no bujin wa kokuhō de, kono heya no shuyaku desu.",
+          noteZh:"埴轮是排在古坟上面的。人、马、房子、船——像是把活着的世界原样搬了上去。挂甲武人是国宝，这间屋子的主角。"
+        },
+        questions:[
+          {type:"read", prompt:"「埴輪」の読み方は？", options:["はにわ","しょくりん","はにりん"], answer:0,
+           explain:"はにわ。埴（はに）＝黏土，輪（わ）＝圈。全训读。这个词光看汉字绝对猜不出音。"},
+          {type:"read", prompt:"「古墳」の読み方は？", options:["こふん","ふるはか","こぼ"], answer:0,
+           explain:"こふん。跟中文 gǔfén 对得上。古坟时代就是以它命名的。"},
+          {type:"vocab", prompt:"埴轮是放在哪里的？",
+           options:["古坟上面","坟墓里面","神社门口"], answer:0,
+           explain:"排在坟丘外侧，围一圈。不是陪葬品，是给外面看的。"},
+          {type:"read", prompt:"「並べる」の読み方は？", options:["ならべる","へいべる","なみべる"], answer:0,
+           explain:"ならべる。他动词（人去排）。自动词是「並ぶ（ならぶ）」——浅草学过「店が並んでいます」。"},
+          {type:"listen", tts:"人、馬、家、船。生きている世界をそのまま置いたようです。",
+           ttsKana:"ひと、うま、いえ、ふね。いきて いる せかいを そのまま おいたようです。",
+           options:["像把活着的世界原样搬了上去","这些东西都是活的","世界一直没有变过"], answer:0,
+           explain:"「〜ようです」＝好像…。「そのまま」＝原封不动。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「埴輪」怎么念？", accept:["はにわ"], hint:"は…", kana:"はにわ",
+           explain:"はにわ。三个假名，全训读。这是整个展室里最该记住的一个音——你认得这两个字几十年，可它念はにわ。"},
+          {type:"write", prompt:"「古墳」怎么念？", accept:["こふん"], hint:"こ…", kana:"こふん",
+           explain:"こふん。音读，跟中文接近。跟前面那些训读词一对照，你就能感觉出哪些词能靠中文猜、哪些不能。"},
+          {type:"build", prompt:"想说「排在古坟的上面」。",
+           zhHint:"位置用「に」，被动「並べられました」。",
+           tiles:["古墳の上に","並べられ","ました"], extra:["で","並べます"],
+           kana:"こふんの うえに ならべられました",
+           explain:"「並べる」他动词的被动＝被排列。跟浅草「店が並んでいます」（自动词，自己排着）比一比：一个有人摆，一个自己成那样。"},
+          {type:"build", prompt:"想说「像是把活着的世界原样搬上去了」。",
+           zhHint:"「そのまま」＝原封不动；「〜ようです」＝好像。",
+           tiles:["生きている世界を","そのまま","置いた","ようです"], extra:["から","置きます"],
+           kana:"いきて いる せかいを そのまま おいたようです",
+           explain:"「〜ようです」＝看起来像、好像是。讲你自己的推测时用它，比断言留余地。你在美术馆里想说的很多话，其实都是推测。"},
+          {type:"shadow", hideKana:true, jp:"挂甲の武人は国宝です。",
+           kana:"けいこうの ぶじんは こくほうです。", zh:"挂甲武人是国宝。",
+           explain:"「挂甲」念けいこう——铠甲的一种。展签上的这类专有名词最难，但也最值：念得出来，你在这间屋子里就能自己走。"}
+        ]
+      },
+      {
+        id:"dotaku", name:"銅鐸", x:44, y:72,
+        learn:{
+          words:[
+            {jp:"銅鐸", kana:"どうたく", romaji:"dōtaku", zh:"铜铎"},
+            {jp:"青銅", kana:"せいどう", romaji:"seidō", zh:"青铜"},
+            {jp:"鳴らす", kana:"ならす", romaji:"narasu", zh:"使…发声"},
+            {jp:"謎", kana:"なぞ", romaji:"nazo", zh:"谜"}
+          ],
+          noteJa:"銅鐸は青銅でできた鐘のような道具です。はじめは鳴らしていたようですが、だんだん大きくなって、飾るだけになりました。何のために作ったのかは、今も謎です。",
+          noteKana:"どうたくは せいどうで できた かねのような どうぐです。はじめは ならして いたようですが、だんだん おおきく なって、かざるだけに なりました。なんの ために つくったのかは、いまも なぞです。",
+          noteRomaji:"Dōtaku wa seidō de dekita kane no yō na dōgu desu. Hajime wa narashite ita yō desu ga, dandan ōkiku natte, kazaru dake ni narimashita. Nan no tame ni tsukutta no ka wa, ima mo nazo desu.",
+          noteZh:"铜铎是青铜做的、像钟一样的器物。起初似乎是敲响用的，后来越做越大，变成只用来陈设。到底为什么造，至今是谜。"
+        },
+        questions:[
+          {type:"read", prompt:"「銅鐸」の読み方は？", options:["どうたく","どうだく","どうてつ"], answer:0,
+           explain:"どうたく。清音たく。这个字你在中文里读 duó，日语念たく。"},
+          {type:"read", prompt:"「青銅」の読み方は？", options:["せいどう","あおどう","しょうどう"], answer:0,
+           explain:"せいどう。「青」音读せい，训读あお。青空（あおぞら）用训读，青銅用音读。"},
+          {type:"vocab", prompt:"铜铎后来变成了什么用途？",
+           options:["只用来陈设，不再敲响","变成了乐器","变成了容器"], answer:0,
+           explain:"越做越大越薄，敲不响了。工具变成象征——这个过程本身就很有意思。"},
+          {type:"vocab", prompt:"「謎」是什么意思？",
+           options:["谜、还没弄清的事","模型","碎片"], answer:0,
+           explain:"なぞ。「謎のまま」＝仍然是个谜。考古展签上很常见——日本的学者不怕承认不知道。"},
+          {type:"listen", tts:"何のために作ったのかは、今も謎です。",
+           ttsKana:"なんの ために つくったのかは、いまも なぞです。",
+           options:["到底为什么造的，至今是谜","造了多少个至今不明","什么时候造的已经清楚了"], answer:0,
+           explain:"「何のために」＝为了什么。浅草宝蔵門那格的「何のためですか」是同一个词，这次装进了长句里。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「銅鐸」怎么念？", accept:["どうたく"], hint:"どう…", kana:"どうたく",
+           explain:"どうたく。你在中文里念 tóngduó 几十年了。日语这一版，今天装进嘴里。"},
+          {type:"write", prompt:"「謎」怎么念？", accept:["なぞ"], hint:"な…", kana:"なぞ",
+           explain:"なぞ。两个假名。「謎の人物」「謎が解ける」——推理小说的常用词。"},
+          {type:"build", prompt:"想说「是青铜做的」。",
+           zhHint:"这个句型你在本館的仏像那格用过。",
+           tiles:["青銅で","できて","います"], extra:["から","作ります"],
+           kana:"せいどうで できて います",
+           explain:"「〜でできている」——本館的「木でできている」是第一次，这是第二次。石でできている、紙でできている——这一句能陪你走完所有的博物馆。"},
+          {type:"build", prompt:"想说「为什么造的至今是谜」。",
+           zhHint:"「何のために」＝为了什么。",
+           tiles:["何のために","作ったのかは","今も","謎です"], extra:["から","です"],
+           kana:"なんの ために つくったのかは いまも なぞです",
+           explain:"「〜のかは」把一个疑问句整个当主语用。这是日语描述「不清楚的事」的标准做法：疑问＋のか＋は＋结论。"},
+          {type:"shadow", hideKana:true, jp:"だんだん大きくなって、飾るだけになりました。",
+           kana:"だんだん おおきく なって、かざるだけに なりました。",
+           zh:"越做越大，变成只用来陈设了。",
+           explain:"「だんだん〜なる」＝渐渐变得…。这一章「〜になる」已经第七次了。日语讲变化，主角永远是那个东西自己。"}
+        ]
+      },
+      {
+        id:"garasu", name:"ガラスの映り込み", x:84, y:76, egg:true,
+        eggLines:["…","そっと","カツ、カツ","しーん"],
+        eggFinal:"ガラスに自分の顔が映る。二千年前のものと、同じ枠の中に",
+        eggFinalAt:8
+      }
+    ]
+  },
+  {
+    id:"matsukata", name:"松方コレクション", short:"西洋美", chapter:4,
+    svg:"u8",
+    hotspots:[
+      {
+        id:"korekushon", name:"松方コレクション", x:22, y:46,
+        learn:{
+          words:[
+            {jp:"収集", kana:"しゅうしゅう", romaji:"shūshū", zh:"收集"},
+            {jp:"寄贈", kana:"きぞう", romaji:"kizō", zh:"捐赠"},
+            {jp:"戦争", kana:"せんそう", romaji:"sensō", zh:"战争"},
+            {jp:"返還", kana:"へんかん", romaji:"henkan", zh:"归还"}
+          ],
+          noteJa:"松方幸次郎はヨーロッパで絵を買い集めました。戦争でフランスに接収されましたが、戦後に返還されて、この美術館ができました。美術館が先にあったのではなく、絵が先にあったのです。",
+          noteKana:"まつかた こうじろうは ヨーロッパで えを かいあつめました。せんそうで フランスに せっしゅう されましたが、せんごに へんかん されて、この びじゅつかんが できました。びじゅつかんが さきに あったのでは なく、えが さきに あったのです。",
+          noteRomaji:"Matsukata Kōjirō wa Yōroppa de e o kaiatsumemashita. Sensō de Furansu ni sesshū saremashita ga, sengo ni henkan sarete, kono bijutsukan ga dekimashita. Bijutsukan ga saki ni atta no de wa naku, e ga saki ni atta no desu.",
+          noteZh:"松方幸次郎在欧洲一路买画。战争中被法国接收，战后归还，这座美术馆才建起来。不是先有美术馆才有画，是先有画才有美术馆。"
+        },
+        questions:[
+          {type:"read", prompt:"「収集」の読み方は？", options:["しゅうしゅう","しゅうあつめ","おさめあつめ"], answer:0,
+           explain:"しゅうしゅう。四个假名两个しゅう，念的时候容易并成一个。慢一点。"},
+          {type:"read", prompt:"「返還」の読み方は？", options:["へんかん","はんかん","かえしかん"], answer:0,
+           explain:"へんかん。归还。跟「変換（へんかん）」同音不同字——一个是还回来，一个是转换。日语同音词多，靠汉字分。"},
+          {type:"vocab", prompt:"这座美术馆是怎么来的？",
+           options:["为了安放归还的松方藏品而建","先建馆再买画","是法国送的"], answer:0,
+           explain:"顺序反过来了：画先在，馆后有。所以它从一开始就是为一批画量身做的房子。"},
+          {type:"listen", tts:"戦後に返還されて、この美術館ができました。",
+           ttsKana:"せんごに へんかん されて、この びじゅつかんが できました。",
+           options:["战后归还，这座美术馆才建成","战后美术馆被拆了","美术馆战前就有了"], answer:0,
+           explain:"「できる」＝建成、形成。浅草ひさご通り那格的「商店街ができました」是同一个用法。"},
+          {type:"read", prompt:"「寄贈」の読み方は？", options:["きぞう","きそう","よそう"], answer:0,
+           explain:"きぞう。捐赠。美术馆展签上常见「〇〇氏寄贈」。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「収集」怎么念？", accept:["しゅうしゅう"], hint:"しゅう…", kana:"しゅうしゅう",
+           explain:"しゅうしゅう。两个しゅう要分开念清楚。日语里这种叠音词不少：習慣（しゅうかん）、集中（しゅうちゅう）。"},
+          {type:"write", prompt:"「戦争」怎么念？", accept:["せんそう"], hint:"せん…", kana:"せんそう",
+           explain:"せんそう。这批画的命运从这个词开始拐弯。松方买画时想的是给日本人看，结果隔了一场战争才到。"},
+          {type:"build", prompt:"想说「战后归还了」。",
+           zhHint:"被动「返還されました」。",
+           tiles:["戦後に","返還され","ました"], extra:["から","返還します"],
+           kana:"せんごに へんかん されました",
+           explain:"汉字词＋される＝被…。这一章你已经见过：接収される、返還される、寄贈される。认得汉字的人，在这里占大便宜——加两个假名就成句。"},
+          {type:"build", prompt:"想说「不是先有美术馆，是先有画」。",
+           zhHint:"「〜のではなく、〜のです」＝不是…而是…。",
+           tiles:["美術館が","先にあったのでは","なく","絵が先にあったのです"], extra:["から","です"],
+           kana:"びじゅつかんが さきに あったのでは なく、えが さきに あったのです",
+           explain:"「〜のではなく」是纠正、澄清时用的。你知道的历史比大多数人多，这个句型能让你把「其实不是那样」说得体面。"},
+          {type:"shadow", hideKana:true, jp:"ヨーロッパで絵を買い集めました。",
+           kana:"ヨーロッパで えを かいあつめました。", zh:"在欧洲一路买画。",
+           explain:"「買い集める」——两个动词粘一起。押しつける、買い集める、生まれ育つ、話しかける——这一章你已经收了四个。"}
+        ]
+      },
+      {
+        id:"rodin", name:"ロダン「考える人」", x:54, y:26,
+        learn:{
+          words:[
+            {jp:"彫刻", kana:"ちょうこく", romaji:"chōkoku", zh:"雕刻"},
+            {jp:"考える", kana:"かんがえる", romaji:"kangaeru", zh:"思考"},
+            {jp:"屋外", kana:"おくがい", romaji:"okugai", zh:"户外"},
+            {jp:"無料", kana:"むりょう", romaji:"muryō", zh:"免费"}
+          ],
+          noteJa:"「考える人」は前庭にあります。屋外なので、チケットを買わなくても見られます。地獄の門の上に座っていた人が、一人だけ大きくなって独立しました。",
+          noteKana:"かんがえる ひとは ぜんていに あります。おくがいなので、チケットを かわなくても みられます。じごくのもんの うえに すわって いた ひとが、ひとりだけ おおきく なって どくりつ しました。",
+          noteRomaji:"Kangaeru Hito wa zentei ni arimasu. Okugai na node, chiketto o kawanakute mo miraremasu. Jigoku no Mon no ue ni suwatte ita hito ga, hitori dake ōkiku natte dokuritsu shimashita.",
+          noteZh:"《思想者》在前庭。因为在户外，不买票也能看。他本来坐在《地狱之门》上方，后来单独放大，独立成了一件作品。"
+        },
+        questions:[
+          {type:"read", prompt:"「彫刻」の読み方は？", options:["ちょうこく","ほりこく","とうこく"], answer:0,
+           explain:"ちょうこく。彫（ちょう）＋刻（こく）。浅草包丁屋那格的「彫ってくれます」念ほる——同字两读。"},
+          {type:"read", prompt:"「屋外」の読み方は？", options:["おくがい","やがい","おくそと"], answer:0,
+           explain:"おくがい。注意不是やがい——「野外（やがい）」才念やがい，是另一个词。这两个词很容易混。"},
+          {type:"vocab", prompt:"为什么不买票也能看《思想者》？",
+           options:["因为它在户外的前庭","因为周一免费","因为是复制品"], answer:0,
+           explain:"前庭是开放的。你路过上野公园，随时能站在它面前。"},
+          {type:"vocab", prompt:"《思想者》原来是哪里的一部分？",
+           options:["《地狱之门》上方","独立创作的","美术馆的门柱"], answer:0,
+           explain:"他本来俯视着门下的众生。单拿出来放大之后，那个「看着什么」的对象消失了——留下一个纯粹在想的人。"},
+          {type:"listen", tts:"チケットを買わなくても見られますよ。",
+           ttsKana:"チケットを かわなくても みられますよ。",
+           options:["不买票也能看","票买了才能看","票卖完了"], answer:0,
+           explain:"「〜なくても」＝即使不…也。アメ横那格的「買わなくて大丈夫」是同一个思路。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「彫刻」怎么念？", accept:["ちょうこく"], hint:"ちょう…", kana:"ちょうこく",
+           explain:"ちょうこく。美术馆里最常见的分类词之一：絵画（かいが）、彫刻（ちょうこく）、版画（はんが）——版画你在浅草学过了。"},
+          {type:"write", prompt:"「無料」怎么念？", accept:["むりょう"], hint:"む…", kana:"むりょう",
+           explain:"むりょう。反义是「有料（ゆうりょう）」。日本到处贴这两个词，看得懂能省不少事。"},
+          {type:"build", prompt:"想说「不买票也能看」。",
+           zhHint:"「〜なくても」＝即使不…也。可能形「見られます」。",
+           tiles:["チケットを","買わなくても","見られます"], extra:["から","買います"],
+           kana:"チケットを かわなくても みられます",
+           explain:"「買わなくても」是否定的て形＋も。アメ横「呼ばれても」、这里「買わなくても」——一个肯定一个否定，两种都拿到手。"},
+          {type:"build", prompt:"想说「因为在户外，随时都能看」。",
+           zhHint:"原因用「〜なので」（名词/形容动词后）。",
+           tiles:["屋外","なので","いつでも","見られます"], extra:["から","ので"],
+           kana:"おくがい なので いつでも みられます",
+           explain:"名词接原因要用「なので」，不是「ので」。上野今戸神社「神社なので」是同一条规则，这是第二次。"},
+          {type:"shadow", hideKana:true, jp:"地獄の門の上に座っていた人です。",
+           kana:"じごくのもんの うえに すわって いた ひとです。",
+           zh:"是原本坐在《地狱之门》上方的那个人。",
+           explain:"「座っていた」——ている的过去形，表示「当时一直坐着」。这一章的「〜ている」到这里第八次了。"}
+        ]
+      },
+      {
+        id:"monet", name:"モネ「睡蓮」", x:80, y:56,
+        learn:{
+          words:[
+            {jp:"睡蓮", kana:"すいれん", romaji:"suiren", zh:"睡莲"},
+            {jp:"光", kana:"ひかり", romaji:"hikari", zh:"光"},
+            {jp:"印象", kana:"いんしょう", romaji:"inshō", zh:"印象"},
+            {jp:"筆", kana:"ふで", romaji:"fude", zh:"笔／笔触"}
+          ],
+          noteJa:"モネは同じ池を何十枚も描きました。描いていたのは睡蓮ではなく、水に落ちる光のほうです。近くで見ると筆のあとだけ、離れると池になります。",
+          noteKana:"モネは おなじ いけを なんじゅうまいも えがきました。えがいて いたのは すいれんでは なく、みずに おちる ひかりの ほうです。ちかくで みると ふでの あとだけ、はなれると いけに なります。",
+          noteRomaji:"Mone wa onaji ike o nanjū-mai mo egakimashita. Egaite ita no wa suiren de wa naku, mizu ni ochiru hikari no hō desu. Chikaku de miru to fude no ato dake, hanareru to ike ni narimasu.",
+          noteZh:"莫奈把同一个池子画了几十幅。他画的不是睡莲，是落在水上的光。凑近看只有笔触，退开就成了池子。"
+        },
+        questions:[
+          {type:"read", prompt:"「睡蓮」の読み方は？", options:["すいれん","すいはす","ねむりはす"], answer:0,
+           explain:"すいれん。蓮在这里念れん（音读）。不忍池那格的「蓮（はす）」是训读——同一个字，隔了一个展馆又碰上了。"},
+          {type:"read", prompt:"「筆」の読み方は？", options:["ふで","ひつ","ふみ"], answer:0,
+           explain:"ふで。训读。组词念ひつ：鉛筆（えんぴつ）、筆記（ひっき）。"},
+          {type:"vocab", prompt:"莫奈真正在画的是什么？",
+           options:["落在水上的光","睡莲的品种","池子的形状"], answer:0,
+           explain:"所以他要在不同时刻反复画同一个池子——光每小时都不一样。"},
+          {type:"listen", tts:"近くで見ると筆のあとだけです。",
+           ttsKana:"ちかくで みると ふでの あとだけです。",
+           options:["凑近看只有笔触","近看才看得清","近处不许观看"], answer:0,
+           explain:"「〜と」＝一…就。这一章第五次了。"},
+          {type:"vocab", prompt:"「離れると池になります」是什么意思？",
+           options:["退开一点就变成池子了","离开池子就好了","池子会移动"], answer:0,
+           explain:"印象派最要紧的一句话。看画要退后几步——这是这一格想让你带走的东西。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「睡蓮」怎么念？", accept:["すいれん"], hint:"すい…", kana:"すいれん",
+           explain:"すいれん。跟不忍池的「蓮（はす）」是同一个字。音读れん、训读はす——隔着一整个上野公园，这个字回来了。"},
+          {type:"write", prompt:"「印象」怎么念？", accept:["いんしょう"], hint:"いん…", kana:"いんしょう",
+           explain:"いんしょう。印象派＝いんしょうは。「印象に残る」＝留下印象，日常里也常说。"},
+          {type:"build", prompt:"想说「他画的不是睡莲，是光」。",
+           zhHint:"松方那格学过「〜ではなく」。",
+           tiles:["描いていたのは","睡蓮では","なく","光です"], extra:["から","です"],
+           kana:"えがいて いたのは すいれんでは なく ひかりです",
+           explain:"「〜ではなく」第二次。这个句型专门用来纠正一个常见的误会——而你想说的话里，有一半是这种。"},
+          {type:"build", prompt:"想说「退开一点就成了池子」。",
+           zhHint:"「〜と」＝一…就；「〜になります」。",
+           tiles:["離れると","池に","なります"], extra:["から","します"],
+           kana:"はなれると いけに なります",
+           explain:"「〜と〜になる」——这一章第八次了。夏になると緑になる、離れると池になる。同一个骨架，一个说季节，一个说距离。"},
+          {type:"shadow", hideKana:true, jp:"同じ池を何十枚も描きました。",
+           kana:"おなじ いけを なんじゅうまいも えがきました。",
+           zh:"把同一个池子画了几十幅。",
+           explain:"「何十枚も」＝几十幅之多。「も」在这里是强调数量之多。画用「枚」——浅草学过票用枚，这里是画。"}
+        ]
+      },
+      {
+        id:"korubyujie", name:"ル・コルビュジエの建物", x:44, y:78,
+        learn:{
+          words:[
+            {jp:"建築家", kana:"けんちくか", romaji:"kenchikuka", zh:"建筑家"},
+            {jp:"世界遺産", kana:"せかいいさん", romaji:"sekai isan", zh:"世界遗产"},
+            {jp:"設計", kana:"せっけい", romaji:"sekkei", zh:"设计"},
+            {jp:"柱", kana:"はしら", romaji:"hashira", zh:"柱子"}
+          ],
+          noteJa:"本館を設計したのはル・コルビュジエです。建物そのものが世界遺産になりました。一階は柱だけで、壁がありません。中に入ると、螺旋のスロープで少しずつ上がっていきます。",
+          noteKana:"ほんかんを せっけい したのは ル・コルビュジエです。たてもの そのものが せかいいさんに なりました。いっかいは はしらだけで、かべが ありません。なかに はいると、らせんの スロープで すこしずつ あがって いきます。",
+          noteRomaji:"Honkan o sekkei shita no wa Ru Korubyujie desu. Tatemono sono mono ga sekai isan ni narimashita. Ikkai wa hashira dake de, kabe ga arimasen. Naka ni hairu to, rasen no surōpu de sukoshi zutsu agatte ikimasu.",
+          noteZh:"本馆是勒·柯布西耶设计的。建筑本身成了世界遗产。一楼只有柱子，没有墙。走进去，顺着螺旋坡道一点点往上。"
+        },
+        questions:[
+          {type:"read", prompt:"「設計」の読み方は？", options:["せっけい","せつけい","もうけい"], answer:0,
+           explain:"せっけい。促音——せつけい是错的。促音是中文母语者最容易吃掉的音，念的时候要真的停半拍。"},
+          {type:"read", prompt:"「世界遺産」の読み方は？", options:["せかいいさん","せかいいざん","せかいゆいさん"], answer:0,
+           explain:"せかいいさん。「界」和「遺」中间两个い连着，容易并成一个。慢一点念清楚。"},
+          {type:"vocab", prompt:"这栋建筑为什么特别？",
+           options:["建筑本身就是世界遗产","是日本最高的美术馆","里面不能拍照"], answer:0,
+           explain:"所以你不只是来看画的——房子本身就是一件展品。"},
+          {type:"vocab", prompt:"一楼为什么没有墙？",
+           options:["用柱子把楼撑起来，让地面空出来","还没建完","为了通风"], answer:0,
+           explain:"这是柯布西耶的「ピロティ」。房子被架空，地面还给街道。"},
+          {type:"listen", tts:"建物そのものが世界遺産になりました。",
+           ttsKana:"たてもの そのものが せかいいさんに なりました。",
+           options:["建筑本身成了世界遗产","建筑里有世界遗产","世界遗产搬进了这栋楼"], answer:0,
+           explain:"「そのもの」＝…本身。强调不是里面的东西，是它自己。"}
+        ],
+        advanced:[
+          {type:"write", prompt:"「設計」怎么念？", accept:["せっけい"], hint:"せっ…", kana:"せっけい",
+           explain:"せっけい。促音。浅草「切符（きっぷ）」「日記（にっき）」也是——促音吃掉了，日本人就听不懂了。这一格请把那半拍念足。"},
+          {type:"write", prompt:"「柱」怎么念？", accept:["はしら"], hint:"は…", kana:"はしら",
+           explain:"はしら。训读。「大黒柱（だいこくばしら）」＝顶梁柱，说家里的支柱也用它。"},
+          {type:"build", prompt:"想说「设计这栋楼的是柯布西耶」。",
+           zhHint:"「〜したのは〜です」＝做…的是…。",
+           tiles:["設計したのは","ル・コルビュジエ","です"], extra:["から","しました"],
+           kana:"せっけい したのは ル・コルビュジエです",
+           explain:"「〜のは〜です」是把重点后置的说法。中文说「柯布西耶设计了它」，日语可以说「设计它的是柯布西耶」——重点在谁，不在做了什么。"},
+          {type:"build", prompt:"想说「一楼只有柱子，没有墙」。",
+           zhHint:"「〜だけで」＝只有…，然后接下一句。",
+           tiles:["一階は","柱だけで","壁が","ありません"], extra:["から","います"],
+           kana:"いっかいは はしらだけで かべが ありません",
+           explain:"「だけで」＝只用…、只有…。不忍池「三十分から」、这里「柱だけで」——「だけ」这个词在这一章第三次了。注意墙是东西，用「ありません」不是「いません」。"},
+          {type:"shadow", hideKana:true, jp:"螺旋のスロープで、少しずつ上がっていきます。",
+           kana:"らせんの スロープで、すこしずつ あがって いきます。",
+           zh:"顺着螺旋坡道，一点点往上。",
+           explain:"「〜ていく」＝（从现在）往下去。跟太宰那句「送って来ました」的「〜てくる」正好相反：一个朝向现在，一个离开现在。柯布西耶想让你就这样一点点走上去。"}
+        ]
+      },
+      {
+        id:"kage", name:"前庭の影", x:16, y:80, egg:true,
+        eggLines:["…","すうっ","かたん","しん"],
+        eggFinal:"考える人の影は、時間によって向きを変える",
+        eggFinalAt:8
+      }
+    ]
   }
 ];
 
@@ -1294,13 +1725,115 @@ const NODE_POS = {
   uenoeki:{x:76,y:91}, shinobazu:{x:20,y:70}, koen:{x:44,y:52},
   /* 第二章 アメ横：车站南边，沿着铁道 */
   ameyoko:{x:48,y:82}, gado:{x:74,y:74},
-  /* 第三章 博物馆：公园最北端 */
-  tohaku:{x:56,y:18}
+  /* 第三章 東博：公园最北端 */
+  tohaku:{x:60,y:20}, heiseikan:{x:38,y:14},
+  /* 第四章 西洋美術館：公园入口一侧 */
+  matsukata:{x:24,y:36}
 };
-const MAX_CHAPTER = 3;
-const CH_KANJI = ["","一","二","三"];
+const MAX_CHAPTER = 4;
+const CH_KANJI = ["","一","二","三","四"];
 
 const SVG_ART = {
+u7: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#2E2B26"/>
+  <rect y="250" width="390" height="70" fill="#413C34"/>
+  <rect y="246" width="390" height="5" fill="#554F44"/>
+  <!-- スポット光 -->
+  <g opacity=".16" fill="#FBF3E2">
+    <path d="M40 0 L96 250 L4 250 Z"/><path d="M172 0 L226 250 L128 250 Z"/>
+    <path d="M300 0 L352 250 L258 250 Z"/>
+  </g>
+  <!-- 縄文土器（火焔型） -->
+  <g stroke="#33302B" stroke-width="2.5" fill="#A9704A">
+    <path d="M46 168 C 38 196, 44 226, 62 234 C 76 240, 96 236, 104 224
+             C 112 210, 110 184, 100 166 Z"/>
+    <path d="M46 168 C 40 156, 52 150, 56 158 C 60 146, 74 148, 74 158
+             C 78 144, 94 148, 96 158 C 102 150, 110 158, 100 166 Z" fill="#C08659"/>
+  </g>
+  <g stroke="#7A4E2E" stroke-width="2" fill="none" opacity=".8">
+    <path d="M52 186 H100 M50 200 H104 M54 214 H100"/>
+  </g>
+  <!-- 土偶 -->
+  <g stroke="#33302B" stroke-width="2.5" fill="#9C8368">
+    <path d="M162 240 C 156 214, 160 196, 172 192 L204 192 C 216 196, 220 214, 214 240 Z"/>
+    <ellipse cx="188" cy="172" rx="26" ry="20"/>
+    <path d="M162 208 C 148 204, 142 214, 150 220 M214 208 C 228 204, 234 214, 226 220"/>
+  </g>
+  <g fill="#33302B">
+    <ellipse cx="177" cy="172" rx="8" ry="5"/><ellipse cx="199" cy="172" rx="8" ry="5"/>
+  </g>
+  <path d="M170 172 H184 M192 172 H206" stroke="#C9B79C" stroke-width="2"/>
+  <!-- 埴輪 -->
+  <g stroke="#33302B" stroke-width="2.5" fill="#C08659">
+    <path d="M284 240 C 280 216, 284 200, 296 198 L336 198 C 348 200, 352 216, 348 240 Z"/>
+    <rect x="298" y="150" width="36" height="46" rx="6"/>
+    <path d="M292 160 h48" stroke-width="3"/>
+  </g>
+  <g fill="#33302B">
+    <ellipse cx="308" cy="172" rx="4" ry="6"/><ellipse cx="324" cy="172" rx="4" ry="6"/>
+    <ellipse cx="316" cy="186" rx="5" ry="4"/>
+  </g>
+  <!-- 銅鐸 -->
+  <g stroke="#33302B" stroke-width="2.5" fill="#6E8F7A">
+    <path d="M186 66 C 178 88, 178 120, 184 132 L216 132 C 222 120, 222 88, 214 66 Z"/>
+    <path d="M186 66 C 190 52, 210 52, 214 66" fill="none" stroke-width="3"/>
+    <path d="M186 88 H214 M184 110 H216" stroke="#4E6B58" stroke-width="2"/>
+  </g>
+  <!-- ケースのガラス -->
+  <g fill="#FBF3E2" opacity=".07">
+    <rect x="20" y="60" width="120" height="190"/><rect x="150" y="60" width="110" height="190"/>
+    <rect x="270" y="60" width="106" height="190"/>
+  </g>
+  <g stroke="#8A8172" stroke-width="2" opacity=".5">
+    <rect x="20" y="60" width="120" height="190" fill="none"/>
+    <rect x="150" y="60" width="110" height="190" fill="none"/>
+    <rect x="270" y="60" width="106" height="190" fill="none"/>
+  </g>
+</svg>`,
+u8: `
+<svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
+  <rect width="390" height="320" fill="#DCD8CE"/>
+  <rect y="238" width="390" height="82" fill="#A9A396"/>
+  <!-- ピロティ（柱だけの一階） -->
+  <rect x="0" y="96" width="390" height="112" fill="#B9B3A5"/>
+  <g fill="#8C8578" stroke="#33302B" stroke-width="2.5">
+    <rect x="34" y="208" width="20" height="34"/><rect x="122" y="208" width="20" height="34"/>
+    <rect x="248" y="208" width="20" height="34"/><rect x="336" y="208" width="20" height="34"/>
+  </g>
+  <rect x="0" y="200" width="390" height="10" fill="#96907F"/>
+  <!-- 打ち込みタイルの壁 -->
+  <g fill="#A29B8C" opacity=".65">
+    <rect x="20" y="108" width="52" height="28"/><rect x="80" y="108" width="52" height="28"/>
+    <rect x="140" y="108" width="52" height="28"/><rect x="200" y="108" width="52" height="28"/>
+    <rect x="260" y="108" width="52" height="28"/><rect x="320" y="108" width="52" height="28"/>
+    <rect x="50" y="144" width="52" height="28"/><rect x="110" y="144" width="52" height="28"/>
+    <rect x="170" y="144" width="52" height="28"/><rect x="230" y="144" width="52" height="28"/>
+    <rect x="290" y="144" width="52" height="28"/>
+  </g>
+  <!-- 考える人 -->
+  <rect x="150" y="252" width="76" height="22" fill="#6E6759" stroke="#33302B" stroke-width="3"/>
+  <g stroke="#33302B" stroke-width="2.5" fill="#4E5B4A">
+    <path d="M168 252 C 166 236, 172 226, 180 224 L198 224 C 206 228, 210 240, 208 252 Z"/>
+    <circle cx="186" cy="208" r="13"/>
+    <path d="M186 221 C 178 216, 176 208, 180 202" fill="none"/>
+    <path d="M198 234 C 210 230, 214 218, 200 212" fill="none"/>
+  </g>
+  <!-- 睡蓮の額 -->
+  <rect x="272" y="112" width="96" height="66" fill="#D9C89A" stroke="#33302B" stroke-width="4"/>
+  <rect x="280" y="120" width="80" height="50" fill="#7FA9BD"/>
+  <g fill="#5E8A9E" opacity=".8">
+    <ellipse cx="300" cy="152" rx="14" ry="6"/><ellipse cx="336" cy="140" rx="12" ry="5"/>
+    <ellipse cx="318" cy="162" rx="11" ry="5"/>
+  </g>
+  <g fill="#F2C4D2"><circle cx="304" cy="146" r="4"/><circle cx="334" cy="134" r="3.4"/></g>
+  <!-- スロープ -->
+  <path d="M22 208 C 60 196, 80 172, 78 140" fill="none" stroke="#8C8578" stroke-width="7" stroke-linecap="round"/>
+  <!-- 前庭の木と影 -->
+  <g opacity=".3" fill="#7A8450">
+    <ellipse cx="52" cy="258" rx="30" ry="12"/><ellipse cx="344" cy="264" rx="26" ry="10"/>
+  </g>
+</svg>`,
 u4: `
 <svg viewBox="0 0 390 320" xmlns="http://www.w3.org/2000/svg">
   <rect width="390" height="320" fill="#CBDDE2"/>

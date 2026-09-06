@@ -198,7 +198,8 @@ function renderMap(){
     const node = el("div","lantern-node"+(small?" small":"")+(unlocked?"":" locked")+(goldN===hs.length&&unlocked?" done":""));
     node.style.left = NODE_POS[sc.id].x+"%";
     node.style.top = NODE_POS[sc.id].y+"%";
-    node.innerHTML = '<div class="lamp"><span class="nm">'+sc.short+'</span>'+
+    const ic = "ic-" + ((typeof MAP_ICON !== "undefined" && MAP_ICON) || "lantern");
+    node.innerHTML = '<div class="lamp '+ic+'"><span class="nm">'+sc.short+'</span>'+
       (unlocked?'':'<span class="ribbon">'+sc.chapter+'章</span>')+'</div>'+
       (unlocked?('<div class="cnt">金 '+goldN+' / '+hs.length+'</div>'):'<div class="cnt">🔒</div>');
     node.addEventListener("click", ()=>{
@@ -1484,7 +1485,8 @@ function showGuide(firstTime){
   }
   g.innerHTML = '<div class="g-card">'+
     '<h3>遊び方 · 怎么玩</h3>'+
-    '<div class="g-step"><span class="g-ico">🏮</span><span>点地图上的<b>红灯笼</b>，走进一个区域。灰灯笼还在建，以后更新。</span></div>'+
+    (CHT.guideMap ||
+      '<div class="g-step"><span class="g-ico">🏮</span><span>点地图上的<b>红灯笼</b>，走进一个区域。灰灯笼还在建，以后更新。</span></div>')+
     '<div class="g-step"><span class="g-ico">🔴</span><span><b>红点</b>是新内容：先看学习卡，点 🔊 听发音，看完按「记住了」。</span></div>'+
     '<div class="g-step"><span class="g-ico">🔵</span><span>变<b>蓝</b>之后再点它，开始做题：每次随机3题，答错当场重答。</span></div>'+
     '<div class="g-step"><span class="g-ico">✨</span><span>每个地点藏着5道题，<b>全部答完</b>朱印就变金印。<b>一章集齐全部金印</b>，下一章的灯笼自动点亮。</span></div>'+
