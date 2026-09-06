@@ -305,6 +305,59 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
 .g-card h3{font-family:var(--serif);font-size:19px;letter-spacing:4px;text-align:center;margin-bottom:14px}
 .g-card .g-step{display:flex;gap:10px;font-size:13.5px;line-height:1.65;margin-bottom:10px}
 .g-card .g-ico{flex:none;font-size:17px}
+/* ---------- 进度码 / 评审模式 ---------- */
+.map-head h1{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.transfer{margin-top:24px;padding-top:18px;border-top:1px dashed var(--grey);text-align:center}
+.transfer .t-title{font-family:var(--serif);font-size:15px;letter-spacing:3px;margin-bottom:7px}
+.transfer .t-hint{font-size:11.5px;line-height:1.75;color:#6d675c;margin-bottom:13px}
+#xfer{position:fixed;inset:0;background:rgba(40,35,28,.55);z-index:130;display:none;
+  align-items:center;justify-content:center;padding:24px}
+.x-card{width:100%;max-width:340px}
+.x-p{font-size:12.5px;line-height:1.75;color:#5c564b;margin-bottom:13px}
+.x-code{width:100%;box-sizing:border-box;font-family:ui-monospace,Menlo,Consolas,monospace;
+  font-size:13px;line-height:1.8;letter-spacing:1px;word-break:break-all;
+  border:1px solid var(--grey);border-radius:8px;padding:10px;background:var(--paper);
+  color:var(--ink);resize:none;margin-bottom:13px;-webkit-appearance:none}
+#rvbar{position:fixed;left:0;right:0;bottom:0;z-index:110;display:none;align-items:center;gap:8px;
+  background:var(--kon);color:var(--paper);padding:9px 12px;font-size:11.5px;letter-spacing:1px}
+#rvbar span{margin-right:auto}
+#rvbar button{background:rgba(255,255,255,.18);color:var(--paper);border:0;border-radius:6px;
+  padding:6px 11px;font-size:11.5px}
+#rvidx{position:fixed;inset:0;z-index:140;background:var(--paper);display:none;flex-direction:column}
+.rv-top{flex:none;display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:var(--ink);color:var(--paper);font-size:12.5px}
+.rv-top span{margin-right:auto;opacity:.7;font-size:10.5px;letter-spacing:0}
+.rv-top button{background:var(--shu);color:#fff;border:0;border-radius:6px;padding:6px 13px;font-size:12px}
+.rv-body{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding:14px 14px 48px;
+  font-size:12.5px;line-height:1.7}
+.rv-ch{font-family:var(--serif);font-size:17px;letter-spacing:6px;color:var(--shu);
+  border-bottom:2px solid var(--shu);margin:24px 0 10px;padding-bottom:4px}
+.rv-sc{font-family:var(--serif);font-size:15px;letter-spacing:2px;margin:16px 0 8px}
+.rv-sc small,.rv-hn small{font-family:var(--sans);font-size:10px;color:#8a8272;
+  letter-spacing:0;font-weight:400}
+.rv-hs{border-left:3px solid var(--grey);padding:2px 0 2px 10px;margin-bottom:17px}
+.rv-egg{border-left-color:var(--moss);opacity:.85}
+.rv-hn{font-weight:700;margin-bottom:5px}
+.rv-egl{font-size:11.5px;color:#6d675c}
+.rv-bj{background:var(--paper-deep);border-radius:8px;padding:8px 10px;margin-bottom:8px;font-size:11.5px}
+.rv-story{margin:5px 0;color:#5c564b}
+.rv-quote{font-family:var(--serif);border-left:2px solid var(--shu);padding-left:8px;margin-top:6px}
+.rv-w{width:100%;border-collapse:collapse;margin-bottom:7px;font-size:11.5px}
+.rv-w td{border-bottom:1px solid #E7DFCC;padding:3px 5px;vertical-align:top}
+.rv-w td:nth-child(1){font-weight:700;white-space:nowrap}
+.rv-w td:nth-child(2),.rv-w td:nth-child(3){color:#26466D;white-space:nowrap}
+.rv-note{background:var(--white);border:1px solid #E7DFCC;border-radius:8px;padding:7px 9px;
+  font-size:11.5px;margin-bottom:8px}
+.rv-note i{color:#26466D;font-style:normal}
+.rv-q{margin:0;padding-left:18px}
+.rv-q li{margin-bottom:10px}
+.rv-t{display:inline-block;background:var(--grey);color:#fff;border-radius:4px;
+  font-size:9.5px;padding:1px 5px;vertical-align:2px;margin-right:3px}
+.rv-o{margin:4px 0}
+.rv-o span{display:inline-block;border:1px solid var(--grey);border-radius:5px;
+  padding:2px 7px;margin:2px 4px 2px 0;font-size:11.5px}
+.rv-o span.ok{border-color:var(--ok);background:#EAF1E5;color:var(--ok);font-weight:700}
+.rv-ex{color:#6d675c;font-size:11.5px}
 </style>
 </head>
 <body>
@@ -381,6 +434,12 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
     <h2>御朱印帳</h2>
     <p class="b-sub" id="book-sub"></p>
     <div class="stamp-grid" id="stamp-grid"></div>
+    <div class="transfer">
+      <div class="t-title">换手机 · 进度码</div>
+      <p class="t-hint">要换到新手机上接着做？在<b>旧手机</b>上「生成进度码」，把那串字发过去，<br>在<b>新手机</b>上「输入进度码」粘贴进去就行。</p>
+      <button class="btn-ghost" id="btn-code-out">生成进度码</button>
+      <button class="btn-ghost" id="btn-code-in">输入进度码</button>
+    </div>
   </div>
 </main>
 
@@ -2181,6 +2240,7 @@ const OMIKUJI_WEIGHTS = [
    STORAGE  (window.storage -> localStorage -> memory)
 ===================================================== */
 const SAVE_KEY = "asakusa-meguri-save";
+let REVIEW = false;   /* 评审模式（见文件末尾「后门」一节）。开启后一律不写存档 */
 let state = { learned:{}, cleared:{}, gold:{}, qdone:{}, omikuji:null, eggTaps:{}, seenGuide:false, seenV2:false };
 
 async function loadState(){
@@ -2196,6 +2256,7 @@ async function loadState(){
   } catch(e){}
 }
 async function saveState(){
+  if (REVIEW) return;   /* 评审模式绝不落盘，试玩不会污染已有进度 */
   const v = JSON.stringify(state);
   if (window.storage) {
     try { await window.storage.set(SAVE_KEY, v); return; } catch(e){}
@@ -2307,6 +2368,7 @@ function chapterAllGold(ch){
     .every(s=>quizHotspots(s).every(h=>state.gold[h.id]));
 }
 function chapterUnlocked(ch){
+  if (REVIEW) return true;
   if (ch===1) return true;
   return chapterAllGold(ch-1);
 }
@@ -3370,6 +3432,322 @@ function renderStamps(){
     });
   });
   $("#book-sub").textContent = "已集 "+got+" / "+totalStamps()+" 枚 · 答完一处全部题目得金印";
+}
+
+/* =====================================================
+   PROGRESS CODE  进度码（换设备接着做）
+   -----------------------------------------------------
+   把 learned / cleared / gold / qdone 压成位图，再用
+   Crockford Base32 编码，约 84 个字符。
+   带走：学习卡是否看过、朱印、金印、每道题是否答过。
+   不带走：omikuji（今日签）、eggTaps（彩蛋计数）——重抽即可。
+
+   注意：位序 = codeHotspots() 的遍历顺序（SCENES → hotspots）。
+   以后新增场面或地点【必须追加在末尾】；插在中间会让所有旧码错位。
+   旧码比新版短时会自动按短的读完，不报错。
+===================================================== */
+const CODE_VER = 1;
+const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   /* Crockford：不含 I L O U */
+
+function codeHotspots(){
+  const out = [];
+  SCENES.forEach(sc => quizHotspots(sc).forEach(h => out.push(h)));
+  return out;
+}
+function fnv1a(bytes){
+  let h = 0x811c9dc5;
+  for (let i=0;i<bytes.length;i++){
+    h ^= bytes[i] & 0xff;
+    h = (h + ((h<<1)+(h<<4)+(h<<7)+(h<<8)+(h<<24))) >>> 0;
+  }
+  return h >>> 0;
+}
+function b32enc(bytes){
+  let s = "", buf = 0, n = 0;
+  for (let i=0;i<bytes.length;i++){
+    buf = (buf<<8) | (bytes[i] & 0xff); n += 8;
+    while (n >= 5){ s += B32[(buf >> (n-5)) & 31]; n -= 5; }
+  }
+  if (n) s += B32[(buf << (5-n)) & 31];
+  return s;
+}
+function b32dec(str){
+  const out = []; let buf = 0, n = 0;
+  for (let i=0;i<str.length;i++){
+    const v = B32.indexOf(str.charAt(i));
+    if (v < 0) continue;
+    buf = (buf<<5) | v; n += 5;
+    if (n >= 8){ out.push((buf >> (n-8)) & 255); n -= 8; }
+  }
+  return out;
+}
+/* 手抄容错：小写转大写、去掉分隔符、O 当 0、I/L 当 1 */
+function normCode(str){
+  return String(str).toUpperCase().replace(/[^0-9A-Z]/g,"")
+    .replace(/O/g,"0").replace(/I/g,"1").replace(/L/g,"1");
+}
+function encodeProgress(){
+  const bits = [];
+  const w = b => bits.push(b ? 1 : 0);
+  w(state.seenGuide); w(state.seenV2);
+  codeHotspots().forEach(h=>{
+    w(state.learned[h.id]); w(state.cleared[h.id]); w(state.gold[h.id]);
+    const d = state.qdone[h.id] || {};
+    for (let i=0;i<h.questions.length;i++) w(d[i]);
+  });
+  const bytes = [];
+  for (let i=0;i<bits.length;i+=8){
+    let b = 0;
+    for (let k=0;k<8;k++) b = (b<<1) | (bits[i+k] || 0);
+    bytes.push(b);
+  }
+  const all = [CODE_VER].concat(bytes);
+  all.push(fnv1a(all) & 0xff);
+  return b32enc(all).replace(/(.{4})/g, "$1-").replace(/-$/, "");
+}
+function decodeProgress(str){
+  const bytes = b32dec(normCode(str));
+  if (bytes.length < 4) return {ok:false, err:"这串码太短了，可能没复制全"};
+  const sum = bytes.pop();
+  if ((fnv1a(bytes) & 0xff) !== sum)
+    return {ok:false, err:"这串码对不上，多半是漏抄或多抄了字符。请整段重新复制"};
+  const ver = bytes.shift();
+  if (ver !== CODE_VER)
+    return {ok:false, err:"这串码来自另一个版本（v"+ver+"），当前是 v"+CODE_VER};
+  let bi = 0;
+  const rd = ()=>{
+    const byte = bytes[bi >> 3];
+    if (byte === undefined) return null;
+    const b = (byte >> (7 - (bi & 7))) & 1; bi++; return b;
+  };
+  const d = {learned:{}, cleared:{}, gold:{}, qdone:{}, seenGuide:false, seenV2:false};
+  d.seenGuide = !!rd(); d.seenV2 = !!rd();
+  let spots = 0, stamps = 0;
+  const hs = codeHotspots();
+  for (let n=0;n<hs.length;n++){
+    const h = hs[n];
+    const l = rd(); if (l === null) break;
+    const c = rd(), g = rd();
+    if (l) d.learned[h.id] = true;
+    if (c){ d.cleared[h.id] = true; stamps++; }
+    if (g) d.gold[h.id] = true;
+    for (let i=0;i<h.questions.length;i++){
+      const q = rd(); if (q === null) break;
+      if (q){ if (!d.qdone[h.id]) d.qdone[h.id] = {}; d.qdone[h.id][i] = true; }
+    }
+    spots++;
+  }
+  return {ok:true, data:d, spots:spots, stamps:stamps};
+}
+/* 只做并集：不会抹掉这台设备上已经做出来的进度 */
+async function applyProgress(d){
+  ["learned","cleared","gold"].forEach(k=>{
+    Object.keys(d[k]).forEach(id=>{ state[k][id] = true; });
+  });
+  Object.keys(d.qdone).forEach(id=>{
+    if (!state.qdone[id]) state.qdone[id] = {};
+    Object.keys(d.qdone[id]).forEach(i=>{ state.qdone[id][i] = true; });
+  });
+  if (d.seenGuide) state.seenGuide = true;
+  if (d.seenV2)    state.seenV2 = true;
+  await saveState();
+}
+
+/* ---------- 进度码的界面 ---------- */
+function xferCard(inner){
+  let x = document.getElementById("xfer");
+  if (!x){ x = el("div"); x.id = "xfer"; document.body.appendChild(x); }
+  x.innerHTML = '<div class="g-card x-card">' + inner + '</div>';
+  x.style.display = "flex";
+  const c = document.getElementById("x-close");
+  if (c) c.addEventListener("click", closeXfer);
+  return x;
+}
+function closeXfer(){
+  const x = document.getElementById("xfer");
+  if (x) x.style.display = "none";
+}
+function showCodeOut(){
+  const code = encodeProgress();
+  xferCard(
+    '<h3>进度码</h3>' +
+    '<p class="x-p">这串字记着你现在的全部进度（朱印 ' + stampCount() + ' / ' + totalStamps() +
+      ' 枚）。把它发到新手机上，在新手机的「输入进度码」里粘贴，就能接着做。<br>' +
+      '<b>旧手机上的进度不会消失</b>，两边都能继续。</p>' +
+    '<textarea class="x-code" id="x-out" readonly rows="4">' + code + '</textarea>' +
+    '<button class="btn-main" id="x-copy">复制</button>' +
+    '<button class="btn-ghost" id="x-close">关闭</button>');
+  const ta = document.getElementById("x-out");
+  ta.addEventListener("click", function(){ this.select(); });
+  document.getElementById("x-copy").addEventListener("click", async ()=>{
+    ta.select(); ta.setSelectionRange(0, 99999);
+    let ok = false;
+    try { await navigator.clipboard.writeText(code); ok = true; }
+    catch(e){ try { ok = document.execCommand("copy"); } catch(e2){} }
+    toast(ok ? "已复制，发到新手机上就行" : "复制没成功：请长按上面的框，手动全选复制");
+  });
+}
+function showCodeIn(){
+  xferCard(
+    '<h3>输入进度码</h3>' +
+    '<p class="x-p">把旧手机上生成的那串字粘贴进来。<b>只会往上加，不会抹掉</b>这台手机上已有的进度。</p>' +
+    '<textarea class="x-code" id="x-in" rows="4" placeholder="在这里粘贴"></textarea>' +
+    '<button class="btn-main" id="x-go">确定</button>' +
+    '<button class="btn-ghost" id="x-close">关闭</button>');
+  document.getElementById("x-go").addEventListener("click", async ()=>{
+    const r = decodeProgress(document.getElementById("x-in").value);
+    if (!r.ok){ toast(r.err); return; }
+    const before = stampCount();
+    await applyProgress(r.data);
+    closeXfer();
+    renderStamps(); renderMap();
+    const now = stampCount();
+    toast(REVIEW ? "评审模式下不写存档，刷新后会还原"
+                 : "接上了：朱印 " + now + " / " + totalStamps() + " 枚（新增 " + (now-before) + " 枚）");
+  });
+}
+(function bindXfer(){
+  const a = document.getElementById("btn-code-out");
+  const b = document.getElementById("btn-code-in");
+  if (a) a.addEventListener("click", showCodeOut);
+  if (b) b.addEventListener("click", showCodeIn);
+})();
+
+/* =====================================================
+   后门（评审模式）
+   -----------------------------------------------------
+   入口：在地图页【长按标题「浅草絵図」1.5 秒】，输密码。
+   作用：1. 全部章节解锁，不必集金印就能进
+         2. 「全文速览」——13 场面 / 全部词表 / 全部题目连答案平铺成一页
+         3. 全程不写存档（saveState 被短路），刷新即还原，
+            所以在妈妈的手机上试玩也不会动到她的进度。
+
+   注意：仓库是公开的，下面存的只是一个哈希，不是加密。
+   它只能挡住顺手翻源码的人，挡不住真想找的人——别当成安全措施。
+   换密码：浏览器控制台运行  __pwHash("新密码")  ，把结果填到 REVIEW_PW_HASH。
+===================================================== */
+const REVIEW_PW_HASH = "cf3d4553";
+function __pwHash(str){
+  const b = [];
+  for (let i=0;i<str.length;i++){
+    const c = str.charCodeAt(i);
+    b.push(c & 0xff, (c >> 8) & 0xff);
+  }
+  return ("0000000" + fnv1a(b).toString(16)).slice(-8);
+}
+window.__pwHash = __pwHash;
+
+function askReviewPw(){
+  if (REVIEW){ openReviewIndex(); return; }
+  xferCard(
+    '<h3>·</h3>' +
+    '<input class="x-code" id="x-pw" type="password" autocomplete="off" spellcheck="false">' +
+    '<button class="btn-main" id="x-pwgo">確認</button>' +
+    '<button class="btn-ghost" id="x-close">取消</button>');
+  const inp = document.getElementById("x-pw");
+  inp.focus();
+  const go = ()=>{
+    if (__pwHash(inp.value) === REVIEW_PW_HASH){ closeXfer(); enterReview(); }
+    else { inp.value = ""; closeXfer(); }
+  };
+  document.getElementById("x-pwgo").addEventListener("click", go);
+  inp.addEventListener("keydown", e=>{ if (e.key === "Enter") go(); });
+}
+function enterReview(){
+  REVIEW = true;
+  renderMap();
+  let bar = document.getElementById("rvbar");
+  if (!bar){
+    bar = el("div"); bar.id = "rvbar";
+    bar.innerHTML = '<span>評審モード · 全章解锁 · 不写存档</span>' +
+      '<button id="rv-idx">全文速览</button><button id="rv-out">退出</button>';
+    document.body.appendChild(bar);
+    document.getElementById("rv-idx").addEventListener("click", openReviewIndex);
+    document.getElementById("rv-out").addEventListener("click", ()=>location.reload());
+  }
+  bar.style.display = "flex";
+  toast("评审模式：全部章节已解锁，这台设备的进度不会被改动");
+}
+/* 长按标题进入 */
+(function bindBackdoor(){
+  const t = document.querySelector(".map-head h1");
+  if (!t) return;
+  let timer = null;
+  const start = ()=>{ clearTimeout(timer); timer = setTimeout(askReviewPw, 1500); };
+  const cancel = ()=>{ clearTimeout(timer); };
+  t.addEventListener("touchstart", start, {passive:true});
+  t.addEventListener("touchend", cancel);
+  t.addEventListener("touchmove", cancel);
+  t.addEventListener("touchcancel", cancel);
+  t.addEventListener("mousedown", start);
+  t.addEventListener("mouseup", cancel);
+  t.addEventListener("mouseleave", cancel);
+  t.addEventListener("contextmenu", e=>e.preventDefault());
+})();
+
+/* ---------- 全文速览 ---------- */
+function openReviewIndex(){
+  let ov = document.getElementById("rvidx");
+  if (!ov){ ov = el("div"); ov.id = "rvidx"; document.body.appendChild(ov); }
+  let nq = 0, nw = 0, nh = 0;
+  SCENES.forEach(sc => sc.hotspots.forEach(h=>{
+    if (!h.learn) return;
+    nh++; nw += h.learn.words.length; nq += h.questions.length;
+  }));
+  let html = '<div class="rv-top"><b>全文速览</b><span>' + SCENES.length + ' 场面 · ' +
+    nh + ' 地点 · ' + nw + ' 词 · ' + nq + ' 题</span>' +
+    '<button id="rv-x">关闭</button></div><div class="rv-body">';
+  let curCh = 0;
+  SCENES.forEach(sc=>{
+    if (sc.chapter !== curCh){
+      curCh = sc.chapter;
+      html += '<h2 class="rv-ch">第 ' + CH_KANJI[curCh] + ' 章</h2>';
+    }
+    html += '<h3 class="rv-sc">' + sc.name + ' <small>' + sc.short + ' · ' + sc.id + '</small></h3>';
+    sc.hotspots.forEach(h=>{
+      if (!h.learn){
+        html += '<div class="rv-hs rv-egg"><div class="rv-hn">' + h.name +
+          ' <small>彩蛋 · ' + h.id + '</small></div><div class="rv-egl">' +
+          (h.eggLines || []).join(" ／ ") +
+          (h.eggFinal ? '　→　' + h.eggFinal + '（第 ' + (h.eggFinalAt || "?") + ' 次）' : '') +
+          '</div></div>';
+        return;
+      }
+      html += '<div class="rv-hs"><div class="rv-hn">' + h.name + ' <small>' + h.id +
+        ' · ' + h.questions.length + ' 题</small></div>';
+      if (h.bunjin){
+        const b = h.bunjin;
+        html += '<div class="rv-bj"><b>文人碑</b>　' + b.life + ' · ' + b.tag +
+          '<div class="rv-story">' + b.story + '</div>' +
+          '<div class="rv-quote">' + b.quote.jp + '<br><i>' + b.quote.kana + '</i><br><i>' +
+          b.quote.romaji + '</i><br>' + b.quote.zh +
+          '<br><small>——' + b.quote.src + '</small></div></div>';
+      }
+      html += '<table class="rv-w"><tbody>';
+      h.learn.words.forEach(w=>{
+        html += '<tr><td>' + w.jp + '</td><td>' + w.kana + '</td><td>' +
+          w.romaji + '</td><td>' + w.zh + '</td></tr>';
+      });
+      html += '</tbody></table><div class="rv-note">' + h.learn.noteJa +
+        '<br><i>' + h.learn.noteKana + '</i><br><i>' + h.learn.noteRomaji + '</i><br>' +
+        h.learn.noteZh + '</div><ol class="rv-q">';
+      h.questions.forEach(q=>{
+        const prompt = (q.type === "listen")
+          ? ('🔊 ' + q.tts + '　<i>' + (q.ttsKana || "") + '</i>')
+          : q.prompt;
+        html += '<li><span class="rv-t">' + q.type + '</span>' + prompt + '<div class="rv-o">';
+        q.options.forEach((o, i)=>{
+          html += '<span class="' + (i === q.answer ? "ok" : "") + '">' + o + '</span>';
+        });
+        html += '</div><div class="rv-ex">' + q.explain + '</div></li>';
+      });
+      html += '</ol></div>';
+    });
+  });
+  html += '</div>';
+  ov.innerHTML = html;
+  ov.style.display = "flex";
+  document.getElementById("rv-x").addEventListener("click", ()=>{ ov.style.display = "none"; });
 }
 
 /* =====================================================
