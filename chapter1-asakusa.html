@@ -358,6 +358,18 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   padding:2px 7px;margin:2px 4px 2px 0;font-size:11.5px}
 .rv-o span.ok{border-color:var(--ok);background:#EAF1E5;color:var(--ok);font-weight:700}
 .rv-ex{color:#6d675c;font-size:11.5px}
+.au-scroll{max-height:46vh;overflow:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px}
+.au-ok{font-size:12.5px;line-height:1.75;color:var(--ok);background:#EAF1E5;
+  border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.au-ng{font-size:12.5px;line-height:1.75;color:var(--ng);background:#F6E9E7;
+  border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.au-t{width:100%;border-collapse:collapse;font-size:11.5px;margin-bottom:10px}
+.au-t th{text-align:left;color:#8a8272;font-weight:400;padding:3px 5px;
+  border-bottom:1px solid var(--grey)}
+.au-t td{padding:3px 5px;border-bottom:1px solid #E7DFCC}
+.au-t .au-bad td{background:#F6E9E7}
+.au-t .au-flag{color:var(--ng);font-weight:700}
+.au-note{font-size:11px;line-height:1.7;color:#8a8272}
 </style>
 </head>
 <body>
@@ -3660,9 +3672,11 @@ function enterReview(){
   if (!bar){
     bar = el("div"); bar.id = "rvbar";
     bar.innerHTML = '<span>評審モード · 全章解锁 · 不写存档</span>' +
-      '<button id="rv-idx">全文速览</button><button id="rv-out">退出</button>';
+      '<button id="rv-idx">全文速览</button><button id="rv-aud">体检</button>' +
+      '<button id="rv-out">退出</button>';
     document.body.appendChild(bar);
     document.getElementById("rv-idx").addEventListener("click", openReviewIndex);
+    document.getElementById("rv-aud").addEventListener("click", showAudit);
     document.getElementById("rv-out").addEventListener("click", ()=>location.reload());
   }
   bar.style.display = "flex";
@@ -3749,6 +3763,176 @@ function openReviewIndex(){
   ov.style.display = "flex";
   document.getElementById("rv-x").addEventListener("click", ()=>{ ov.style.display = "none"; });
 }
+
+/* =====================================================
+   存档体检 · 修复
+   -----------------------------------------------------
+   qdone（逐题答对记录）是真实作业量的唯一可信来源：
+   gold / cleared 是一次性写入的结论，可能被别的构建写坏，
+   但没人会伪造几百条逐题记录。所以用 qdone 反推应有的
+   gold / cleared，两者对不上就是异常。
+
+   规则（与 finishQuiz 保持一致）：
+     应有金印  <=>  qdone[id] 的条数 >= 该处题目总数
+     应有朱印  <=>  qdone[id] 至少有 1 条
+===================================================== */
+function auditState(){
+  const hs = codeHotspots();
+  const known = new Set(hs.map(h=>h.id));
+  const perCh = {};
+  let phantomGold = 0, realGold = 0, phantomCleared = 0, missingGold = 0;
+
+  SCENES.forEach(sc=>{
+    if (!perCh[sc.chapter]) perCh[sc.chapter] =
+      {gold:0, goldShould:0, cleared:0, q:0, qTotal:0, spots:0};
+    const c = perCh[sc.chapter];
+    quizHotspots(sc).forEach(h=>{
+      const d = state.qdone[h.id] || {};
+      const n = Object.keys(d).filter(k=>{
+        const i = Number(k); return Number.isInteger(i) && i >= 0 && i < h.questions.length;
+      }).length;
+      const shouldGold = n >= h.questions.length;
+      const isGold = !!state.gold[h.id];
+      const isCleared = !!state.cleared[h.id];
+      c.spots++; c.q += n; c.qTotal += h.questions.length;
+      if (isGold) c.gold++;
+      if (shouldGold) c.goldShould++;
+      if (isCleared) c.cleared++;
+      if (isGold && !shouldGold) phantomGold++;
+      if (isGold && shouldGold) realGold++;
+      if (!isGold && shouldGold) missingGold++;
+      if (isCleared && n === 0) phantomCleared++;
+    });
+  });
+  const stray = {
+    gold:    Object.keys(state.gold   ).filter(id=>!known.has(id)),
+    cleared: Object.keys(state.cleared).filter(id=>!known.has(id)),
+    qdone:   Object.keys(state.qdone  ).filter(id=>!known.has(id)),
+  };
+  return {perCh, phantomGold, realGold, phantomCleared, missingGold, stray};
+}
+
+/* 按 qdone 重算 gold / cleared。learned 保留（只影响圆点颜色）。 */
+function rebuildFromQdone(){
+  const hs = codeHotspots();
+  const known = new Set(hs.map(h=>h.id));
+  const gold = {}, cleared = {}, qdone = {}, learned = {};
+  hs.forEach(h=>{
+    const d = state.qdone[h.id] || {};
+    const keys = Object.keys(d).filter(k=>{
+      const i = Number(k); return Number.isInteger(i) && i >= 0 && i < h.questions.length;
+    });
+    if (keys.length){
+      qdone[h.id] = {};
+      keys.forEach(k=>{ qdone[h.id][k] = true; });
+      cleared[h.id] = true;
+      if (keys.length >= h.questions.length) gold[h.id] = true;
+    }
+    if (state.learned[h.id]) learned[h.id] = true;
+  });
+  Object.keys(state.eggTaps || {}).forEach(id=>{ if (!known.has(id)) delete state.eggTaps[id]; });
+  return {gold, cleared, qdone, learned};
+}
+
+/* 兜底：只保留前 keepCh 章，之后的章节全部清空 */
+function keepChaptersUpTo(keepCh){
+  const drop = new Set();
+  SCENES.forEach(sc=>{
+    if (sc.chapter > keepCh) sc.hotspots.forEach(h=>drop.add(h.id));
+  });
+  ["learned","cleared","gold","qdone","eggTaps"].forEach(k=>{
+    Object.keys(state[k] || {}).forEach(id=>{ if (drop.has(id)) delete state[k][id]; });
+  });
+}
+
+/* 修复要真正写盘，必须临时解除评审模式的短路 */
+async function commitRepair(){
+  const wasReview = REVIEW;
+  REVIEW = false;
+  await saveState();
+  REVIEW = wasReview;
+}
+
+function showAudit(){
+  const a = auditState();
+  const bad = a.phantomGold + a.phantomCleared
+            + a.stray.gold.length + a.stray.cleared.length + a.stray.qdone.length;
+
+  let rows = '<table class="au-t"><tbody><tr><th>章</th><th>金印</th><th>应有</th><th>答题</th></tr>';
+  Object.keys(a.perCh).sort().forEach(ch=>{
+    const c = a.perCh[ch];
+    const odd = c.gold > c.goldShould;
+    rows += '<tr class="' + (odd ? "au-bad" : "") + '"><td>第' + ch + '章</td>' +
+      '<td>' + c.gold + '/' + c.spots + '</td>' +
+      '<td>' + c.goldShould + '/' + c.spots + '</td>' +
+      '<td>' + c.q + '/' + c.qTotal + '</td>' +
+      (odd ? '<td class="au-flag">异常</td>' : '<td></td>') + '</tr>';
+  });
+  rows += '</tbody></table>';
+
+  let verdict;
+  if (bad === 0){
+    verdict = '<p class="au-ok">没查出矛盾。存档里的金印都有对应的答题记录，' +
+      '也就是说这些进度是真做出来的。</p>';
+  } else {
+    verdict = '<p class="au-ng"><b>查出 ' + bad + ' 处矛盾。</b><br>' +
+      (a.phantomGold ? '有 <b>' + a.phantomGold + '</b> 处盖了金印，却没有答完题的记录。<br>' : '') +
+      (a.phantomCleared ? '有 <b>' + a.phantomCleared + '</b> 处盖了朱印，却一道题都没答过。<br>' : '') +
+      (a.stray.gold.length + a.stray.cleared.length + a.stray.qdone.length ?
+        '另有 <b>' + (a.stray.gold.length + a.stray.cleared.length + a.stray.qdone.length) +
+        '</b> 条记录不属于当前版本的任何地点。<br>' : '') +
+      '这些金印不是答题得来的，是被写进去的。</p>';
+  }
+  if (a.missingGold)
+    verdict += '<p class="au-ng">另有 ' + a.missingGold + ' 处题目已答完却没盖金印。</p>';
+
+  xferCard(
+    '<h3>存档体检</h3>' +
+    '<div class="au-scroll">' +
+      '<p class="x-p">当前：朱印 ' + stampCount() + ' / ' + totalStamps() + '</p>' +
+      verdict + rows +
+      '<p class="au-note">「应有」＝按逐题答对记录反推出来的金印数。' +
+      'qdone 是每答对一题就写一条，最难被伪造，所以拿它当准绳。</p>' +
+    '</div>' +
+    '<button class="btn-ghost" id="au-backup">先复制当前存档（备份）</button>' +
+    '<button class="btn-main" id="au-fix">按答题记录重算</button>' +
+    '<button class="btn-ghost" id="au-keep3">只保留第 1〜3 章</button>' +
+    '<button class="btn-ghost" id="x-close">关闭</button>');
+
+  document.getElementById("au-backup").addEventListener("click", async ()=>{
+    const raw = JSON.stringify(state);
+    let ok = false;
+    try { await navigator.clipboard.writeText(raw); ok = true; } catch(e){}
+    toast(ok ? "当前存档已复制到剪贴板（" + raw.length + " 字符），先粘到备忘录里"
+             : "复制失败，请换用「生成进度码」做备份");
+  });
+
+  document.getElementById("au-fix").addEventListener("click", async ()=>{
+    const before = {s: stampCount(), g: Object.keys(state.gold).length};
+    const r = rebuildFromQdone();
+    state.gold = r.gold; state.cleared = r.cleared;
+    state.qdone = r.qdone; state.learned = r.learned;
+    await commitRepair();
+    renderMap(); renderStamps();
+    toast("已重算：朱印 " + before.s + "→" + stampCount() +
+          "，金印 " + before.g + "→" + Object.keys(state.gold).length);
+    showAudit();
+  });
+
+  document.getElementById("au-keep3").addEventListener("click", async ()=>{
+    keepChaptersUpTo(3);
+    state.seenV2 = false;          /* 让她重新收到「新地图」的通知 */
+    await commitRepair();
+    renderMap(); renderStamps();
+    toast("已清空第 4 章之后的全部记录，朱印 " + stampCount() + " / " + totalStamps());
+    showAudit();
+  });
+}
+
+/* 评审模式：切到后台就自动退出，避免把「全解锁」的画面留给妈妈 */
+document.addEventListener("visibilitychange", ()=>{
+  if (REVIEW && document.hidden) location.reload();
+});
 
 /* =====================================================
    INIT
