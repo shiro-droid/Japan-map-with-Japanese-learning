@@ -103,6 +103,14 @@
 ===================================================== */
 const SAVE_KEY = "asakusa-meguri-save";   /* 妈妈的存档就在这个键上，别改 */
 
+/* 阶梯：1基 → 2基 → 1高 → 3基 → 2高 → 4基 …
+   浅草没有入场门槛（她从这里开始）；二周目要等上野一周目走完。 */
+const REQUIRE = {
+  adv: { key:"ueno-meguri-save", flag:"doneBasic", label:"上野の一周目",
+         href:"chapter2-ueno.html",
+         hint:"先去上野走一圈。隔一章再回来，那时候这些词已经开始忘了，逼出来的才是真记住的。" }
+};
+
 /* 本章文案（原样搬过来，她看到的一个字都没变） */
 const CH_TEXT = {
   area: "浅草",

@@ -42,19 +42,38 @@ const OMIKUJI_WEIGHTS = [
    STORAGE  (window.storage -> localStorage -> memory)
 ===================================================== */
 let REVIEW = false;   /* 评审模式（见文件末尾「后门」一节）。开启后一律不写存档 */
-let state = { learned:{}, cleared:{}, gold:{}, qdone:{}, omikuji:null, eggTaps:{}, seenGuide:false, seenV2:false };
+let state = { learned:{}, cleared:{}, gold:{}, qdone:{}, omikuji:null, eggTaps:{}, seenGuide:false, seenV2:false,
+  /* 二周目（高阶版）。纯追加，旧存档读进来时这一层是空的 */
+  adv: { learned:{}, cleared:{}, gold:{}, qdone:{} },
+  tier: "basic",        /* 她上次停在哪一周目 */
+  doneBasic: false,     /* 基础版通关（跨章解锁靠这两个旗子） */
+  doneAdv: false };
+
+/* 当前周目。P() 取进度，QP() 取题库——玩法主体一律走这两个口子 */
+let TIER = "basic";
+function P(){ return TIER === "adv" ? state.adv : state; }
+function QP(h){ return (TIER === "adv" ? h.advanced : h.questions) || []; }
+function advExists(){ return SCENES.some(sc=>sc.hotspots.some(h=>h.learn && h.advanced && h.advanced.length)); }
+function tierLabel(){ return TIER === "adv" ? "二周目" : "一周目"; }
 
 async function loadState(){
   if (window.storage) {
     try {
       const r = await window.storage.get(SAVE_KEY);
-      if (r && r.value) { state = Object.assign(state, JSON.parse(r.value)); return; }
+      if (r && r.value) { state = Object.assign(state, JSON.parse(r.value)); afterLoad(); return; }
     } catch(e){ /* key missing or unavailable */ }
   }
   try {
     const v = localStorage.getItem(SAVE_KEY);
     if (v) state = Object.assign(state, JSON.parse(v));
   } catch(e){}
+  afterLoad();
+}
+/* 旧存档没有 adv 这一层，补上；再把周目恢复到她上次停的地方 */
+function afterLoad(){
+  if (!state.adv) state.adv = { learned:{}, cleared:{}, gold:{}, qdone:{} };
+  ["learned","cleared","gold","qdone"].forEach(k=>{ if (!state.adv[k]) state.adv[k] = {}; });
+  TIER = (state.tier === "adv" && advUnlocked()) ? "adv" : "basic";
 }
 async function saveState(){
   if (REVIEW) return;   /* 评审模式绝不落盘，试玩不会污染已有进度 */
@@ -133,9 +152,9 @@ function shuffledOptions(q){
   }
   return idx;
 }
-function quizHotspots(scene){ return scene.hotspots.filter(h=>h.learn); }
+function quizHotspots(scene){ return scene.hotspots.filter(h=>h.learn && QP(h).length); }
 function totalStamps(){ return SCENES.reduce((n,s)=>n+quizHotspots(s).length,0); }
-function stampCount(){ return Object.keys(state.cleared).length; }
+function stampCount(){ return Object.keys(P().cleared).length; }
 
 /* =====================================================
    NAVIGATION
@@ -155,7 +174,7 @@ $("#btn-stamps").addEventListener("click", ()=>{ renderStamps(); show("view-stam
 ===================================================== */
 function chapterAllGold(ch){
   return SCENES.filter(s=>s.chapter===ch)
-    .every(s=>quizHotspots(s).every(h=>state.gold[h.id]));
+    .every(s=>quizHotspots(s).every(h=>P().gold[h.id]));
 }
 function chapterUnlocked(ch){
   if (REVIEW) return true;
@@ -167,7 +186,7 @@ function renderMap(){
   canvas.querySelectorAll(".lantern-node").forEach(n=>n.remove());
   SCENES.forEach(sc=>{
     const hs = quizHotspots(sc);
-    const goldN = hs.filter(h=>state.gold[h.id]).length;
+    const goldN = hs.filter(h=>P().gold[h.id]).length;
     const unlocked = chapterUnlocked(sc.chapter);
     const small = sc.chapter!==1;
     const node = el("div","lantern-node"+(small?" small":"")+(unlocked?"":" locked")+(goldN===hs.length&&unlocked?" done":""));
@@ -185,8 +204,10 @@ function renderMap(){
   let open = 1;
   for (let c=1;c<=MAX_CHAPTER;c++){ if (chapterUnlocked(c)) open = c; }
   const chEl = $("#map-chap");
-  if (chEl) chEl.textContent = "第 "+CH_KANJI[open]+" 章 · 全 "+CH_KANJI[MAX_CHAPTER]+" 章";
+  if (chEl) chEl.textContent = "第 "+CH_KANJI[open]+" 章 · 全 "+CH_KANJI[MAX_CHAPTER]+" 章"+
+    (TIER === "adv" ? " · 二周目" : "");
   $("#stamp-count").textContent = stampCount()+"/"+totalStamps();
+  renderTierBar();
 }
 
 /* =====================================================
@@ -201,9 +222,9 @@ function openScene(sc){
   stage.innerHTML = SVG_ART[sc.svg] + '<div id="egg-bubble"></div>';
   sc.hotspots.forEach(h=>{
     const spot = el("button","spot"+(h.egg?" egg":"")+(h.bunjin?" bunjin":""));
-    if (state.gold[h.id]) spot.classList.add("gold");
-    else if (state.cleared[h.id]) spot.classList.add("cleared");
-    else if (state.learned[h.id]) spot.classList.add("learned");
+    if (P().gold[h.id]) spot.classList.add("gold");
+    else if (P().cleared[h.id]) spot.classList.add("cleared");
+    else if (P().learned[h.id]) spot.classList.add("learned");
     spot.style.left = h.x+"%";
     spot.style.top = h.y+"%";
     spot.innerHTML = '<span class="dot"></span><span class="tag">'+h.name+'</span>';
@@ -215,7 +236,7 @@ function openScene(sc){
 }
 function updateSceneProg(){
   const hs = quizHotspots(currentScene);
-  const done = hs.filter(h=>state.gold[h.id]).length;
+  const done = hs.filter(h=>P().gold[h.id]).length;
   $("#scene-prog").textContent = "金印 "+done+" / "+hs.length;
   $("#stamp-count").textContent = stampCount()+"/"+totalStamps();
 }
@@ -226,7 +247,7 @@ function updateSceneProg(){
 function tapHotspot(h, spotEl){
   if (h.egg) return tapEgg(h, spotEl);
   if (h.mikuji) return openOmikuji();
-  if (!state.learned[h.id]) openLearn(h, false);
+  if (!P().learned[h.id]) openLearn(h, false);
   else openQuiz(h);
 }
 
@@ -313,7 +334,7 @@ function openLearn(h, isReview){
     $("#btn-to-quiz").addEventListener("click", ()=>openQuiz(h));
   } else {
     $("#btn-learned").addEventListener("click", async ()=>{
-      state.learned[h.id] = true;
+      P().learned[h.id] = true;
       await saveState();
       closeSheet();
       refreshSpots();
@@ -340,8 +361,8 @@ function shuffleArr(a){
   return a;
 }
 function openQuiz(h){
-  const pool = h.questions;
-  const doneSet = state.qdone[h.id] || {};
+  const pool = QP(h);
+  const doneSet = P().qdone[h.id] || {};
   const undone = shuffleArr(pool.map((_,i)=>i).filter(i=>!doneSet[i]));
   const doneIdx = shuffleArr(pool.map((_,i)=>i).filter(i=>doneSet[i]));
   const want = Math.min(3, pool.length);
@@ -379,11 +400,11 @@ function qTail(){
 }
 /* 共通の後始末：正解なら記録して次へ、間違いなら解き直し */
 async function qResolve(h, run, correct, extraHtml, sayAfter, retryable){
-  const q = h.questions[run.qi[run.i]];
+  const q = QP(h)[run.qi[run.i]];
   const nextBtn = $("#btn-next");
   if (correct){
-    if (!state.qdone[h.id]) state.qdone[h.id] = {};
-    state.qdone[h.id][run.qi[run.i]] = true;
+    if (!P().qdone[h.id]) P().qdone[h.id] = {};
+    P().qdone[h.id][run.qi[run.i]] = true;
     await saveState();
     nextBtn.dataset.retry = "";
     nextBtn.textContent = (run.i < run.qi.length - 1 ? "下一题" : "看结果");
@@ -404,7 +425,7 @@ async function qResolve(h, run, correct, extraHtml, sayAfter, retryable){
 function qBindNav(h, run){
   $("#btn-next").addEventListener("click", ()=>{
     if ($("#btn-next").dataset.retry){
-      const q = h.questions[run.qi[run.i]];
+      const q = QP(h)[run.qi[run.i]];
       if (q.options) run.order[run.i] = shuffledOptions(q);
       renderQuestion(h, run);
       return;
@@ -416,7 +437,7 @@ function qBindNav(h, run){
 }
 
 function renderQuestion(h, run){
-  const q = h.questions[run.qi[run.i]];
+  const q = QP(h)[run.qi[run.i]];
   if (q.type === "build" || q.type === "rewrite") return renderBuild(h, run);
   if (q.type === "write")  return renderWrite(h, run);
   if (q.type === "shadow") return renderShadow(h, run);
@@ -425,7 +446,7 @@ function renderQuestion(h, run){
 
 /* ---------- 四択（従来どおり） ---------- */
 function renderChoice(h, run){
-  const q = h.questions[run.qi[run.i]];
+  const q = QP(h)[run.qi[run.i]];
   const ord = run.order[run.i];
   const jp = !!(q.jpOptions || q.type === "read" || q.type === "particle");
   let html = qHead(h, run);
@@ -472,7 +493,7 @@ function renderChoice(h, run){
 
 /* ---------- 組み立て：語順と助詞を自分で組む ---------- */
 function renderBuild(h, run){
-  const q = h.questions[run.qi[run.i]];
+  const q = QP(h)[run.qi[run.i]];
   const bank = shuffleArr(q.tiles.concat(q.extra || []).map((t, i)=>({t:t, i:i})));
   const picked = [];
 
@@ -533,7 +554,7 @@ function renderBuild(h, run){
 
 /* ---------- 書く：短く打たせる ---------- */
 function renderWrite(h, run){
-  const q = h.questions[run.qi[run.i]];
+  const q = QP(h)[run.qi[run.i]];
   let tries = 0;
 
   let html = qHead(h, run);
@@ -598,7 +619,7 @@ function renderWrite(h, run){
 
 /* ---------- 音読：耳だけ二十年ぶんある人に、口を動かさせる ---------- */
 function renderShadow(h, run){
-  const q = h.questions[run.qi[run.i]];
+  const q = QP(h)[run.qi[run.i]];
   let html = qHead(h, run);
   html += '<div class="q-text">' + (q.prompt || "听一遍，然后自己出声念一遍") + '</div>';
   const hide = !!q.hideKana;   /* 漢字を見て自力で読ませる。中国語で読む癖への直撃 */
@@ -630,13 +651,13 @@ function renderShadow(h, run){
 }
 
 async function finishQuiz(h, run){
-  const pool = h.questions;
-  const doneSet = state.qdone[h.id] || {};
+  const pool = QP(h);
+  const doneSet = P().qdone[h.id] || {};
   const dcount = Object.keys(doneSet).length;
   const nowGold = dcount >= pool.length;
-  const newGold = nowGold && !state.gold[h.id];
-  state.cleared[h.id] = true;
-  if (nowGold) state.gold[h.id] = true;
+  const newGold = nowGold && !P().gold[h.id];
+  P().cleared[h.id] = true;
+  if (nowGold) P().gold[h.id] = true;
   await saveState();
   let html = '<div class="result-wrap">'+
     '<div class="r-title">'+(nowGold?"金印達成！":"通関！")+'</div>'+
@@ -655,12 +676,20 @@ async function finishQuiz(h, run){
   const retry = $("#btn-retry");
   if (retry) retry.addEventListener("click", ()=>openQuiz(h));
 }
-function checkChapter(h){
+async function checkChapter(h){
   const sc = SCENES.find(s=>s.hotspots.includes(h));
   if (!sc) return;
   if (!chapterAllGold(sc.chapter)) return;
-  if (sc.chapter < MAX_CHAPTER) showCongrats(sc.chapter);
-  else showFinale();
+  const wasBasicDone = state.doneBasic;
+  refreshDone();
+  await saveState();
+  if (sc.chapter < MAX_CHAPTER){ showCongrats(sc.chapter); return; }
+  /* 本章最后一章也集满了 */
+  if (TIER === "basic" && !wasBasicDone && typeof NEXT_STEP !== "undefined" && NEXT_STEP){
+    showNextStep();          /* 强提示：回上一章做二周目 */
+    return;
+  }
+  showFinale();
 }
 function overlayCard(inner){
   let g = document.getElementById("ovl");
@@ -779,8 +808,8 @@ function renderStamps(){
   let got = 0;
   SCENES.forEach(sc=>{
     quizHotspots(sc).forEach(h=>{
-      const has = !!state.cleared[h.id];
-      const gold = !!state.gold[h.id];
+      const has = !!P().cleared[h.id];
+      const gold = !!P().gold[h.id];
       if (has) got++;
       const cell = el("div","stamp-cell "+(has?("got"+(gold?" gold":"")):"empty"));
       cell.innerHTML = '<div class="c-seal"><div class="c-inner"><span class="c-name">'+h.name+'</span></div></div>'+
@@ -803,15 +832,126 @@ function renderStamps(){
    以后新增场面或地点【必须追加在末尾】；插在中间会让所有旧码错位。
    旧码比新版短时会自动按短的读完，不报错。
 ===================================================== */
+/* =====================================================
+   周目（基础版 / 高阶版）
+   -----------------------------------------------------
+   同一张地图走两遍。一周目四选一，二周目自己说、自己念。
+   两遍之间隔着整整一章，那时候词已经开始忘了，
+   逼出来的才是从记忆里捞的，不是从上一页抄的。
+
+   次序：1基 → 2基 → 1高 → 3基 → 2高 → 4基 → 3高 …
+   规则不写死在引擎里，各章 HTML 自己声明 REQUIRE：
+     REQUIRE = {
+       basic: {key:"别章的存档键", flag:"doneAdv", label:"…", href:"…"},
+       adv:   {key:"别章的存档键", flag:"doneBasic", label:"…", href:"…"}
+     }
+   同源，所以读得到别章的 localStorage。
+===================================================== */
+function tierComplete(tier){
+  const keep = TIER;
+  TIER = tier;
+  const hasAny = SCENES.some(sc=>quizHotspots(sc).length);
+  const ok = hasAny && SCENES.every(sc=>quizHotspots(sc).every(h=>P().gold[h.id]));
+  TIER = keep;
+  return ok;
+}
+function refreshDone(){
+  if (tierComplete("basic")) state.doneBasic = true;
+  if (advExists() && tierComplete("adv")) state.doneAdv = true;
+}
+const GATE = (typeof REQUIRE !== "undefined") ? REQUIRE : null;
+function gateMet(cond){
+  if (!cond) return true;
+  try {
+    const v = localStorage.getItem(cond.key);
+    if (!v) return false;
+    return !!JSON.parse(v)[cond.flag || "doneAdv"];
+  } catch(e){ return false; }
+}
+function basicUnlocked(){ return gateMet(GATE && GATE.basic); }
+function advUnlocked(){
+  return advExists() && (state.doneBasic || tierComplete("basic")) && gateMet(GATE && GATE.adv);
+}
+
+/* 前提没满足时，整章都不给进 */
+function showGate(cond){
+  overlayCard(
+    '<div style="text-align:center;font-size:40px;margin-bottom:6px">🔒</div>' +
+    '<h3>まだ開きません</h3>' +
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:12px">' +
+    '这里要等你先走完<br><b>' + (cond.label || "上一段") + '</b>。</p>' +
+    (cond.hint ? '<p style="text-align:center;font-size:12.5px;color:#7c7566;line-height:1.8;margin-bottom:12px">' +
+      cond.hint + '</p>' : '') +
+    (cond.href ? '<a class="btn-main" style="display:block;text-align:center;text-decoration:none" href="' +
+      cond.href + '">去那边</a>' : '<button class="btn-main" onclick="location.reload()">知道了</button>'));
+}
+
+/* 一周目通关时的强提示：把她推回上一章做二周目 */
+function showNextStep(){
+  const n = NEXT_STEP;
+  const g = overlayCard(
+    '<div style="text-align:center;font-size:40px;margin-bottom:6px">🔁</div>' +
+    '<h3>' + (n.title || "次はここ") + '</h3>' +
+    '<p style="text-align:center;font-size:14px;line-height:1.9;margin-bottom:12px">' + n.body + '</p>' +
+    '<a class="btn-main" style="display:block;text-align:center;text-decoration:none" href="' + n.href + '">' +
+      (n.cta || "去") + '</a>' +
+    '<button class="btn-ghost" id="ns-later">先不去</button>');
+  document.getElementById("ns-later").addEventListener("click", ()=>{ g.style.display = "none"; });
+}
+
+/* 地图上方的周目条 */
+function renderTierBar(){
+  const canvas = $("#map-canvas");
+  if (!canvas) return;
+  let bar = document.getElementById("tier-bar");
+  if (!bar){
+    bar = el("div"); bar.id = "tier-bar";
+    canvas.parentNode.insertBefore(bar, canvas);
+  }
+  document.body.classList.toggle("adv-on", TIER === "adv");
+  if (!advExists()){ bar.style.display = "none"; return; }
+  bar.style.display = "flex";
+
+  if (TIER === "adv"){
+    bar.className = "t-adv";
+    bar.innerHTML = '<span><b>二周目</b> · 这次不选，自己说</span><button id="tier-back">回一周目</button>';
+    document.getElementById("tier-back").addEventListener("click", async ()=>{
+      TIER = "basic"; state.tier = "basic"; await saveState();
+      renderMap(); show("view-map");
+    });
+    return;
+  }
+  if (advUnlocked()){
+    bar.className = "t-open";
+    bar.innerHTML = '<span>一周目走完了。<b>二周目开着</b></span><button id="tier-go">再走一遍</button>';
+    document.getElementById("tier-go").addEventListener("click", async ()=>{
+      TIER = "adv"; state.tier = "adv"; await saveState();
+      renderMap(); show("view-map");
+      toast("二周目：地方还是那些地方，题目换成自己说、自己念");
+    });
+    return;
+  }
+  if (state.doneBasic && GATE && GATE.adv && !gateMet(GATE.adv)){
+    bar.className = "t-wait";
+    bar.innerHTML = '<span>二周目要等你先走完' + (GATE.adv.label || "上一段") + '</span>' +
+      (GATE.adv.href ? '<a href="' + GATE.adv.href + '">去那边</a>' : '');
+    return;
+  }
+  bar.className = "t-lock";
+  bar.innerHTML = '<span>集齐全部金印，二周目就开</span>';
+}
+
 /* 各章自己的文案。章节 HTML 里定义 CH_TEXT，没定义就退回空对象 */
 const CHT = (typeof CH_TEXT !== "undefined") ? CH_TEXT : {};
 
-const CODE_VER = 1;
+const CODE_VER = 2;   /* v2 起，一串码同时覆盖一周目与二周目 */
 const B32 = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";   /* Crockford：不含 I L O U */
 
 function codeHotspots(){
+  /* 注意：这里不能用 quizHotspots——那个按周目筛，顺序会变。
+     进度码的位序必须两个周目共用同一份，且新地点只能追加在末尾。 */
   const out = [];
-  SCENES.forEach(sc => quizHotspots(sc).forEach(h => out.push(h)));
+  SCENES.forEach(sc => sc.hotspots.forEach(h => { if (h.learn) out.push(h); }));
   return out;
 }
 function fnv1a(bytes){
@@ -849,11 +989,19 @@ function normCode(str){
 function encodeProgress(){
   const bits = [];
   const w = b => bits.push(b ? 1 : 0);
-  w(state.seenGuide); w(state.seenV2);
-  codeHotspots().forEach(h=>{
+  w(state.seenGuide); w(state.seenV2); w(state.doneBasic); w(state.doneAdv);
+  const hs = codeHotspots();
+  /* 先铺完一周目，再铺二周目。旧的短码解到一半没位了就停，二周目留空——不会报错 */
+  hs.forEach(h=>{
     w(state.learned[h.id]); w(state.cleared[h.id]); w(state.gold[h.id]);
     const d = state.qdone[h.id] || {};
-    for (let i=0;i<h.questions.length;i++) w(d[i]);
+    for (let i=0;i<(h.questions||[]).length;i++) w(d[i]);
+  });
+  hs.forEach(h=>{
+    const A = state.adv;
+    w(A.learned[h.id]); w(A.cleared[h.id]); w(A.gold[h.id]);
+    const d = A.qdone[h.id] || {};
+    for (let i=0;i<(h.advanced||[]).length;i++) w(d[i]);
   });
   const bytes = [];
   for (let i=0;i<bits.length;i+=8){
@@ -880,23 +1028,30 @@ function decodeProgress(str){
     if (byte === undefined) return null;
     const b = (byte >> (7 - (bi & 7))) & 1; bi++; return b;
   };
-  const d = {learned:{}, cleared:{}, gold:{}, qdone:{}, seenGuide:false, seenV2:false};
-  d.seenGuide = !!rd(); d.seenV2 = !!rd();
+  const d = {learned:{}, cleared:{}, gold:{}, qdone:{}, seenGuide:false, seenV2:false,
+             doneBasic:false, doneAdv:false,
+             adv:{learned:{}, cleared:{}, gold:{}, qdone:{}}};
+  d.seenGuide = !!rd(); d.seenV2 = !!rd(); d.doneBasic = !!rd(); d.doneAdv = !!rd();
   let spots = 0, stamps = 0;
   const hs = codeHotspots();
-  for (let n=0;n<hs.length;n++){
-    const h = hs[n];
-    const l = rd(); if (l === null) break;
-    const c = rd(), g = rd();
-    if (l) d.learned[h.id] = true;
-    if (c){ d.cleared[h.id] = true; stamps++; }
-    if (g) d.gold[h.id] = true;
-    for (let i=0;i<h.questions.length;i++){
-      const q = rd(); if (q === null) break;
-      if (q){ if (!d.qdone[h.id]) d.qdone[h.id] = {}; d.qdone[h.id][i] = true; }
+  function readTier(box, poolOf, count){
+    for (let n=0;n<hs.length;n++){
+      const h = hs[n];
+      const l = rd(); if (l === null) return;
+      const c = rd(), g = rd();
+      if (l) box.learned[h.id] = true;
+      if (c){ box.cleared[h.id] = true; if (count) stamps++; }
+      if (g) box.gold[h.id] = true;
+      const pool = poolOf(h) || [];
+      for (let i=0;i<pool.length;i++){
+        const q = rd(); if (q === null) return;
+        if (q){ if (!box.qdone[h.id]) box.qdone[h.id] = {}; box.qdone[h.id][i] = true; }
+      }
+      if (count) spots++;
     }
-    spots++;
   }
+  readTier(d,     h=>h.questions, true);
+  readTier(d.adv, h=>h.advanced,  false);
   return {ok:true, data:d, spots:spots, stamps:stamps};
 }
 /* 只做并集：不会抹掉这台设备上已经做出来的进度 */
@@ -908,8 +1063,20 @@ async function applyProgress(d){
     if (!state.qdone[id]) state.qdone[id] = {};
     Object.keys(d.qdone[id]).forEach(i=>{ state.qdone[id][i] = true; });
   });
-  if (d.seenGuide) state.seenGuide = true;
-  if (d.seenV2)    state.seenV2 = true;
+  if (d.adv){
+    ["learned","cleared","gold"].forEach(k=>{
+      Object.keys(d.adv[k]).forEach(id=>{ state.adv[k][id] = true; });
+    });
+    Object.keys(d.adv.qdone).forEach(id=>{
+      if (!state.adv.qdone[id]) state.adv.qdone[id] = {};
+      Object.keys(d.adv.qdone[id]).forEach(i=>{ state.adv.qdone[id][i] = true; });
+    });
+  }
+  if (d.seenGuide)  state.seenGuide = true;
+  if (d.seenV2)     state.seenV2 = true;
+  if (d.doneBasic)  state.doneBasic = true;
+  if (d.doneAdv)    state.doneAdv = true;
+  refreshDone();
   await saveState();
 }
 
@@ -1135,14 +1302,14 @@ function auditState(){
       {gold:0, goldShould:0, cleared:0, q:0, qTotal:0, spots:0};
     const c = perCh[sc.chapter];
     quizHotspots(sc).forEach(h=>{
-      const d = state.qdone[h.id] || {};
+      const d = P().qdone[h.id] || {};
       const n = Object.keys(d).filter(k=>{
-        const i = Number(k); return Number.isInteger(i) && i >= 0 && i < h.questions.length;
+        const i = Number(k); return Number.isInteger(i) && i >= 0 && i < QP(h).length;
       }).length;
-      const shouldGold = n >= h.questions.length;
-      const isGold = !!state.gold[h.id];
-      const isCleared = !!state.cleared[h.id];
-      c.spots++; c.q += n; c.qTotal += h.questions.length;
+      const shouldGold = n >= QP(h).length;
+      const isGold = !!P().gold[h.id];
+      const isCleared = !!P().cleared[h.id];
+      c.spots++; c.q += n; c.qTotal += QP(h).length;
       if (isGold) c.gold++;
       if (shouldGold) c.goldShould++;
       if (isCleared) c.cleared++;
@@ -1153,9 +1320,9 @@ function auditState(){
     });
   });
   const stray = {
-    gold:    Object.keys(state.gold   ).filter(id=>!known.has(id)),
-    cleared: Object.keys(state.cleared).filter(id=>!known.has(id)),
-    qdone:   Object.keys(state.qdone  ).filter(id=>!known.has(id)),
+    gold:    Object.keys(P().gold   ).filter(id=>!known.has(id)),
+    cleared: Object.keys(P().cleared).filter(id=>!known.has(id)),
+    qdone:   Object.keys(P().qdone  ).filter(id=>!known.has(id)),
   };
   return {perCh, phantomGold, realGold, phantomCleared, missingGold, stray};
 }
@@ -1166,17 +1333,17 @@ function rebuildFromQdone(){
   const known = new Set(hs.map(h=>h.id));
   const gold = {}, cleared = {}, qdone = {}, learned = {};
   hs.forEach(h=>{
-    const d = state.qdone[h.id] || {};
+    const d = P().qdone[h.id] || {};
     const keys = Object.keys(d).filter(k=>{
-      const i = Number(k); return Number.isInteger(i) && i >= 0 && i < h.questions.length;
+      const i = Number(k); return Number.isInteger(i) && i >= 0 && i < QP(h).length;
     });
     if (keys.length){
       qdone[h.id] = {};
       keys.forEach(k=>{ qdone[h.id][k] = true; });
       cleared[h.id] = true;
-      if (keys.length >= h.questions.length) gold[h.id] = true;
+      if (keys.length >= QP(h).length) gold[h.id] = true;
     }
-    if (state.learned[h.id]) learned[h.id] = true;
+    if (P().learned[h.id]) learned[h.id] = true;
   });
   Object.keys(state.eggTaps || {}).forEach(id=>{ if (!known.has(id)) delete state.eggTaps[id]; });
   return {gold, cleared, qdone, learned};
@@ -1256,14 +1423,14 @@ function showAudit(){
   });
 
   document.getElementById("au-fix").addEventListener("click", async ()=>{
-    const before = {s: stampCount(), g: Object.keys(state.gold).length};
+    const before = {s: stampCount(), g: Object.keys(P().gold).length};
     const r = rebuildFromQdone();
-    state.gold = r.gold; state.cleared = r.cleared;
-    state.qdone = r.qdone; state.learned = r.learned;
+    P().gold = r.gold; P().cleared = r.cleared;
+    P().qdone = r.qdone; P().learned = r.learned;
     await commitRepair();
     renderMap(); renderStamps();
     toast("已重算：朱印 " + before.s + "→" + stampCount() +
-          "，金印 " + before.g + "→" + Object.keys(state.gold).length);
+          "，金印 " + before.g + "→" + Object.keys(P().gold).length);
     showAudit();
   });
 
@@ -1313,6 +1480,11 @@ function showGuide(firstTime){
 }
 (async function init(){
   await loadState();
+  if (!basicUnlocked()){ renderMap(); showGate(GATE.basic); return; }
+  /* 旗子要落盘：别章靠读这两个旗子来决定开不开 */
+  const before = state.doneBasic + "|" + state.doneAdv;
+  refreshDone();
+  if (before !== state.doneBasic + "|" + state.doneAdv) await saveState();
   renderMap();
   if (!state.seenGuide) { showGuide(true); state.seenV2 = true; await saveState(); }
   else if (!state.seenV2 && CHT.newChapters && chapterAllGold(3)) showNewChapters();

@@ -9,6 +9,7 @@
   --moss:#7A8450;
   --white:#FFFDF7;
   --grey:#B9B0A0;
+  --murasaki:#6B4E8E;   /* 二周目＝極印。冠位十二階で紫は最上位 */
   --ok:#5E7F4E;
   --ng:#B23A3A;
   --serif:"Hiragino Mincho ProN","Yu Mincho","Noto Serif JP","Noto Serif SC","Songti SC",serif;
@@ -222,6 +223,29 @@ button{font-family:inherit;border:none;background:none;cursor:pointer;color:inhe
   font-size:13px;line-height:1.7;display:none;
 }
 .q-explain .tr{color:var(--kon);font-family:var(--serif);display:block;margin-bottom:4px;font-size:14px}
+/* ---------- 周目条と二周目の見た目 ---------- */
+#tier-bar{display:none;align-items:center;gap:8px;margin:0 0 10px;padding:8px 12px;
+  border-radius:10px;font-size:12px;line-height:1.6}
+#tier-bar span{margin-right:auto;min-width:0}
+#tier-bar button,#tier-bar a{border:0;border-radius:7px;padding:6px 12px;font-size:12px;
+  text-decoration:none;white-space:nowrap;flex:none}
+#tier-bar.t-lock{background:#EFE8D6;color:#8a8272}
+#tier-bar.t-wait{background:#F3E7CC;color:#6d675c}
+#tier-bar.t-wait a{background:var(--shu);color:#fff}
+#tier-bar.t-open{background:#EFEAF5;color:var(--murasaki);border:1px solid #D6CBE6}
+#tier-bar.t-open button{background:var(--murasaki);color:#fff}
+#tier-bar.t-adv{background:var(--murasaki);color:var(--paper)}
+#tier-bar.t-adv button{background:rgba(255,255,255,.2);color:var(--paper)}
+
+body.adv-on .lantern-node:not(.locked) .lamp{
+  background:radial-gradient(circle at 50% 30%, #8A6BAF, var(--murasaki) 55%, #4A3566);
+  box-shadow:0 4px 10px rgba(107,78,142,.35);
+}
+body.adv-on .lantern-node.done .cnt{background:var(--murasaki);color:var(--white);border-color:var(--murasaki)}
+body.adv-on .stamp-cell.got .c-seal{background:#9D86BC;box-shadow:0 2px 8px rgba(107,78,142,.3)}
+body.adv-on .stamp-cell.got.gold .c-seal{background:var(--murasaki);box-shadow:0 2px 8px rgba(107,78,142,.45)}
+body.adv-on .spot.gold .dot{background:var(--murasaki)}
+
 /* ---------- 産出型の出題 ---------- */
 .b-zh{font-size:12.5px;color:#7c7566;line-height:1.7;margin:-2px 0 10px}
 .build-slot{min-height:52px;border:2px dashed var(--grey);border-radius:10px;

@@ -107,6 +107,21 @@
 ===================================================== */
 const SAVE_KEY = "ueno-meguri-save";
 
+const REQUIRE = {
+  basic: { key:"asakusa-meguri-save", flag:"doneBasic", label:"浅草の一周目",
+           href:"chapter1-asakusa.html" },
+  adv:   { key:"asakusa-meguri-save", flag:"doneAdv",   label:"浅草の二周目",
+           href:"chapter1-asakusa.html" }
+};
+
+/* 一周目走完时的强提示：把她推回浅草做二周目 */
+const NEXT_STEP = {
+  title: "浅草へ戻ります",
+  body: "上野の一周目、おしまい。<br>次は浅草をもう一度——<br>今度は選ぶんじゃなくて、自分で言う番。",
+  href: "chapter1-asakusa.html",
+  cta: "去浅草・二周目"
+};
+
 const CH_TEXT = {
   area: "上野",
   guideBunjin:
